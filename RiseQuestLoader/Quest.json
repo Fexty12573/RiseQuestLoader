@@ -1,0 +1,235 @@
+{
+    "ID": 103,
+    "QuestText": {
+        "name": "Fungal Frustrations",
+        "client": "Mushroom Restaurant Owner",
+        "description": "I've been dreaming of opening\nmy own restaurant, but I spent\nso much time experimenting\nwith the menu that I ran out of\ningredients! I'll never be able to\nopen if I don't get some more.\nThink you can help me out?",
+        "target": "Deliver 8 Unique Mushrooms"
+    },
+    "QuestData": {
+        "type": 32,
+        "level": 1,
+        "enemylevel": 0,
+        "map": 0,
+        "quest_time": 3,
+        "time_variation": 3,
+        "time_limit": 50,
+        "carts": 3,
+        "conditions": [ 0, 0 ],
+        "targets": [ 1, 0 ],
+        "target_monsters": [ 0, 0 ],
+        "target_items": [ 0, 0 ],
+        "amount": [ 0, 0 ],
+        "monsters": [
+            {
+                "id": 0,
+                "spawn_condition": 0,
+                "param": 0
+            },
+            {
+                "id": 0,
+                "spawn_condition": 0,
+                "param": 0
+            },
+            {
+                "id": 0,
+                "spawn_condition": 0,
+                "param": 0
+            },
+            {
+                "id": 0,
+                "spawn_condition": 0,
+                "param": 0
+            },
+            {
+                "id": 0,
+                "spawn_condition": 0,
+                "param": 0
+            },
+            {
+                "id": 0,
+                "spawn_condition": 0,
+                "param": 0
+            },
+            {
+                "id": 0,
+                "spawn_condition": 0,
+                "param": 0
+            }
+        ],
+        "extra_monster_count": 0,
+        "swap_frequency": [ 0, 0 ],
+        "swap_condition": [ 0, 0 ],
+        "swap_param": [ 0, 0 ],
+        "swap_exit_time": [ 0, 0 ],
+        "swap_stop_type": 0,
+        "swap_stop_param": 0,
+        "swap_exec_type": 0,
+        "swap_exit_ride": false,
+        "reward": {
+            "zenny": 1000,
+            "points": 100,
+            "hrp": 130
+        },
+        "supply_id": 0,
+        "monster_icons": [ 0, 0, 0, 0, 0 ],
+        "tutorial": false,
+        "arena_param": {
+            "fence_default_active": false,
+            "fence_uptime": 0,
+            "fence_initial_delay": 0,
+            "fence_cooldown": 0,
+            "pillars_active": [ false, false, false ]
+        },
+        "auto_match_hr": 0,
+        "battle_bgm_type": 0,
+        "clear_bgm_type": 0
+    },
+    "EnemyData": {
+        "small_monsters": {
+            "spawn_type": 21,
+            "hp": 31,
+            "attack": 38,
+            "part_hp": 30,
+            "other": 4,
+            "multi": 0
+        },
+        "monsters": [
+            {
+                "path_id": 21,
+                "set_name": "",
+                "sub_type": 0,
+                "hp": 0,
+                "attack": 0,
+                "other": 0,
+                "stamina": 0,
+                "size": 0,
+                "scale_type": 1,
+                "difficulty": 0,
+                "multi": 0
+            },
+            {
+                "path_id": 21,
+                "set_name": "",
+                "sub_type": 0,
+                "hp": 0,
+                "attack": 0,
+                "other": 0,
+                "stamina": 0,
+                "size": 0,
+                "scale_type": 1,
+                "difficulty": 0,
+                "multi": 0
+            },
+            {
+                "path_id": 21,
+                "set_name": "",
+                "sub_type": 0,
+                "hp": 0,
+                "attack": 0,
+                "other": 0,
+                "stamina": 0,
+                "size": 0,
+                "scale_type": 1,
+                "difficulty": 0,
+                "multi": 0
+            },
+            {
+                "path_id": 21,
+                "set_name": "",
+                "sub_type": 0,
+                "hp": 0,
+                "attack": 0,
+                "other": 0,
+                "stamina": 0,
+                "size": 0,
+                "scale_type": 1,
+                "difficulty": 0,
+                "multi": 0
+            },
+            {
+                "path_id": 21,
+                "set_name": "",
+                "sub_type": 0,
+                "hp": 0,
+                "attack": 0,
+                "other": 0,
+                "stamina": 0,
+                "size": 0,
+                "scale_type": 1,
+                "difficulty": 0,
+                "multi": 0
+            },
+            {
+                "path_id": 21,
+                "set_name": "",
+                "sub_type": 0,
+                "hp": 0,
+                "attack": 0,
+                "other": 0,
+                "stamina": 0,
+                "size": 0,
+                "scale_type": 1,
+                "difficulty": 0,
+                "multi": 0
+            },
+            {
+                "path_id": 21,
+                "set_name": "",
+                "sub_type": 0,
+                "hp": 0,
+                "attack": 0,
+                "other": 0,
+                "stamina": 0,
+                "size": 0,
+                "scale_type": 1,
+                "difficulty": 0,
+                "multi": 0
+            }
+
+        ]
+    },
+    "RampageData": {
+        "seed": 0,
+        "attributes": 1,
+        "waves": [
+            {
+                "boss_monster": 0,
+                "boss_subtype": 0,
+                "order_table": 0,
+                "monsters": [ 0, 0, 0, 0 ],
+                "boss_em_nando_table": -1,
+                "wave_em_nando_table": -1
+            },
+            {
+                "boss_monster": 0,
+                "boss_subtype": 0,
+                "order_table": 0,
+                "monsters": [ 0, 0, 0, 0 ],
+                "boss_em_nando_table": -1,
+                "wave_em_nando_table": -1
+            },
+            {
+                "boss_monster": 0,
+                "boss_subtype": 0,
+                "order_table": 0,
+                "monsters": [ 0, 0, 0, 0 ],
+                "boss_em_nando_table": -1,
+                "wave_em_nando_table": -1
+            }
+        ],
+        "level": 3,
+        "map": 0,
+        "category": 0,
+        "village": true,
+        "base_time": 13,
+        "start_block": 3,
+        "end_block": 3,
+        "extra_wave_count": 0,
+        "extra_em_nando_table": -1,
+        "apex_order_table": -1,
+        "weapon_unlock_table": -1,
+        "sub_targets": [ 0, 0, 0, 0, 0, 0 ],
+        "subtarget_5_wave": 0
+    }
+}

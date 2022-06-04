@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\dependencies">
+      <UniqueIdentifier>{08305932-eff1-4ff7-930b-afc0b87d29bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dependencies\imgui">
+      <UniqueIdentifier>{396b50cd-cfe8-4a2c-b1ad-50946d424c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dependencies\reframework">
+      <UniqueIdentifier>{9ac8a2c5-4487-4de4-ad2f-7a8daef5ef11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dependencies\rendering">
+      <UniqueIdentifier>{d7f00d27-412e-4f01-966f-7e6e4d500a70}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="imgui\font_robotomedium.hpp">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_dx11.h">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_dx12.h">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_win32.h">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\re2_imconfig.hpp">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="rendering\d3d11.hpp">
+      <Filter>Header Files\dependencies\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="rendering\d3d12.hpp">
+      <Filter>Header Files\dependencies\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="rendering\shared.hpp">
+      <Filter>Header Files\dependencies\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="reframework\API.h">
+      <Filter>Header Files\dependencies\reframework</Filter>
+    </ClInclude>
+    <ClInclude Include="reframework\API.hpp">
+      <Filter>Header Files\dependencies\reframework</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="reframework\utility.h">
+      <Filter>Header Files\dependencies\reframework</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestExporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionHook.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="imgui\imgui_impl_dx11.cpp">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_dx12.cpp">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_win32.cpp">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="rendering\d3d11.cpp">
+      <Filter>Header Files\dependencies\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="rendering\d3d12.cpp">
+      <Filter>Header Files\dependencies\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputDebugStringBuf.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="reframework\utility.cpp">
+      <Filter>Header Files\dependencies\reframework</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestExporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctionHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Quest.json">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>
