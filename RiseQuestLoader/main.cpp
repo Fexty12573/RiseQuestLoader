@@ -20,6 +20,10 @@ bool initialize() {
 
     ImGui::CreateContext();
 
+    if (!IMGUI_CHECKVERSION()) {
+        OutputDebugStringA("[FEXTY] ImGui Version Mismatch");
+    }
+
     const auto renderer = API::get()->param()->renderer_data;
 
     DXGI_SWAP_CHAIN_DESC desc{};
@@ -107,6 +111,7 @@ void on_device_reset() {
 }
 
 bool on_message(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+    //OutputDebugString(TEXT("[FEXTY] on_message"));
     ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam);
 
     return !ImGui::GetIO().WantCaptureMouse && !ImGui::GetIO().WantCaptureKeyboard;
@@ -123,7 +128,6 @@ __declspec(dllexport) void reframework_plugin_required_version(REFrameworkPlugin
 }
 
 __declspec(dllexport) bool reframework_plugin_initialize(const REFrameworkPluginInitializeParam* param) {
-    OutputDebugString(TEXT("[FEXTY] REFramework Initialize"));
     API::initialize(param);
     ImGui::CreateContext();
 

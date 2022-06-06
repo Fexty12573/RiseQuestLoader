@@ -179,7 +179,7 @@ void QuestLoader::render_ui() {
         }
 
         for (const auto& q : quests) {
-            std::ofstream(fmt::format("./reframework/plugins/quests/q{}.json", q.value("ID", 0))) << q.dump(4);
+            std::ofstream(fmt::format("./reframework/plugins/quests/q{}.json", q.value("QuestID", 0))) << q.dump(4);
         }
     }
 
@@ -200,11 +200,11 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
     std::ifstream(path) >> j;
 
 
-    if (!j.contains("ID")) {
+    if (!j.contains("QuestID")) {
         return;
     }
 
-    const auto quest_id = j["ID"].get<int32_t>();
+    const auto quest_id = j["QuestID"].get<int32_t>();
     
     const auto quest = new_instance(api->get_vm_context(), utility::get_class_info(m_quest_data), 0);
     if (quest == nullptr) {
@@ -235,61 +235,61 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
     qenemy->add_ref();
     qrampage->add_ref();
 
-    if (j.contains("QuestData")) {
+    if (j.contains("QuestData") && j["QuestData"].type() != nlohmann::detail::value_t::null) {
         const auto& normal = j["QuestData"];
 
         *qnormal->get_field<uint32_t>("_QuestNo") = quest_id;
-        *qnormal->get_field<uint32_t>("_QuestType") = normal["type"];
-        *qnormal->get_field<int32_t>("_QuestLv") = normal["level"];
-        *qnormal->get_field<int32_t>("_EnemyLv") = normal["enemylevel"];
-        *qnormal->get_field<int32_t>("_MapNo") = normal["map"];
-        *qnormal->get_field<uint32_t>("_BaseTime") = normal["quest_time"];
-        *qnormal->get_field<int32_t>("_TimeVariation") = normal["time_variation"];
-        *qnormal->get_field<int32_t>("_TimeLimit") = normal["time_limit"];
-        *qnormal->get_field<int32_t>("_QuestLife") = normal["carts"];
+        *qnormal->get_field<uint32_t>("_QuestType") = normal["QuestType"];
+        *qnormal->get_field<int32_t>("_QuestLv") = normal["QuestLevel"];
+        *qnormal->get_field<int32_t>("_EnemyLv") = normal["EnemyLevel"];
+        *qnormal->get_field<int32_t>("_MapNo") = normal["Map"];
+        *qnormal->get_field<uint32_t>("_BaseTime") = normal["BaseTime"];
+        *qnormal->get_field<int32_t>("_TimeVariation") = normal["TimeVariation"];
+        *qnormal->get_field<int32_t>("_TimeLimit") = normal["TimeLimit"];
+        *qnormal->get_field<int32_t>("_QuestLife") = normal["Carts"];
         
         if (const auto conditions = qnormal->get_field<API::ManagedObject*>("_OrderType")) {
-            *conditions = utility::create_managed_array("snow.quest.QuestOrderType", normal["conditions"].size());
+            *conditions = utility::create_managed_array("snow.quest.QuestOrderType", normal["QuestConditions"].size());
             (*conditions)->add_ref();
 
-            for (auto i = 0u; i < normal["conditions"].size(); ++i) {
-                utility::call(*conditions, "Set", i, normal["conditions"][i].get<int32_t>());
+            for (auto i = 0u; i < normal["QuestConditions"].size(); ++i) {
+                utility::call(*conditions, "Set", i, normal["QuestConditions"][i].get<int32_t>());
             }
         }
 
         if (const auto targets = qnormal->get_field<API::ManagedObject*>("_TargetType")) {
-            *targets = utility::create_managed_array("snow.quest.QuestTargetType", normal["targets"].size());
+            *targets = utility::create_managed_array("snow.quest.QuestTargetType", normal["TargetTypes"].size());
             (*targets)->add_ref();
 
-            for (auto i = 0u; i < normal["targets"].size(); ++i) {
-                utility::call(*targets, "Set", i, normal["targets"][i].get<uint8_t>());
+            for (auto i = 0u; i < normal["TargetTypes"].size(); ++i) {
+                utility::call(*targets, "Set", i, normal["TargetTypes"][i].get<uint8_t>());
             }
         }
 
         if (const auto targets = qnormal->get_field<API::ManagedObject*>("_TgtEmType")) {
-            *targets = utility::create_managed_array("snow.enemy.EnemyDef.EmTypes", normal["target_monsters"].size());
+            *targets = utility::create_managed_array("snow.enemy.EnemyDef.EmTypes", normal["TargetMonsters"].size());
             (*targets)->add_ref();
 
-            for (auto i = 0u; i < normal["target_monsters"].size(); ++i) {
-                utility::call(*targets, "Set", i, normal["target_monsters"][i].get<uint32_t>());
+            for (auto i = 0u; i < normal["TargetMonsters"].size(); ++i) {
+                utility::call(*targets, "Set", i, normal["TargetMonsters"][i].get<uint32_t>());
             }
         }
 
         if (const auto items = qnormal->get_field<API::ManagedObject*>("_TgtItemId")) {
-            *items = utility::create_managed_array("snow.data.ContentsIdSystem.ItemId", normal["target_items"].size());
+            *items = utility::create_managed_array("snow.data.ContentsIdSystem.ItemId", normal["TargetItemIds"].size());
             (*items)->add_ref();
 
-            for (auto i = 0u; i < normal["target_items"].size(); ++i) {
-                utility::call(*items, "Set", i, normal["target_items"][i].get<uint32_t>());
+            for (auto i = 0u; i < normal["TargetItemIds"].size(); ++i) {
+                utility::call(*items, "Set", i, normal["TargetItemIds"][i].get<uint32_t>());
             }
         }
 
         if (const auto counts = qnormal->get_field<API::ManagedObject*>("_TgtNum")) {
-            *counts = utility::create_managed_array("System.UInt32", normal["amount"].size());
+            *counts = utility::create_managed_array("System.UInt32", normal["TargetAmounts"].size());
             (*counts)->add_ref();
 
-            for (auto i = 0u; i < normal["amount"].size(); ++i) {
-                utility::call(*counts, "Set", i, normal["amount"][i].get<uint32_t>());
+            for (auto i = 0u; i < normal["TargetAmounts"].size(); ++i) {
+                utility::call(*counts, "Set", i, normal["TargetAmounts"][i].get<uint32_t>());
             }
         }
 
@@ -307,64 +307,64 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
                     (*params)->add_ref();
 
                     for (auto i = 0u; i < max_monster_count; ++i) {
-                        const auto& mon = normal["monsters"][i];
+                        const auto& mon = normal["Monsters"][i];
 
-                        utility::call(*monsters, "Set", i, mon["id"].get<uint32_t>());
-                        utility::call(*conds, "Set", i, mon["spawn_condition"].get<uint32_t>());
-                        utility::call(*params, "Set", i, mon["param"].get<uint32_t>());
+                        utility::call(*monsters, "Set", i, mon["Id"].get<uint32_t>());
+                        utility::call(*conds, "Set", i, mon["SpawnCondition"].get<uint32_t>());
+                        utility::call(*params, "Set", i, mon["SpawnParam"].get<uint32_t>());
                     }
                 }
             }
         }
 
-        *qnormal->get_field<uint8_t>("_InitExtraEmNum") = normal["extra_monster_count"];
-        *qnormal->get_field<bool>("_IsSwapExitMarionette") = normal["swap_exit_ride"];
+        *qnormal->get_field<uint8_t>("_InitExtraEmNum") = normal["ExtraMonsterCount"];
+        *qnormal->get_field<bool>("_IsSwapExitMarionette") = normal["SwapExitRide"];
 
         if (const auto rates = qnormal->get_field<API::ManagedObject*>("_SwapEmRate")) {
-            *rates = utility::create_managed_array("System.Byte", normal["swap_frequency"].size());
+            *rates = utility::create_managed_array("System.Byte", normal["SwapFrequencies"].size());
             (*rates)->add_ref();
 
-            for (auto i = 0u; i < normal["swap_frequency"].size(); ++i) {
-                utility::call(*rates, "Set", i, normal["swap_frequency"][i].get<uint8_t>());
+            for (auto i = 0u; i < normal["SwapFrequencies"].size(); ++i) {
+                utility::call(*rates, "Set", i, normal["SwapFrequencies"][i].get<uint8_t>());
             }
         }
 
         if (const auto conds = qnormal->get_field<API::ManagedObject*>("_SwapSetCondition")) {
-            *conds = utility::create_managed_array("snow.QuestManager.SwapSetCondition", normal["swap_condition"].size());
+            *conds = utility::create_managed_array("snow.QuestManager.SwapSetCondition", normal["SwapConditions"].size());
             (*conds)->add_ref();
 
-            for (auto i = 0u; i < normal["swap_condition"].size(); ++i) {
-                utility::call(*conds, "Set", i, normal["swap_condition"][i].get<uint32_t>());
+            for (auto i = 0u; i < normal["SwapConditions"].size(); ++i) {
+                utility::call(*conds, "Set", i, normal["SwapConditions"][i].get<uint32_t>());
             }
         }
 
         if (const auto params = qnormal->get_field<API::ManagedObject*>("_SwapSetParam")) {
-            *params = utility::create_managed_array("System.Byte", normal["swap_param"].size());
+            *params = utility::create_managed_array("System.Byte", normal["SwapParams"].size());
             (*params)->add_ref();
 
-            for (auto i = 0u; i < normal["swap_param"].size(); ++i) {
-                utility::call(*params, "Set", i, normal["swap_param"][i].get<uint8_t>());
+            for (auto i = 0u; i < normal["SwapParams"].size(); ++i) {
+                utility::call(*params, "Set", i, normal["SwapParams"][i].get<uint8_t>());
             }
         }
 
         if (const auto counts = qnormal->get_field<API::ManagedObject*>("_SwapExitTime")) {
-            *counts = utility::create_managed_array("System.Byte", normal["swap_exit_time"].size());
+            *counts = utility::create_managed_array("System.Byte", normal["SwapExitTimes"].size());
             (*counts)->add_ref();
 
-            for (auto i = 0u; i < normal["swap_exit_time"].size(); ++i) {
-                utility::call(*counts, "Set", i, normal["swap_exit_time"][i].get<uint8_t>());
+            for (auto i = 0u; i < normal["SwapExitTimes"].size(); ++i) {
+                utility::call(*counts, "Set", i, normal["SwapExitTimes"][i].get<uint8_t>());
             }
         }
 
-        *qnormal->get_field<uint32_t>("_SwapStopType") = normal["swap_stop_type"];
-        *qnormal->get_field<uint8_t>("_SwapStopParam") = normal["swap_stop_param"];
-        *qnormal->get_field<uint32_t>("_SwapExecType") = normal["swap_exec_type"];
+        *qnormal->get_field<uint32_t>("_SwapStopType") = normal["SwapStopType"];
+        *qnormal->get_field<uint8_t>("_SwapStopParam") = normal["SwapStopParam"];
+        *qnormal->get_field<uint32_t>("_SwapExecType") = normal["SwapExecType"];
 
-        *qnormal->get_field<uint32_t>("_RemMoney") = normal["reward"]["zenny"];
-        *qnormal->get_field<uint32_t>("_RemVillagePoint") = normal["reward"]["points"];
-        *qnormal->get_field<uint32_t>("_RemRankPoint") = normal["reward"]["hrp"];
+        *qnormal->get_field<uint32_t>("_RemMoney") = normal["Reward"]["Zenny"];
+        *qnormal->get_field<uint32_t>("_RemVillagePoint") = normal["Reward"]["Points"];
+        *qnormal->get_field<uint32_t>("_RemRankPoint") = normal["Reward"]["HRP"];
 
-        *qnormal->get_field<uint32_t>("_SupplyTbl") = normal["supply_id"];
+        *qnormal->get_field<uint32_t>("_SupplyTbl") = normal["SupplyTable"];
 
         if (const auto icons = qnormal->get_field<API::ManagedObject*>("_Icon")) {
             constexpr uint32_t quest_icon_count = 5;
@@ -373,16 +373,16 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             (*icons)->add_ref();
 
             for (auto i = 0u; i < quest_icon_count; ++i) {
-                utility::call(*icons, "Set", i, normal["monster_icons"][i].get<int32_t>());
+                utility::call(*icons, "Set", i, normal["Icons"][i].get<int32_t>());
             }
         }
 
-        *qnormal->get_field<bool>("_IsTutorial") = normal["tutorial"];
+        *qnormal->get_field<bool>("_IsTutorial") = normal["Tutorial"];
 
-        *qnormal->get_field<bool>("_FenceDefaultActive") = normal["arena_param"]["fence_default_active"];
-        *qnormal->get_field<uint16_t>("_FenceActiveSec") = normal["arena_param"]["fence_uptime"];
-        *qnormal->get_field<uint16_t>("_FenceDefaultWaitSec") = normal["arena_param"]["fence_initial_delay"];
-        *qnormal->get_field<uint16_t>("_FenceReloadSec") = normal["arena_param"]["fence_cooldown"];
+        *qnormal->get_field<bool>("_FenceDefaultActive") = normal["ArenaParam"]["FenceDefaultActive"];
+        *qnormal->get_field<uint16_t>("_FenceActiveSec") = normal["ArenaParam"]["FenceUptime"];
+        *qnormal->get_field<uint16_t>("_FenceDefaultWaitSec") = normal["ArenaParam"]["FenceInitialDelay"];
+        *qnormal->get_field<uint16_t>("_FenceReloadSec") = normal["ArenaParam"]["FenceCooldown"];
 
         if (const auto pillars = qnormal->get_field<API::ManagedObject*>("_IsUsePillar")) {
             constexpr uint32_t arena_pillar_count = 3;
@@ -391,28 +391,28 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             (*pillars)->add_ref();
 
             for (auto i = 0u; i < arena_pillar_count; ++i) {
-                utility::call(*pillars, "Set", i, normal["arena_param"]["pillars_active"][i].get<bool>());
+                utility::call(*pillars, "Set", i, normal["ArenaParam"]["Pillars"][i].get<bool>());
             }
         }
 
-        *qnormal->get_field<uint16_t>("_AutoMatchHR") = normal["auto_match_hr"];
-        *qnormal->get_field<int32_t>("_BattleBGMType") = normal["battle_bgm_type"];
-        *qnormal->get_field<int32_t>("_ClearBGMType") = normal["clear_bgm_type"];
+        *qnormal->get_field<uint16_t>("_AutoMatchHR") = normal["AutoMatchHR"];
+        *qnormal->get_field<int32_t>("_BattleBGMType") = normal["BattleBGMType"];
+        *qnormal->get_field<int32_t>("_ClearBGMType") = normal["ClearBGMType"];
     }
 
-    if (j.contains("EnemyData")) {
+    if (j.contains("EnemyData") && j["EnemyData"].type() != nlohmann::detail::value_t::null) {
         const auto& enemy = j["EnemyData"];
 
         *qnormal->get_field<uint32_t>("_QuestNo") = quest_id;
-        *qenemy->get_field<int32_t>("_EmsSetNo") = enemy["small_monsters"]["spawn_type"];
-        *qenemy->get_field<uint8_t>("_ZakoVital") = enemy["small_monsters"]["hp"];
-        *qenemy->get_field<uint8_t>("_ZakoAttack") = enemy["small_monsters"]["attack"];
-        *qenemy->get_field<uint8_t>("_ZakoParts") = enemy["small_monsters"]["part_hp"];
-        *qenemy->get_field<uint8_t>("_ZakoOther") = enemy["small_monsters"]["other"];
-        *qenemy->get_field<uint8_t>("_ZakoMulti") = enemy["small_monsters"]["multi"];
+        *qenemy->get_field<int32_t>("_EmsSetNo") = enemy["SmallMonsters"]["SpawnType"];
+        *qenemy->get_field<uint8_t>("_ZakoVital") = enemy["SmallMonsters"]["HealthTable"];
+        *qenemy->get_field<uint8_t>("_ZakoAttack") = enemy["SmallMonsters"]["AttackTable"];
+        *qenemy->get_field<uint8_t>("_ZakoParts") = enemy["SmallMonsters"]["PartTable"];
+        *qenemy->get_field<uint8_t>("_ZakoOther") = enemy["SmallMonsters"]["OtherTable"];
+        *qenemy->get_field<uint8_t>("_ZakoMulti") = enemy["SmallMonsters"]["MultiTable"];
 
-        std::vector tables = {
-            qenemy->get_field<API::ManagedObject*>("_RouteNo"), qenemy->get_field<API::ManagedObject*>("_InitSetName"),
+        std::vector tables = {qenemy->get_field<API::ManagedObject*>("_RouteNo"),
+            qenemy->get_field<API::ManagedObject*>("_PartsTbl"), qenemy->get_field<API::ManagedObject*>("_InitSetName"),
             qenemy->get_field<API::ManagedObject*>("_SubType"), qenemy->get_field<API::ManagedObject*>("_VitalTbl"),
             qenemy->get_field<API::ManagedObject*>("_AttackTbl"), qenemy->get_field<API::ManagedObject*>("_OtherTbl"),
             qenemy->get_field<API::ManagedObject*>("_StaminaTbl"), qenemy->get_field<API::ManagedObject*>("_Scale"),
@@ -424,100 +424,102 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             constexpr uint32_t max_monster_count = 7;
 
             *tables[0] = utility::create_managed_array("System.Byte", max_monster_count);
-            *tables[1] = utility::create_managed_array("System.String", max_monster_count);
-            *tables[2] = utility::create_managed_array("System.Byte", max_monster_count);
+            *tables[1] = utility::create_managed_array("System.Byte", max_monster_count);
+            *tables[2] = utility::create_managed_array("System.String", max_monster_count);
             *tables[3] = utility::create_managed_array("System.Byte", max_monster_count);
             *tables[4] = utility::create_managed_array("System.Byte", max_monster_count);
             *tables[5] = utility::create_managed_array("System.Byte", max_monster_count);
             *tables[6] = utility::create_managed_array("System.Byte", max_monster_count);
             *tables[7] = utility::create_managed_array("System.Byte", max_monster_count);
-            *tables[8] = utility::create_managed_array("snow.enemy.EnemyDef.BossScaleTblType", max_monster_count);
-            *tables[9] = utility::create_managed_array("snow.enemy.EnemyDef.NandoYuragi", max_monster_count);
-            *tables[10] = utility::create_managed_array("System.Byte", max_monster_count);
+            *tables[8] = utility::create_managed_array("System.Byte", max_monster_count);
+            *tables[9] = utility::create_managed_array("snow.enemy.EnemyDef.BossScaleTblType", max_monster_count);
+            *tables[10] = utility::create_managed_array("snow.enemy.EnemyDef.NandoYuragi", max_monster_count);
+            *tables[11] = utility::create_managed_array("System.Byte", max_monster_count);
 
             std::for_each(tables.begin(), tables.end(), [](auto** obj) { (*obj)->add_ref(); });
 
             for (auto i = 0u; i < max_monster_count; ++i) {
-                const auto& mon = enemy["monsters"][i];
+                const auto& mon = enemy["Monsters"][i];
 
-                utility::call(*tables[0], "Set", i, mon["path_id"].get<uint8_t>());
+                utility::call(*tables[0], "Set", i, mon["PathId"].get<uint8_t>());
+                utility::call(*tables[1], "Set", i, mon["PartTable"].get<uint8_t>());
 
-                if (const auto str = utility::create_managed_string(mon["set_name"].get<std::string>())) {
+                if (const auto str = utility::create_managed_string(mon["SetName"].get<std::string>())) {
                     reinterpret_cast<API::ManagedObject*>(str)->add_ref();
-                    utility::call(*tables[1], "Set", i, str);
+                    utility::call(*tables[2], "Set", i, str);
                 }
 
-                utility::call(*tables[2], "Set", i, mon["sub_type"].get<uint8_t>());
-                utility::call(*tables[3], "Set", i, mon["hp"].get<uint8_t>());
-                utility::call(*tables[4], "Set", i, mon["attack"].get<uint8_t>());
-                utility::call(*tables[5], "Set", i, mon["other"].get<uint8_t>());
-                utility::call(*tables[6], "Set", i, mon["stamina"].get<uint8_t>());
-                utility::call(*tables[7], "Set", i, mon["size"].get<uint8_t>());
-                utility::call(*tables[8], "Set", i, mon["scale_type"].get<int32_t>());
-                utility::call(*tables[9], "Set", i, mon["difficulty"].get<int32_t>());
-                utility::call(*tables[10], "Set", i, mon["multi"].get<uint8_t>());
+                utility::call(*tables[3], "Set", i, mon["SubType"].get<uint8_t>());
+                utility::call(*tables[4], "Set", i, mon["HealthTable"].get<uint8_t>());
+                utility::call(*tables[5], "Set", i, mon["AttackTable"].get<uint8_t>());
+                utility::call(*tables[6], "Set", i, mon["OtherTable"].get<uint8_t>());
+                utility::call(*tables[7], "Set", i, mon["StaminaTable"].get<uint8_t>());
+                utility::call(*tables[8], "Set", i, mon["Size"].get<uint8_t>());
+                utility::call(*tables[9], "Set", i, mon["SizeTable"].get<int32_t>());
+                utility::call(*tables[10], "Set", i, mon["Difficulty"].get<int32_t>());
+                utility::call(*tables[11], "Set", i, mon["MultiTable"].get<uint8_t>());
             }
         }
     }
 
-    if (j.contains("RampageData")) {
+    if (j.contains("RampageData") && j["RampageData"].type() != nlohmann::detail::value_t::null) {
         const auto& rampage = j["RampageData"];
 
-        if (rampage.contains("seed")) {
+        if (rampage.contains("Seed")) {
             is_rampage_quest = true;
 
             *qnormal->get_field<uint32_t>("_QuestNo") = quest_id;
-            *qrampage->get_field<int32_t>("_RandomSeed") = rampage["seed"];
-            *qrampage->get_field<uint8_t>("_Attr") = rampage["attributes"];
+            *qrampage->get_field<int32_t>("_RandomSeed") = rampage["Seed"];
+            *qrampage->get_field<uint8_t>("_Attr") = rampage["QuestAttr"];
 
             if (const auto waves = qrampage->get_field<API::ManagedObject*>("_WaveData")) {
-                *waves = utility::create_managed_array("snow.quest.HyakuryuQuestData.WaveData", rampage["waves"].size());
+                *waves = utility::create_managed_array("snow.quest.HyakuryuQuestData.WaveData", rampage["Waves"].size());
                 (*waves)->add_ref();
 
-                for (auto i = 0u; i < rampage["waves"].size(); ++i) {
+                for (auto i = 0u; i < rampage["Waves"].size(); ++i) {
                     if (const auto qwave = utility::call(*waves, "Get", i)) {
-                        const auto& wave = rampage["waves"][i];
+                        const auto& wave = rampage["Waves"][i];
 
-                        *qwave->get_field<uint32_t>("_BossEm") = wave["boss_monster"];
-                        *qwave->get_field<uint32_t>("_BossSubType") = wave["boss_subtype"];
-                        *qwave->get_field<int32_t>("_OrderTblNo") = wave["order_table"];
-                        *qwave->get_field<int32_t>("_BossEmNandoTblNo") = wave["boss_em_nando_table"];
-                        *qwave->get_field<int32_t>("_WaveEmNandoTblNo") = wave["wave_em_nando_table"];
+                        *qwave->get_field<uint32_t>("_BossEm") = wave["BossMonster"];
+                        *qwave->get_field<uint32_t>("_BossSubType") = wave["BossSubType"];
+                        *qwave->get_field<int32_t>("_OrderTblNo") = wave["OrderTable"];
+                        *qwave->get_field<int32_t>("_BossEmNandoTblNo") = wave["BossMonsterNandoTable"];
+                        *qwave->get_field<int32_t>("_WaveEmNandoTblNo") = wave["WaveMonsterNandoTable"];
 
                         if (const auto monsters = qwave->get_field<API::ManagedObject*>("_EmTable")) {
-                            *monsters = utility::create_managed_array("snow.enemy.EnemyDef.EmTypes", wave["monsters"].size());
+                            *monsters = utility::create_managed_array("snow.enemy.EnemyDef.EmTypes", wave["Monsters"].size());
                             (*monsters)->add_ref();
 
                             for (auto k = 0u; k < wave["monsters"].size(); ++k) {
-                                utility::call(*monsters, "Set", k, wave["monsters"][k].get<uint32_t>());
+                                utility::call(*monsters, "Set", k, wave["Monsters"][k].get<uint32_t>());
                             }
                         }
                     }
                 }
             }
 
-            *qrampage->get_field<int32_t>("_QuestLv") = rampage["level"];
-            *qrampage->get_field<int32_t>("_MapNo") = rampage["map"];
-            *qrampage->get_field<uint8_t>("_Category") = rampage["category"];
-            *qrampage->get_field<bool>("_IsVillage") = rampage["village"];
-            *qrampage->get_field<uint8_t>("_BaseTime") = rampage["base_time"];
-            *qrampage->get_field<uint8_t>("_StartBlockNo") = rampage["start_block"];
-            *qrampage->get_field<uint8_t>("_EndBlockNo") = rampage["end_block"];
-            *qrampage->get_field<uint8_t>("_ExtraEmWaveNo") = rampage["extra_wave_count"];
-            *qrampage->get_field<int8_t>("_ExtraEmNandoTblNo") = rampage["extra_em_nando_table"];
-            *qrampage->get_field<uint8_t>("_NushiOrderTblNo") = rampage["apex_order_table"];
-            *qrampage->get_field<uint8_t>("_HmUnlockTblNo") = rampage["weapon_unlock_table"];
+            *qrampage->get_field<int32_t>("_QuestLv") = rampage["QuestLevel"];
+            *qrampage->get_field<int32_t>("_MapNo") = rampage["Map"];
+            *qrampage->get_field<uint8_t>("_Category") = rampage["Category"];
+            *qrampage->get_field<bool>("_IsVillage") = rampage["IsVillage"];
+            *qrampage->get_field<uint8_t>("_BaseTime") = rampage["BaseTime"];
+            *qrampage->get_field<uint8_t>("_StartBlockNo") = rampage["StartBlock"];
+            *qrampage->get_field<uint8_t>("_EndBlockNo") = rampage["EndBlock"];
+            *qrampage->get_field<uint8_t>("_ExtraEmWaveNo") = rampage["ExtraWaveCount"];
+            *qrampage->get_field<int8_t>("_ExtraEmNandoTblNo") = rampage["ExtraMonsterNandoTable"];
+            *qrampage->get_field<uint8_t>("_NushiOrderTblNo") = rampage["ApexOrderTable"];
+            *qrampage->get_field<uint8_t>("_HmUnlockTblNo") = rampage["WeaponUnlockTable"];
 
             if (const auto subtargets = qrampage->get_field<API::ManagedObject*>("_SubTarget")) {
-                *subtargets = utility::create_managed_array("snow.quest.QuestTargetType", rampage["sub_targets"].size());
+                *subtargets = utility::create_managed_array("snow.quest.QuestTargetType", rampage["SubTargets"].size());
                 (*subtargets)->add_ref();
 
-                for (auto i = 0u; i < rampage["sub_targets"].size(); ++i) {
-                    utility::call(*subtargets, "Set", i, rampage["sub_targets"][i].get<uint8_t>());
+                for (auto i = 0u; i < rampage["SubTargets"].size(); ++i) {
+                    utility::call(*subtargets, "Set", i, rampage["SubTargets"][i].get<uint8_t>());
                 }
             }
 
-            *qrampage->get_field<uint8_t>("_SubTarget5WaveNo") = rampage["subtarget_5_wave"];
+            *qrampage->get_field<uint8_t>("_SubTarget5WaveNo") = rampage["SubTarget5Wave"];
         }
     }
 

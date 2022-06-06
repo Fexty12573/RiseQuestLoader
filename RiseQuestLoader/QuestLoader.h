@@ -22,10 +22,10 @@ public:
         CustomQuest() = default;
         CustomQuest(const nlohmann::json& j, reframework::API::ManagedObject* quest)
             : m_memory_object(quest) {
-            m_name = j["QuestText"]["name"];
-            m_client = j["QuestText"]["client"];
-            m_description = j["QuestText"]["description"];
-            m_target = j["QuestText"]["target"];
+            m_name = j["QuestText"]["Name"];
+            m_client = j["QuestText"]["Client"];
+            m_description = j["QuestText"]["Description"];
+            m_target = j["QuestText"]["Target"];
         }
     };
 
