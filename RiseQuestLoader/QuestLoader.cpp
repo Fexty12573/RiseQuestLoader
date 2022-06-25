@@ -535,6 +535,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
     const auto quest_manager = m_quest_exporter.get_quest_manager();
     const auto questdict = *quest_manager->get_field<API::ManagedObject*>("_QuestDataDictionary");
     if (utility::call<bool>(questdict, "ContainsKey", quest_id)) {
+        m_custom_quests[quest_id] = {j, quest};
         utility::call(questdict, "Insert", quest_id, quest, false);
     } else {
         m_custom_quests[quest_id] = {j, quest};
@@ -578,7 +579,7 @@ API::ManagedObject* QuestLoader::make_questno_list_hook(void* vmctx, API::Manage
     const auto quest_level = utility::call<QuestLevel>(loader->m_quest_counter, "convertLeveLMenuToQuestLevel", level);
 
     for (const auto& [id, quest] : loader->m_custom_quests) {
-        if (quest_level == utility::call<QuestLevel>(quest.m_memory_object, "getQuestLevel")) {
+        if (quest_level == utility::call<QuestLevel>(quest.m_memory_object, "getQuestLv")) {
             const auto quest_type = utility::call<QuestType>(quest.m_memory_object, "getQuestType");
             bool add_quest = false;
 
