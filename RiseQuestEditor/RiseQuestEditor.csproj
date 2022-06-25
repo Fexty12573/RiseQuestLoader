@@ -1,0 +1,133 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Icons\em037_00_IAM.png" />
+    <None Remove="Assets\Icons\em_delivery_IAM.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="WPFCustomMessageBox" Version="1.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<Resource Include="Assets/Icons/em001_00_IAM.png" />
+	<Resource Include="Assets/Icons/em001_07_IAM.png" />
+	<Resource Include="Assets/Icons/em002_00_IAM.png" />
+	<Resource Include="Assets/Icons/em002_07_IAM.png" />
+	<Resource Include="Assets/Icons/em003_00_IAM.png" />
+	<Resource Include="Assets/Icons/em004_00_IAM.png" />
+	<Resource Include="Assets/Icons/em007_00_IAM.png" />
+	<Resource Include="Assets/Icons/em007_07_IAM.png" />
+	<Resource Include="Assets/Icons/em023_00_IAM.png" />
+	<Resource Include="Assets/Icons/em024_00_IAM.png" />
+	<Resource Include="Assets/Icons/em025_00_IAM.png" />
+	<Resource Include="Assets/Icons/em027_00_IAM.png" />
+	<Resource Include="Assets/Icons/em032_00_IAM.png" />
+	<Resource Include="Assets/Icons/em037_00_IAM.png" />
+	<Resource Include="Assets/Icons/em042_00_IAM.png" />
+	<Resource Include="Assets/Icons/em044_00_IAM.png" />
+	<Resource Include="Assets/Icons/em047_00_IAM.png" />
+	<Resource Include="Assets/Icons/em054_00_IAM.png" />
+	<Resource Include="Assets/Icons/em057_00_IAM.png" />
+	<Resource Include="Assets/Icons/em057_07_IAM.png" />
+	<Resource Include="Assets/Icons/em059_00_IAM.png" />
+	<Resource Include="Assets/Icons/em060_00_IAM.png" />
+	<Resource Include="Assets/Icons/em060_07_IAM.png" />
+	<Resource Include="Assets/Icons/em061_00_IAM.png" />
+	<Resource Include="Assets/Icons/em062_00_IAM.png" />
+	<Resource Include="Assets/Icons/em082_00_IAM.png" />
+	<Resource Include="Assets/Icons/em082_07_IAM.png" />
+	<Resource Include="Assets/Icons/em086_05_IAM.png" />
+	<Resource Include="Assets/Icons/em089_00_IAM.png" />
+	<Resource Include="Assets/Icons/em090_00_IAM.png" />
+	<Resource Include="Assets/Icons/em091_00_IAM.png" />
+	<Resource Include="Assets/Icons/em092_00_IAM.png" />
+	<Resource Include="Assets/Icons/em093_00_IAM.png" />
+	<Resource Include="Assets/Icons/em094_00_IAM.png" />
+	<Resource Include="Assets/Icons/em095_00_IAM.png" />
+	<Resource Include="Assets/Icons/em096_00_IAM.png" />
+	<Resource Include="Assets/Icons/em097_00_IAM.png" />
+	<Resource Include="Assets/Icons/em098_00_IAM.png" />
+	<Resource Include="Assets/Icons/em099_00_IAM.png" />
+	<Resource Include="Assets/Icons/em099_05_IAM.png" />
+	<Resource Include="Assets/Icons/em100_00_IAM.png" />
+	<Resource Include="Assets/Icons/em102_00_IAM.png" />
+	<Resource Include="Assets/Icons/em107_00_IAM.png" />
+	<Resource Include="Assets/Icons/em108_00_IAM.png" />
+	<Resource Include="Assets/Icons/em109_00_IAM.png" />
+	<Resource Include="Assets/Icons/em118_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems003_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems007_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems008_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems013_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems014_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems016_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems019_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems025_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems026_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems027_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems029_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems034_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems035_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems036_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems038_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems039_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems040_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems041_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems042_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems043_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems044_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems049_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems051_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems051_05_IAM.png" />
+	<Resource Include="Assets/Icons/ems090_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems091_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems092_00_IAM.png" />
+	<Resource Include="Assets/Icons/em_delivery_IAM.png" />
+	<Resource Include="Assets/Icons/em_exploration_IAM.png" />
+	<Resource Include="Assets/Icons/em_tutorial_IAM.png" />
+	<Resource Include="Assets/Icons/em_unidentified_IAM.png" />
+
+	<Resource Include="Assets/AttackRate.json" />
+	<Resource Include="Assets/BattleBgmTypes.json" />
+	<Resource Include="Assets/EmsSetNo.json" />
+	<Resource Include="Assets/EnemyLevel.json" />
+	<Resource Include="Assets/Items.json" />
+	<Resource Include="Assets/Map.json" />
+	<Resource Include="Assets/MonsterIcons.json" />
+	<Resource Include="Assets/Monsters.json" />
+	<Resource Include="Assets/MultiRate.json" />
+	<Resource Include="Assets/NandoYuragi.json" />
+	<Resource Include="Assets/OtherRate.json" />
+	<Resource Include="Assets/PartsRate.json" />
+	<Resource Include="Assets/QuestClearBgmTypes.json" />
+	<Resource Include="Assets/QuestCondition.json" />
+	<Resource Include="Assets/QuestLevel.json" />
+	<Resource Include="Assets/QuestObjective.json" />
+	<Resource Include="Assets/RampageCategory.json" />
+	<Resource Include="Assets/SpawnCondition.json" />
+	<Resource Include="Assets/SwapCondition.json" />
+	<Resource Include="Assets/SwapExecType.json" />
+	<Resource Include="Assets/SwapStopType.json" />
+	<Resource Include="Assets/VitalRate.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\QuestLevel.json">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <!--<Exec Command="xcopy &quot;$(ProjectDir)Assets&quot; &quot;$(OutDir)Assets&quot; /Y /I /E" />-->
+  </Target>
+
+</Project>

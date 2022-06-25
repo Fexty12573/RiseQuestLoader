@@ -1,0 +1,1422 @@
+﻿<Window x:Class="RiseQuestEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RiseQuestEditor"
+        mc:Ignorable="d"
+        Title="Monster Hunter Rise Quest Editor" Height="620" Width="770">
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" Executed="OpenFile"/>
+        <CommandBinding Command="Save" Executed="SaveFile"/>
+        <CommandBinding Command="SaveAs" Executed="SaveFileAs"/>
+        <CommandBinding Command="Close" Executed="ExitProgram"/>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+		<KeyBinding Command="Open" Key="O" Modifiers="Ctrl"/>
+        <KeyBinding Command="Save" Key="S" Modifiers="Ctrl"/>
+        <KeyBinding Command="SaveAs" Key="S" Modifiers="Ctrl+Shift"/>
+        <KeyBinding Command="Close" Key="Q" Modifiers="Ctrl"/>
+    </Window.InputBindings>
+	<Grid>
+	    <Grid.Resources>
+		    <Style TargetType="TextBox">
+                <EventSetter Event="TextChanged" Handler="Property_ContentChanged"/>
+			    <Setter Property="VerticalContentAlignment" Value="Center"/>
+			    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="Height" Value="30"/>
+			    <Setter Property="Text" Value="0"/>
+		    </Style>
+		    <Style TargetType="ComboBox">
+                <EventSetter Event="SelectionChanged" Handler="Property_ContentChanged"/>
+			    <Setter Property="VerticalContentAlignment" Value="Center"/>
+			    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+			    <Setter Property="Height" Value="30"/>
+				<Setter Property="SelectedIndex" Value="0"/>
+                <Setter Property="DisplayMemberPath" Value="Value"/>
+                <Setter Property="SelectedValuePath" Value="Key"/>
+		    </Style>
+		    <Style TargetType="Label">
+			    <Setter Property="VerticalAlignment" Value="Center"/>
+		    </Style>
+            <Style TargetType="CheckBox">
+                <EventSetter Event="Checked" Handler="Property_ContentChanged"/>
+                <EventSetter Event="Unchecked" Handler="Property_ContentChanged"/>
+	            <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+	    </Grid.Resources>
+	    <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="File">
+                    <MenuItem Header="_Open" Name="OpenFileButton" Command="Open" InputGestureText="Ctrl+O"/>
+                    <MenuItem Header="_Save" Name="SaveFileButton" Command="Save" InputGestureText="Ctrl+S"/>
+                    <MenuItem Header="S_ave As" Name="SaveFileAsButton" Command="SaveAs" InputGestureText="Ctrl+Shift+S"/>
+                    <MenuItem Header="_Close" Name="ExitProgramButton" Command="Close" InputGestureText="Ctrl+Q"/>
+                </MenuItem>
+                <MenuItem Header="Edit"></MenuItem>
+                <MenuItem Header="Help">
+                    <MenuItem Header="Usage" Name="UsageButton" Click="UsageButton_Click"/>
+                    <MenuItem Header="About" Name="AboutButton" Click="AboutButton_Click"/>
+                </MenuItem>
+            </Menu>
+            <Border Grid.Row="1" Padding="10" BorderBrush="Black">
+                <TabControl Name="MainTabs">
+                    <TabItem Header="Main" FontSize="16">
+                        <Grid Background="White">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="219*"/>
+                                <RowDefinition Height="286*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170*"/>
+                                <ColumnDefinition Width="196*"/>
+                            </Grid.ColumnDefinitions>
+                            <GroupBox Header="General" Margin="10,0,2,10" Grid.RowSpan="2">
+                                <Grid VerticalAlignment="Stretch" FlowDirection="LeftToRight">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60*"/>
+                                        <ColumnDefinition Width="8*"/>
+                                        <ColumnDefinition Width="60*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <ComboBox Grid.Row="1" Grid.Column="0" Margin="5" Name="QuestLevel" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="2" Grid.Column="0" Margin="5" Name="MonsterLevel" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="3" Grid.Column="0" Margin="5" Name="Map" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="7" Grid.Column="0" Margin="5" Name="BattleBgm" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="8" Grid.Column="0" Margin="5" Name="QuestClearBgm" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="9" Grid.Column="0" Margin="5" Name="QuestCondition1" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Row="10" Grid.Column="0" Margin="5" Name="QuestCondition2" VerticalAlignment="Center"/>
+
+                                    <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="0" Name="QuestID" Margin="5" MaxLength="7"/>
+                                    <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="4" Name="QuestTime" Margin="5"/>
+                                    <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="5" Name="TimeLimit" Margin="5" MaxLength="3"/>
+                                    <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="6" Name="Carts" Margin="5"/>
+
+                                    <Label Grid.Column="2" Grid.Row="0" Content="Quest ID" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="1" Content="Quest Level" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="2" Content="Monster Level" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="3" Content="Map" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="4" Content="Quest Time" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="5" Content="Time Limit" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="6" Content="Carts" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="7" Content="Battle BGM" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="8" Content="Quest Clear BGM" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="9" Content="Quest Condition 1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="10" Content="Quest Condition 2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="Supplies / Rewards" Margin="3,0,10,4" Grid.Column="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60*"/>
+                                        <ColumnDefinition Width="8*"/>
+                                        <ColumnDefinition Width="60*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                        <RowDefinition Height="10*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="0" Name="Money" Margin="5"/>
+                                    <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="1" Name="VillagePoints" Margin="5"/>
+                                    <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="HrPoints" Margin="5"/>
+                                    <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="3" Name="SupplyTable" Margin="5"/>
+
+                                    <Label Grid.Column="2" Grid.Row="0" Content="Money" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="1" Content="Village Points" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="2" Content="HR Points" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="3" Content="Supply Table ID" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="Icons" Margin="3,1,10,10" Grid.Column="1" Grid.Row="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60*"/>
+                                        <ColumnDefinition Width="10*"/>
+                                        <ColumnDefinition Width="60*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+
+                                    <ComboBox Grid.Row="0" SelectionChanged="IconChanged" Name="Icon1" Margin="5"/>
+                                    <ComboBox Grid.Row="1" SelectionChanged="IconChanged" Name="Icon2" Margin="5"/>
+                                    <ComboBox Grid.Row="2" SelectionChanged="IconChanged" Name="Icon3" Margin="5"/>
+                                    <ComboBox Grid.Row="3" SelectionChanged="IconChanged" Name="Icon4" Margin="5"/>
+                                    <ComboBox Grid.Row="4" SelectionChanged="IconChanged" Name="Icon5" Margin="5"/>
+
+                                    <Label Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Icon 1"/>
+                                    <Label Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Icon 2"/>
+                                    <Label Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Icon 3"/>
+                                    <Label Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Icon 4"/>
+                                    <Label Grid.Row="4" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Icon 5"/>
+
+                                    <Image Grid.Row="0" Grid.Column="2" Name="IconImage1" Width="50" Stretch="Uniform"/>
+                                    <Image Grid.Row="1" Grid.Column="2" Name="IconImage2" Width="50" Stretch="Uniform"/>
+                                    <Image Grid.Row="2" Grid.Column="2" Name="IconImage3" Width="50" Stretch="Uniform"/>
+                                    <Image Grid.Row="3" Grid.Column="2" Name="IconImage4" Width="50" Stretch="Uniform"/>
+                                    <Image Grid.Row="4" Grid.Column="2" Name="IconImage5" Width="50" Stretch="Uniform"/>
+                                </Grid>
+                            </GroupBox>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Objectives" FontSize="16">
+                        <StackPanel>
+	                        <Grid Background="White">
+		                        <Grid.ColumnDefinitions>
+			                        <ColumnDefinition Width="50*"/>
+			                        <ColumnDefinition Width="50*"/>
+		                        </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+		                        <GroupBox Header="Objective 1" Grid.Column="0" Margin="10,0,5,10">
+			                        <Grid>
+				                        <Grid.ColumnDefinitions>
+					                        <ColumnDefinition Width="60*"/>
+					                        <ColumnDefinition Width="8*"/>
+					                        <ColumnDefinition Width="60*"/>
+				                        </Grid.ColumnDefinitions>
+				                        <Grid.RowDefinitions>
+					                        <RowDefinition/>
+					                        <RowDefinition/>
+					                        <RowDefinition/>
+					                        <RowDefinition/>
+				                        </Grid.RowDefinitions>
+                                        <ComboBox Grid.Row="0" Name="Objective1Type" Margin="5"/>
+                                        <ComboBox Grid.Row="1" Name="Objective1Monster" Margin="5"/>
+                                        <ComboBox Grid.Row="2" Name="Objective1Item" Margin="5"/>
+
+                                        <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="3" Name="Objective1Amount" Margin="5"/>
+
+                                        <Label Grid.Row="0" Grid.Column="2" Content="Objective Type"/>
+                                        <Label Grid.Row="1" Grid.Column="2" Content="Monster"/>
+                                        <Label Grid.Row="2" Grid.Column="2" Content="Item"/>
+                                        <Label Grid.Row="3" Grid.Column="2" Content="Amount"/>
+			                        </Grid>
+		                        </GroupBox>
+                                <GroupBox Header="Quest Type" Grid.Row="1" Grid.ColumnSpan="2" Margin="10,0,10,10">
+                                    <StackPanel>
+                                        <Grid>
+	                                        <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+
+                                            <CheckBox Content="Hunting Quest" Grid.Row="0" Margin="4" Name="HuntingQuest" HorizontalAlignment="Left"/>
+                                            <CheckBox Content="Kill Quest" Grid.Row="1" Margin="4" Name="KillQuest" HorizontalAlignment="Left"/>
+                                            <CheckBox Content="Capture Quest" Grid.Row="2" Margin="4" Name="CaptureQuest" HorizontalAlignment="Left"/>
+                                            <CheckBox Content="Boss-rush Quest" Grid.Row="3" Margin="4" Name="BossRushQuest" HorizontalAlignment="Left"/>
+                                            <CheckBox Content="Gathering Quest" Grid.Row="4" Margin="4" Name="GatheringQuest" HorizontalAlignment="Left"/>
+                                            <CheckBox Content="Gathering Tour" Grid.Row="5" Margin="4" Name="TourQuest" HorizontalAlignment="Left"/>
+                                            <CheckBox Content="Arena Quest" Grid.Row="6" Margin="4" Name="ArenaQuest" HorizontalAlignment="Left"/>
+                                            <CheckBox Content="Special Quest" Grid.Row="7" Margin="4" Name="SpecialQuest" HorizontalAlignment="Left"/>
+                                            <CheckBox Content="Rampage Quest" Grid.Row="8" Margin="4" Name="RampageQuest" HorizontalAlignment="Left"/>
+                                            <CheckBox Content="Training Quest" Grid.Row="9" Margin="4" Name="TrainingQuest" HorizontalAlignment="Left"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </GroupBox>
+		                        <GroupBox Header="Objective 2" Grid.Column="1" Margin="5,0,10,10">
+			                        <Grid>
+				                        <Grid.ColumnDefinitions>
+					                        <ColumnDefinition Width="60*"/>
+					                        <ColumnDefinition Width="8*"/>
+					                        <ColumnDefinition Width="60*"/>
+				                        </Grid.ColumnDefinitions>
+				                        <Grid.RowDefinitions>
+					                        <RowDefinition/>
+					                        <RowDefinition/>
+					                        <RowDefinition/>
+					                        <RowDefinition/>
+				                        </Grid.RowDefinitions>
+				                        <ComboBox Grid.Row="0" Name="Objective2Type" Margin="5"/>
+				                        <ComboBox Grid.Row="1" Name="Objective2Monster" Margin="5"/>
+                                        <ComboBox Grid.Row="2" Name="Objective2Item" Margin="5"/>
+
+				                        <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="3" Name="Objective2Amount" Margin="5"/>
+
+				                        <Label Grid.Row="0" Grid.Column="2" Content="Objective Type"/>
+				                        <Label Grid.Row="1" Grid.Column="2" Content="Monster"/>
+				                        <Label Grid.Row="2" Grid.Column="2" Content="Item"/>
+				                        <Label Grid.Row="3" Grid.Column="2" Content="Amount"/>
+			                        </Grid>
+                                </GroupBox>
+	                        </Grid>
+                        </StackPanel>
+                    </TabItem>
+                    <TabItem Header="Monsters" FontSize="16">
+	                    <TabControl>
+                            <TabItem Header="Monster 1">
+                                <Grid>
+	                                <Grid.ColumnDefinitions>
+		                                <ColumnDefinition/>
+		                                <ColumnDefinition/>
+	                                </Grid.ColumnDefinitions>
+                                    <GroupBox Header="Stats" Grid.Column="0" Margin="10,0,5,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60*"/>
+                                                <ColumnDefinition Width="8*"/>
+                                                <ColumnDefinition Width="60*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <ComboBox Grid.Row="0" Name="Monster1Id" Margin="5"/>
+                                            <ComboBox Grid.Row="2" Name="Monster1Hp" Margin="5"/>
+                                            <ComboBox Grid.Row="3" Name="Monster1Attack" Margin="5"/>
+                                            <ComboBox Grid.Row="4" Name="Monster1PartHp" Margin="5"/>
+                                            <ComboBox Grid.Row="5" Name="Monster1Other" SelectionChanged="MonsterOtherChanged" Margin="5"/>
+                                            <ComboBox Grid.Row="6" Name="Monster1Stamina" Margin="5"/>
+                                            <ComboBox Grid.Row="7" Name="Monster1Multi" Margin="5"/>
+                                            <ComboBox Grid.Row="8" Name="Monster1Difficulty" Margin="5"/>
+
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster1SubType" Margin="5"/>
+                                            
+
+                                            <Label Grid.Row="0" Grid.Column="2" Content="Monster"/>
+                                            <Label Grid.Row="1" Grid.Column="2" Content="Sub Type"/>
+                                            <Label Grid.Row="2" Grid.Column="2" Content="Health"/>
+                                            <Label Grid.Row="3" Grid.Column="2" Content="Attack"/>
+                                            <Label Grid.Row="4" Grid.Column="2" Content="Part HP"/>
+                                            <Label Grid.Row="5" Grid.Column="2" Content="Other"/>
+                                            <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
+                                            <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
+                                            <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+                                            
+                                        </Grid>
+                                    </GroupBox>
+                                    <GroupBox Header="Spawn Info" Grid.Column="1" Margin="5,0,10,10">
+	                                    <StackPanel Grid.Column="2">
+		                                    <Grid>
+			                                    <Grid.ColumnDefinitions>
+				                                    <ColumnDefinition Width="70*"/>
+				                                    <ColumnDefinition Width="8*"/>
+				                                    <ColumnDefinition Width="60*"/>
+			                                    </Grid.ColumnDefinitions>
+			                                    <Grid.RowDefinitions>
+				                                    <RowDefinition/>
+				                                    <RowDefinition/>
+				                                    <RowDefinition/>
+				                                    <RowDefinition/>
+				                                    <RowDefinition/>
+				                                    <RowDefinition/>
+			                                    </Grid.RowDefinitions>
+
+			                                    <ComboBox Grid.Row="1" Name="Monster1SpawnCondition" Margin="5"/>
+
+			                                    <TextBox Grid.Row="0" Name="Monster1SetName" Margin="5"/>
+			                                    <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster1SpawnParam" Margin="5"/>
+			                                    <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster1SizeTable" Margin="5"/>
+			                                    <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster1Size" Margin="5"/>
+
+			                                    <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster1Info" Margin="5"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Set Name"/>
+			                                    <Label Grid.Row="1" Grid.Column="2" Content="Spawn Condition"/>
+			                                    <Label Grid.Row="2" Grid.Column="2" Content="Spawn Parameter"/>
+			                                    <Label Grid.Row="3" Grid.Column="2" Content="Size Table"/>
+			                                    <Label Grid.Row="4" Grid.Column="2" Content="Size"/>
+                                            </Grid>
+	                                    </StackPanel>
+                                    </GroupBox>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Monster 2">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox Header="Stats" Grid.Column="0" Margin="10,0,5,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60*"/>
+                                                <ColumnDefinition Width="8*"/>
+                                                <ColumnDefinition Width="60*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <ComboBox Grid.Row="0" Name="Monster2Id" Margin="5"/>
+                                            <ComboBox Grid.Row="2" Name="Monster2Hp" Margin="5"/>
+                                            <ComboBox Grid.Row="3" Name="Monster2Attack" Margin="5"/>
+                                            <ComboBox Grid.Row="4" Name="Monster2PartHp" Margin="5"/>
+                                            <ComboBox Grid.Row="5" Name="Monster2Other" SelectionChanged="MonsterOtherChanged" Margin="5"/>
+                                            <ComboBox Grid.Row="6" Name="Monster2Stamina" Margin="5"/>
+                                            <ComboBox Grid.Row="7" Name="Monster2Multi" Margin="5"/>
+                                            <ComboBox Grid.Row="8" Name="Monster2Difficulty" Margin="5"/>
+
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster2SubType" Margin="5"/>
+
+
+                                            <Label Grid.Row="0" Grid.Column="2" Content="Monster"/>
+                                            <Label Grid.Row="1" Grid.Column="2" Content="Sub Type"/>
+                                            <Label Grid.Row="2" Grid.Column="2" Content="Health"/>
+                                            <Label Grid.Row="3" Grid.Column="2" Content="Attack"/>
+                                            <Label Grid.Row="4" Grid.Column="2" Content="Part HP"/>
+                                            <Label Grid.Row="5" Grid.Column="2" Content="Other"/>
+                                            <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
+                                            <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
+                                            <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+
+                                        </Grid>
+                                    </GroupBox>
+                                    <GroupBox Header="Spawn Info" Grid.Column="1" Margin="5,0,10,10">
+                                        <StackPanel Grid.Column="2">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="70*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="1" Name="Monster2SpawnCondition" Margin="5"/>
+
+                                                <TextBox Grid.Row="0" Name="Monster2SetName" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster2SpawnParam" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster2SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster2Size" Margin="5"/>
+
+                                                <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster2Info" Margin="5"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Set Name"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Spawn Condition"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Spawn Parameter"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Size Table"/>
+                                                <Label Grid.Row="4" Grid.Column="2" Content="Size"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </GroupBox>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Monster 3">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox Header="Stats" Grid.Column="0" Margin="10,0,5,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60*"/>
+                                                <ColumnDefinition Width="8*"/>
+                                                <ColumnDefinition Width="60*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <ComboBox Grid.Row="0" Name="Monster3Id" Margin="5"/>
+                                            <ComboBox Grid.Row="2" Name="Monster3Hp" Margin="5"/>
+                                            <ComboBox Grid.Row="3" Name="Monster3Attack" Margin="5"/>
+                                            <ComboBox Grid.Row="4" Name="Monster3PartHp" Margin="5"/>
+                                            <ComboBox Grid.Row="5" Name="Monster3Other" SelectionChanged="MonsterOtherChanged" Margin="5"/>
+                                            <ComboBox Grid.Row="6" Name="Monster3Stamina" Margin="5"/>
+                                            <ComboBox Grid.Row="7" Name="Monster3Multi" Margin="5"/>
+                                            <ComboBox Grid.Row="8" Name="Monster3Difficulty" Margin="5"/>
+
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster3SubType" Margin="5"/>
+
+
+                                            <Label Grid.Row="0" Grid.Column="2" Content="Monster"/>
+                                            <Label Grid.Row="1" Grid.Column="2" Content="Sub Type"/>
+                                            <Label Grid.Row="2" Grid.Column="2" Content="Health"/>
+                                            <Label Grid.Row="3" Grid.Column="2" Content="Attack"/>
+                                            <Label Grid.Row="4" Grid.Column="2" Content="Part HP"/>
+                                            <Label Grid.Row="5" Grid.Column="2" Content="Other"/>
+                                            <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
+                                            <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
+                                            <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+
+                                        </Grid>
+                                    </GroupBox>
+                                    <GroupBox Header="Spawn Info" Grid.Column="1" Margin="5,0,10,10">
+                                        <StackPanel Grid.Column="2">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="70*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="1" Name="Monster3SpawnCondition" Margin="5"/>
+
+                                                <TextBox Grid.Row="0" Name="Monster3SetName" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster3SpawnParam" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster3SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster3Size" Margin="5"/>
+
+                                                <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster3Info" Margin="5"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Set Name"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Spawn Condition"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Spawn Parameter"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Size Table"/>
+                                                <Label Grid.Row="4" Grid.Column="2" Content="Size"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </GroupBox>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Monster 4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox Header="Stats" Grid.Column="0" Margin="10,0,5,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60*"/>
+                                                <ColumnDefinition Width="8*"/>
+                                                <ColumnDefinition Width="60*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <ComboBox Grid.Row="0" Name="Monster4Id" Margin="5"/>
+                                            <ComboBox Grid.Row="2" Name="Monster4Hp" Margin="5"/>
+                                            <ComboBox Grid.Row="3" Name="Monster4Attack" Margin="5"/>
+                                            <ComboBox Grid.Row="4" Name="Monster4PartHp" Margin="5"/>
+                                            <ComboBox Grid.Row="5" Name="Monster4Other" SelectionChanged="MonsterOtherChanged" Margin="5"/>
+                                            <ComboBox Grid.Row="6" Name="Monster4Stamina" Margin="5"/>
+                                            <ComboBox Grid.Row="7" Name="Monster4Multi" Margin="5"/>
+                                            <ComboBox Grid.Row="8" Name="Monster4Difficulty" Margin="5"/>
+
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster4SubType" Margin="5"/>
+
+
+                                            <Label Grid.Row="0" Grid.Column="2" Content="Monster"/>
+                                            <Label Grid.Row="1" Grid.Column="2" Content="Sub Type"/>
+                                            <Label Grid.Row="2" Grid.Column="2" Content="Health"/>
+                                            <Label Grid.Row="3" Grid.Column="2" Content="Attack"/>
+                                            <Label Grid.Row="4" Grid.Column="2" Content="Part HP"/>
+                                            <Label Grid.Row="5" Grid.Column="2" Content="Other"/>
+                                            <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
+                                            <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
+                                            <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+
+                                        </Grid>
+                                    </GroupBox>
+                                    <GroupBox Header="Spawn Info" Grid.Column="1" Margin="5,0,10,10">
+                                        <StackPanel Grid.Column="2">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="70*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="1" Name="Monster4SpawnCondition" Margin="5"/>
+
+                                                <TextBox Grid.Row="0" Name="Monster4SetName" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster4SpawnParam" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster4SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster4Size" Margin="5"/>
+
+                                                <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster4Info" Margin="5"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Set Name"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Spawn Condition"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Spawn Parameter"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Size Table"/>
+                                                <Label Grid.Row="4" Grid.Column="2" Content="Size"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </GroupBox>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Monster 5">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox Header="Stats" Grid.Column="0" Margin="10,0,5,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60*"/>
+                                                <ColumnDefinition Width="8*"/>
+                                                <ColumnDefinition Width="60*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <ComboBox Grid.Row="0" Name="Monster5Id" Margin="5"/>
+                                            <ComboBox Grid.Row="2" Name="Monster5Hp" Margin="5"/>
+                                            <ComboBox Grid.Row="3" Name="Monster5Attack" Margin="5"/>
+                                            <ComboBox Grid.Row="4" Name="Monster5PartHp" Margin="5"/>
+                                            <ComboBox Grid.Row="5" Name="Monster5Other" SelectionChanged="MonsterOtherChanged" Margin="5"/>
+                                            <ComboBox Grid.Row="6" Name="Monster5Stamina" Margin="5"/>
+                                            <ComboBox Grid.Row="7" Name="Monster5Multi" Margin="5"/>
+                                            <ComboBox Grid.Row="8" Name="Monster5Difficulty" Margin="5"/>
+
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster5SubType" Margin="5"/>
+
+
+                                            <Label Grid.Row="0" Grid.Column="2" Content="Monster"/>
+                                            <Label Grid.Row="1" Grid.Column="2" Content="Sub Type"/>
+                                            <Label Grid.Row="2" Grid.Column="2" Content="Health"/>
+                                            <Label Grid.Row="3" Grid.Column="2" Content="Attack"/>
+                                            <Label Grid.Row="4" Grid.Column="2" Content="Part HP"/>
+                                            <Label Grid.Row="5" Grid.Column="2" Content="Other"/>
+                                            <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
+                                            <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
+                                            <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+
+                                        </Grid>
+                                    </GroupBox>
+                                    <GroupBox Header="Spawn Info" Grid.Column="1" Margin="5,0,10,10">
+                                        <StackPanel Grid.Column="2">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="70*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="1" Name="Monster5SpawnCondition" Margin="5"/>
+
+                                                <TextBox Grid.Row="0" Name="Monster5SetName" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster5SpawnParam" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster5SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster5Size" Margin="5"/>
+
+                                                <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster5Info" Margin="5"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Set Name"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Spawn Condition"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Spawn Parameter"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Size Table"/>
+                                                <Label Grid.Row="4" Grid.Column="2" Content="Size"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </GroupBox>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Monster 6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox Header="Stats" Grid.Column="0" Margin="10,0,5,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60*"/>
+                                                <ColumnDefinition Width="8*"/>
+                                                <ColumnDefinition Width="60*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <ComboBox Grid.Row="0" Name="Monster6Id" Margin="5"/>
+                                            <ComboBox Grid.Row="2" Name="Monster6Hp" Margin="5"/>
+                                            <ComboBox Grid.Row="3" Name="Monster6Attack" Margin="5"/>
+                                            <ComboBox Grid.Row="4" Name="Monster6PartHp" Margin="5"/>
+                                            <ComboBox Grid.Row="5" SelectionChanged="MonsterOtherChanged" Name="Monster6Other" Margin="5"/>
+                                            <ComboBox Grid.Row="6" Name="Monster6Stamina" Margin="5"/>
+                                            <ComboBox Grid.Row="7" Name="Monster6Multi" Margin="5"/>
+                                            <ComboBox Grid.Row="8" Name="Monster6Difficulty" Margin="5"/>
+
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster6SubType" Margin="5"/>
+
+
+                                            <Label Grid.Row="0" Grid.Column="2" Content="Monster"/>
+                                            <Label Grid.Row="1" Grid.Column="2" Content="Sub Type"/>
+                                            <Label Grid.Row="2" Grid.Column="2" Content="Health"/>
+                                            <Label Grid.Row="3" Grid.Column="2" Content="Attack"/>
+                                            <Label Grid.Row="4" Grid.Column="2" Content="Part HP"/>
+                                            <Label Grid.Row="5" Grid.Column="2" Content="Other"/>
+                                            <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
+                                            <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
+                                            <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+
+                                        </Grid>
+                                    </GroupBox>
+                                    <GroupBox Header="Spawn Info" Grid.Column="1" Margin="5,0,10,10">
+                                        <StackPanel Grid.Column="2">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="70*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="1" Name="Monster6SpawnCondition" Margin="5"/>
+
+                                                <TextBox Grid.Row="0" Name="Monster6SetName" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster6SpawnParam" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster6SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster6Size" Margin="5"/>
+
+                                                <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster6Info" Margin="5"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Set Name"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Spawn Condition"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Spawn Parameter"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Size Table"/>
+                                                <Label Grid.Row="4" Grid.Column="2" Content="Size"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </GroupBox>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Monster 7">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox Header="Stats" Grid.Column="0" Margin="10,0,5,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60*"/>
+                                                <ColumnDefinition Width="8*"/>
+                                                <ColumnDefinition Width="60*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <ComboBox Grid.Row="0" Name="Monster7Id" Margin="5"/>
+                                            <ComboBox Grid.Row="2" Name="Monster7Hp" Margin="5"/>
+                                            <ComboBox Grid.Row="3" Name="Monster7Attack" Margin="5"/>
+                                            <ComboBox Grid.Row="4" Name="Monster7PartHp" Margin="5"/>
+                                            <ComboBox Grid.Row="5" SelectionChanged="MonsterOtherChanged" Name="Monster7Other" Margin="5"/>
+                                            <ComboBox Grid.Row="6" Name="Monster7Stamina" Margin="5"/>
+                                            <ComboBox Grid.Row="7" Name="Monster7Multi" Margin="5"/>
+                                            <ComboBox Grid.Row="8" Name="Monster7Difficulty" Margin="5"/>
+
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster7SubType" Margin="5"/>
+
+
+                                            <Label Grid.Row="0" Grid.Column="2" Content="Monster"/>
+                                            <Label Grid.Row="1" Grid.Column="2" Content="Sub Type"/>
+                                            <Label Grid.Row="2" Grid.Column="2" Content="Health"/>
+                                            <Label Grid.Row="3" Grid.Column="2" Content="Attack"/>
+                                            <Label Grid.Row="4" Grid.Column="2" Content="Part HP"/>
+                                            <Label Grid.Row="5" Grid.Column="2" Content="Other"/>
+                                            <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
+                                            <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
+                                            <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+
+                                        </Grid>
+                                    </GroupBox>
+                                    <GroupBox Header="Spawn Info" Grid.Column="1" Margin="5,0,10,10">
+                                        <StackPanel Grid.Column="2">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="70*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="1" Name="Monster7SpawnCondition" Margin="5"/>
+
+                                                <TextBox Grid.Row="0" Name="Monster7SetName" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster7SpawnParam" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster7SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster7Size" Margin="5"/>
+
+                                                <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster7Info" Margin="5"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Set Name"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Spawn Condition"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Spawn Parameter"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Size Table"/>
+                                                <Label Grid.Row="4" Grid.Column="2" Content="Size"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </GroupBox>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Small Monsters">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="70*"/>
+                                            <ColumnDefinition Width="5*"/>
+                                            <ColumnDefinition Width="70*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition Height="1*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <ComboBox Grid.Row="0" Name="SmallMonSpawnType" Margin="5"/>
+                                        <ComboBox Grid.Row="1" Name="SmallMonHp" Margin="5"/>
+                                        <ComboBox Grid.Row="2" Name="SmallMonAttack" Margin="5"/>
+                                        <ComboBox Grid.Row="3" Name="SmallMonPartHp" Margin="5"/>
+                                        <ComboBox Grid.Row="4" SelectionChanged="SmallMonOtherOrMultiChanged" Name="SmallMonOther" Margin="5"/>
+                                        <ComboBox Grid.Row="5" SelectionChanged="SmallMonOtherOrMultiChanged" Name="SmallMonMulti" Margin="5"/>
+
+                                        <Label Grid.Row="0" Grid.Column="2" Content="Spawn Type"/>
+                                        <Label Grid.Row="1" Grid.Column="2" Content="Health"/>
+                                        <Label Grid.Row="2" Grid.Column="2" Content="Attack"/>
+                                        <Label Grid.Row="3" Grid.Column="2" Content="Part HP"/>
+                                        <Label Grid.Row="4" Grid.Column="2" Content="Other"/>
+                                        <Label Grid.Row="5" Grid.Column="2" Content="MP Modifier"/>
+
+                                        <Label Grid.Row="6" Content="Stats"/>
+                                        <TextBlock Grid.Row="7" Grid.ColumnSpan="7" Margin="5" Name="SmallMonInfo" FontSize="16"/>
+                                    </Grid>
+                                </StackPanel>
+                            </TabItem>
+                        </TabControl>
+                    </TabItem>
+                    <TabItem Header="Swap Logic" FontSize="16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30*"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="30*"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="30*"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="30*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="60*"/>
+                                <RowDefinition Height="100*"/>
+                            </Grid.RowDefinitions>
+
+                            <GroupBox Header="General" Grid.ColumnSpan="7" Margin="10,0,10,0">
+	                            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="7">
+		                            <Grid.ColumnDefinitions>
+			                            <ColumnDefinition Width="30*"/>
+			                            <ColumnDefinition Width="3*"/>
+			                            <ColumnDefinition Width="30*"/>
+			                            <ColumnDefinition Width="3*"/>
+			                            <ColumnDefinition Width="30*"/>
+			                            <ColumnDefinition Width="3*"/>
+			                            <ColumnDefinition Width="30*"/>
+		                            </Grid.ColumnDefinitions>
+		                            <Grid.RowDefinitions>
+			                            <RowDefinition/>
+			                            <RowDefinition/>
+			                            <RowDefinition/>
+		                            </Grid.RowDefinitions>
+		                            <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="0" Grid.Column="0" Margin="5" Name="ExtraMonsterCount"/>
+		                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="2" Grid.Column="0" Margin="5" Name="SwapStopParam"/>
+
+		                            <ComboBox Grid.Row="1" Grid.Column="0" Margin="5" Name="SwapStopType"/>
+		                            <ComboBox Grid.Row="1" Grid.Column="4" Margin="5" Name="SwapExecType"/>
+
+		                            <CheckBox Grid.Row="0" Grid.Column="4" Margin="5" Name="SwapExitRide" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Swap Exit Ride"/>
+
+		                            <Label Grid.Row="0" Grid.Column="2" Content="Extra Monster Count"/>
+		                            <Label Grid.Row="1" Grid.Column="2" Content="Swap Stop Type"/>
+		                            <Label Grid.Row="2" Grid.Column="2" Content="Stop Percentage"/>
+		                            <Label Grid.Row="1" Grid.Column="6" Content="Swap Exec Type"/>
+	                            </Grid>
+                            </GroupBox>
+
+	                        <GroupBox Header="Monster 2" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="10,0,-3,10">
+		                        <Grid>
+			                        <Grid.ColumnDefinitions>
+				                        <ColumnDefinition Width="60*"/>
+				                        <ColumnDefinition Width="8*"/>
+				                        <ColumnDefinition Width="60*"/>
+			                        </Grid.ColumnDefinitions>
+			                        <Grid.RowDefinitions>
+				                        <RowDefinition/>
+				                        <RowDefinition/>
+				                        <RowDefinition/>
+				                        <RowDefinition/>
+			                        </Grid.RowDefinitions>
+
+                                    <ComboBox Grid.Row="1" Name="SwapCondition2" Margin="5,10,0,10"/>
+
+                                    <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="0" Name="SwapFrequency2" Margin="5,10,0,10"/>
+                                    <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="2" Name="SwapParam2" Margin="5,10,0,10"/>
+                                    <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="SwapExitTime2" Margin="5,10,0,10"/>
+
+			                        <Label Grid.Row="0" Grid.Column="2" Content="Swap Frequency"/>
+			                        <Label Grid.Row="1" Grid.Column="2" Content="Swap Condition"/>
+			                        <Label Grid.Row="2" Grid.Column="2" Content="Swap Parameter"/>
+			                        <Label Grid.Row="3" Grid.Column="2" Content="Swap Exit Time"/>
+		                        </Grid>
+                            </GroupBox>
+                            <GroupBox Header="Monster 3" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="3" Margin="-3,0,10,10">
+                                <Grid>
+	                                <Grid.ColumnDefinitions>
+		                                <ColumnDefinition Width="60*"/>
+		                                <ColumnDefinition Width="8*"/>
+		                                <ColumnDefinition Width="60*"/>
+	                                </Grid.ColumnDefinitions>
+	                                <Grid.RowDefinitions>
+		                                <RowDefinition/>
+		                                <RowDefinition/>
+		                                <RowDefinition/>
+		                                <RowDefinition/>
+	                                </Grid.RowDefinitions>
+
+	                                <ComboBox Grid.Row="1" Name="SwapCondition1" Margin="5,10,0,10"/>
+
+                                    <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="0" Name="SwapFrequency1" Margin="5,10,0,10"/>
+                                    <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="2" Name="SwapParam1" Margin="5,10,0,10"/>
+                                    <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="SwapExitTime1" Margin="5,10,0,10"/>
+
+	                                <Label Grid.Row="0" Grid.Column="2" Content="Swap Frequency"/>
+	                                <Label Grid.Row="1" Grid.Column="2" Content="Swap Condition"/>
+	                                <Label Grid.Row="2" Grid.Column="2" Content="Swap Parameter"/>
+	                                <Label Grid.Row="3" Grid.Column="2" Content="Swap Exit Time"/>
+                                </Grid>
+                            </GroupBox>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Arena" FontSize="16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <GroupBox Header="Fence" Margin="10,0,10,0" Grid.Column="0">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60*"/>
+                                            <ColumnDefinition Width="8*"/>
+                                            <ColumnDefinition Width="60*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+	                                    <CheckBox Grid.Row="0" Grid.Column="0" Name="FenceDefaultActive" Grid.ColumnSpan="3" Content="Fence Default Active" Margin="7" HorizontalAlignment="Left"/>
+
+	                                    <TextBox PreviewTextInput="ValidateUShortTextBox" Grid.Row="1" Margin="5" Name="FenceUpTime"/>
+	                                    <TextBox PreviewTextInput="ValidateUShortTextBox" Grid.Row="2" Margin="5" Name="FenceInitialDelay"/>
+	                                    <TextBox PreviewTextInput="ValidateUShortTextBox" Grid.Row="3" Margin="5" Name="FenceCooldown"/>
+
+	                                    <Label Grid.Row="1" Grid.Column="2" Content="Fence Up-time"/>
+	                                    <Label Grid.Row="2" Grid.Column="2" Content="Fence Initial Delay"/>
+	                                    <Label Grid.Row="3" Grid.Column="2" Content="Fence Cooldown"/>
+                                    </Grid>
+                                </StackPanel>
+                            </GroupBox>
+                            <GroupBox Header="Pillars" Margin="10,0,10,0" Grid.Column="1">
+                                <StackPanel>
+                                    <Grid>
+	                                    <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+	                                    <CheckBox Grid.Row="0" Name="ArenaPillar1" Content="Pillar 1 Active" Margin="10" HorizontalAlignment="Left"/>
+	                                    <CheckBox Grid.Row="1" Name="ArenaPillar2" Content="Pillar 2 Active" Margin="10" HorizontalAlignment="Left"/>
+	                                    <CheckBox Grid.Row="2" Name="ArenaPillar3" Content="Pillar 3 Active" Margin="10" HorizontalAlignment="Left"/>
+                                    </Grid>
+                                    
+                                </StackPanel>
+                            </GroupBox>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Quest Info" FontSize="16">
+                        <Grid>
+	                        <Grid.ColumnDefinitions>
+		                        <ColumnDefinition Width="75*"/>
+		                        <ColumnDefinition Width="2*"/>
+		                        <ColumnDefinition Width="50*"/>
+	                        </Grid.ColumnDefinitions>
+	                        <Grid.RowDefinitions>
+		                        <RowDefinition Height="20*"/>
+		                        <RowDefinition Height="20*"/>
+		                        <RowDefinition Height="100*"/>
+		                        <RowDefinition Height="20*"/>
+		                        <RowDefinition Height="20*"/>
+		                        <RowDefinition Height="20*"/>
+		                        <RowDefinition Height="20*"/>
+	                        </Grid.RowDefinitions>
+
+                            <TextBox Grid.Row="0" Name="QuestName" HorizontalContentAlignment="Left" Margin="5" Text=""/>
+                            <TextBox Grid.Row="1" Name="QuestClient" HorizontalContentAlignment="Left" Margin="5" Text=""/>
+                            <TextBox Grid.Row="2" Name="QuestDesc" VerticalAlignment="Stretch" Text="">
+	                            <TextBox.HorizontalContentAlignment>Left</TextBox.HorizontalContentAlignment>
+                                <TextBox.VerticalContentAlignment>Top</TextBox.VerticalContentAlignment>
+                                <TextBox.Margin>5</TextBox.Margin>
+                                <TextBox.AcceptsReturn>True</TextBox.AcceptsReturn>
+                                <TextBox.TextWrapping>Wrap</TextBox.TextWrapping>
+                                <TextBox.Height>Auto</TextBox.Height>
+                                <TextBox.VerticalScrollBarVisibility>Auto</TextBox.VerticalScrollBarVisibility>
+                            </TextBox>
+                            <TextBox Grid.Row="3" Name="QuestTarget" HorizontalContentAlignment="Left" Margin="5" Text=""/>
+
+                            <Label Grid.Row="0" Grid.Column="2" Content="Quest Name"/>
+                            <Label Grid.Row="1" Grid.Column="2" Content="Quest Client"/>
+                            <Label Grid.Row="2" Grid.Column="2" Content="Quest Description" VerticalAlignment="Top" Margin="1,5,0,0"/>
+                            <Label Grid.Row="3" Grid.Column="2" Content="Quest Target"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Rampage" Name="RampageTab" FontSize="16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <GroupBox Header="General" Margin="5,0,5,5">
+                                <StackPanel>
+	                                <Grid>
+		                                <Grid.ColumnDefinitions>
+			                                <ColumnDefinition Width="60*"/>
+			                                <ColumnDefinition Width="8*"/>
+			                                <ColumnDefinition Width="60*"/>
+		                                </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBox Grid.Row="0" Margin="5" PreviewTextInput="ValidateIntTextBox" Name="RampageSeed"/>
+                                        <StackPanel Grid.Row="1" Margin="5">
+                                            <CheckBox Name="RampageFixWaveOrder" Content="Fix Wave Order" HorizontalAlignment="Left"/>
+                                            <CheckBox Name="RampageLotHighEx" Content="Lot HighEx" HorizontalAlignment="Left"/>
+                                            <CheckBox Name="RampageLotTrueEd" Content="Lot TrueED" HorizontalAlignment="Left"/>
+                                            <CheckBox Name="RampageFinalBossKill" Content="Final Boss Kill" HorizontalAlignment="Left"/>
+                                        </StackPanel>
+                                        <ComboBox Grid.Row="2" Margin="5" Name="RampageQuestLevel"/>
+                                        <ComboBox Grid.Row="3" Margin="5" Name="RampageQuestMap"/>
+                                        <ComboBox Grid.Row="4" Margin="5" Name="RampageQuestCategory"/>
+
+                                        <TextBox Grid.Row="5" Margin="5" Name="RampageQuestBaseTime"/>
+                                        <TextBox Grid.Row="6" Margin="5" PreviewTextInput="ValidateByteTextBox" Name="RampageStartBlock"/>
+                                        <TextBox Grid.Row="7" Margin="5" PreviewTextInput="ValidateByteTextBox" Name="RampageEndBlock"/>
+                                        <TextBox Grid.Row="8" Margin="5" PreviewTextInput="ValidateByteTextBox" Name="RampageExtraWaveCount"/>
+                                        
+
+                                        <Label Grid.Row="0" Grid.Column="2" Content="Seed"/>
+                                        <Label Grid.Row="1" Grid.Column="2" Content="Attributes"/>
+                                        <Label Grid.Row="2" Grid.Column="2" Content="Quest Level"/>
+                                        <Label Grid.Row="3" Grid.Column="2" Content="Map"/>
+                                        <Label Grid.Row="4" Grid.Column="2" Content="Category"/>
+                                        <Label Grid.Row="5" Grid.Column="2" Content="Base Time"/>
+                                        <Label Grid.Row="6" Grid.Column="2" Content="Start Block"/>
+                                        <Label Grid.Row="7" Grid.Column="2" Content="End Block"/>
+                                        <Label Grid.Row="8" Grid.Column="2" Content="Extra Wave Count"/>
+	                                </Grid>
+                                </StackPanel>
+                            </GroupBox>
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30*"/>
+                                    <RowDefinition Height="35*"/>
+                                </Grid.RowDefinitions>
+                                <GroupBox Header="Other" Margin="5,0,5,5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60*"/>
+                                            <ColumnDefinition Width="8*"/>
+                                            <ColumnDefinition Width="60*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+                                        <CheckBox Grid.Row="4" Name="RampageIsVillage" Content="Village" Margin="5" HorizontalAlignment="Left"/>
+
+                                        <TextBox Grid.Row="0" PreviewTextInput="ValidateByteTextBox" Name="RampageWeaponUnlockTable" Margin="5"/>
+                                        <TextBox Grid.Row="1" PreviewTextInput="ValidateSByteTextBox" Name="RampageExtraMonsterNandoTable" Margin="5"/>
+                                        <TextBox Grid.Row="2" PreviewTextInput="ValidateByteTextBox" Name="RampageApexOrderTable" Margin="5"/>
+                                        <TextBox Grid.Row="3" PreviewTextInput="ValidateByteTextBox" Name="RampageSubTarget5Wave" Margin="5"/>
+
+                                        <Label Grid.Row="0" Grid.Column="2" Content="Weapon Unlock Table"/>
+                                        <Label Grid.Row="1" Grid.Column="2" Content="Extra Monster Diff."/>
+                                        <Label Grid.Row="2" Grid.Column="2" Content="Apex Order Table"/>
+                                        <Label Grid.Row="3" Grid.Column="2" Content="Sub Target 5 Wave"/>
+                                    </Grid>
+                                </GroupBox>
+	                            <GroupBox Header="Sub Targets" Margin="5,0,5,5" Grid.Row="1">
+                                    <StackPanel>
+                                        <ComboBox Name="RampageSubTarget1" Margin="30,5,30,5"/>
+                                        <ComboBox Name="RampageSubTarget2" Margin="30,5,30,5"/>
+                                        <ComboBox Name="RampageSubTarget3" Margin="30,5,30,5"/>
+                                        <ComboBox Name="RampageSubTarget4" Margin="30,5,30,5"/>
+                                        <ComboBox Name="RampageSubTarget5" Margin="30,5,30,5"/>
+                                        <ComboBox Name="RampageSubTarget6" Margin="30,5,30,5"/>
+                                    </StackPanel>
+	                            </GroupBox>
+                            </Grid>
+                        </Grid>
+                    </TabItem>
+	                <TabItem Header="Rampage Waves" Name="RampageWavesTab" FontSize="16">
+                        <TabControl>
+                            <TabItem Header="Wave 1">
+	                            <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+
+		                            <StackPanel Grid.Column="0">
+                                        <GroupBox Header="General" Margin="5,0,5,5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="60*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="0" Margin="5" Name="Wave1BossMonster"/>
+                                                <TextBox Grid.Row="1" PreviewTextInput="ValidateNumberTextBox" Margin="5" Name="Wave1BossSubType"/>
+                                                <TextBox Grid.Row="2" PreviewTextInput="ValidateNumberTextBox" Margin="5,5,5,20" Name="Wave1OrderTable"/>
+                                                <TextBox Grid.Row="3" PreviewTextInput="ValidateNumberTextBox" Margin="5,20,5,5" Name="Wave1BossMonsterDifficulty"/>
+                                                <TextBox Grid.Row="4" PreviewTextInput="ValidateNumberTextBox" Margin="5" Name="Wave1WaveMonsterDifficulty"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Boss Monster"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Boss Sub Type"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Wave Order Table"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Boss Monster Diff."/>
+                                                <Label Grid.Row="4" Grid.Column="2" Content="Wave Monster Diff."/>
+                                            </Grid>
+										</GroupBox>
+		                            </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <GroupBox Header="Wave Monsters" Margin="5,0,5,5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="60*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="0" Margin="5" Name="Wave1Monster1"/>
+                                                <ComboBox Grid.Row="1" Margin="5" Name="Wave1Monster2"/>
+                                                <ComboBox Grid.Row="2" Margin="5" Name="Wave1Monster3"/>
+                                                <ComboBox Grid.Row="3" Margin="5" Name="Wave1Monster4"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Monster 1"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Monster 2"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Monster 3"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Monster 4"/>
+                                            </Grid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
+	                        <TabItem Header="Wave 2">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0">
+                                        <GroupBox Header="General" Margin="5,0,5,5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="60*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="0" Margin="5" Name="Wave2BossMonster"/>
+                                                <TextBox Grid.Row="1" PreviewTextInput="ValidateNumberTextBox" Margin="5" Name="Wave2BossSubType"/>
+                                                <TextBox Grid.Row="2" PreviewTextInput="ValidateNumberTextBox" Margin="5,5,5,20" Name="Wave2OrderTable"/>
+                                                <TextBox Grid.Row="3" PreviewTextInput="ValidateNumberTextBox" Margin="5,20,5,5" Name="Wave2BossMonsterDifficulty"/>
+                                                <TextBox Grid.Row="4" PreviewTextInput="ValidateNumberTextBox" Margin="5" Name="Wave2WaveMonsterDifficulty"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Boss Monster"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Boss Sub Type"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Wave Order Table"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Boss Monster Diff."/>
+                                                <Label Grid.Row="4" Grid.Column="2" Content="Wave Monster Diff."/>
+                                            </Grid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <GroupBox Header="Wave Monsters" Margin="5,0,5,5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="60*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="0" Margin="5" Name="Wave2Monster1"/>
+                                                <ComboBox Grid.Row="1" Margin="5" Name="Wave2Monster2"/>
+                                                <ComboBox Grid.Row="2" Margin="5" Name="Wave2Monster3"/>
+                                                <ComboBox Grid.Row="3" Margin="5" Name="Wave2Monster4"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Monster 1"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Monster 2"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Monster 3"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Monster 4"/>
+                                            </Grid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
+	                        <TabItem Header="Wave 3">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0">
+                                        <GroupBox Header="General" Margin="5,0,5,5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="60*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="0" Margin="5" Name="Wave3BossMonster"/>
+                                                <TextBox Grid.Row="1" PreviewTextInput="ValidateNumberTextBox" Margin="5" Name="Wave3BossSubType"/>
+                                                <TextBox Grid.Row="2" PreviewTextInput="ValidateNumberTextBox" Margin="5,5,5,20" Name="Wave3OrderTable"/>
+                                                <TextBox Grid.Row="3" PreviewTextInput="ValidateNumberTextBox" Margin="5,20,5,5" Name="Wave3BossMonsterDifficulty"/>
+                                                <TextBox Grid.Row="4" PreviewTextInput="ValidateNumberTextBox" Margin="5" Name="Wave3WaveMonsterDifficulty"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Boss Monster"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Boss Sub Type"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Wave Order Table"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Boss Monster Diff."/>
+                                                <Label Grid.Row="4" Grid.Column="2" Content="Wave Monster Diff."/>
+                                            </Grid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <GroupBox Header="Wave Monsters" Margin="5,0,5,5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="60*"/>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="60*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <ComboBox Grid.Row="0" Margin="5" Name="Wave3Monster1"/>
+                                                <ComboBox Grid.Row="1" Margin="5" Name="Wave3Monster2"/>
+                                                <ComboBox Grid.Row="2" Margin="5" Name="Wave3Monster3"/>
+                                                <ComboBox Grid.Row="3" Margin="5" Name="Wave3Monster4"/>
+
+                                                <Label Grid.Row="0" Grid.Column="2" Content="Monster 1"/>
+                                                <Label Grid.Row="1" Grid.Column="2" Content="Monster 2"/>
+                                                <Label Grid.Row="2" Grid.Column="2" Content="Monster 3"/>
+                                                <Label Grid.Row="3" Grid.Column="2" Content="Monster 4"/>
+                                            </Grid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
+                        </TabControl>
+	                </TabItem>
+                </TabControl>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

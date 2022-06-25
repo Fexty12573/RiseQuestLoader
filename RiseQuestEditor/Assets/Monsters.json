@@ -1,0 +1,310 @@
+﻿[
+    {
+        "Name": "None",
+        "Id": 0
+    },
+    {
+        "Name": "Rathian",
+        "Id": 1
+    },
+    {
+        "Name": "Apex Rathian",
+        "Id": 1793
+    },
+    {
+        "Name": "Rathalos",
+        "Id": 2
+    },
+    {
+        "Name": "Apex Rathalos",
+        "Id": 1294
+    },
+    {
+        "Name": "Khezu",
+        "Id": 3
+    },
+    {
+        "Name": "Basarios",
+        "Id": 4
+    },
+    {
+        "Name": "Diablos",
+        "Id": 7
+    },
+    {
+        "Name": "Apex Diablos",
+        "Id": 1799
+    },
+    {
+        "Name": "Rajang",
+        "Id": 23
+    },
+    {
+        "Name": "Kushala Daora",
+        "Id": 24
+    },
+    {
+        "Name": "Chameleos",
+        "Id": 25
+    },
+    {
+        "Name": "Teostra",
+        "Id": 27
+    },
+    {
+        "Name": "Tigrex",
+        "Id": 32
+    },
+    {
+        "Name": "Nargacuga",
+        "Id": 37
+    },
+    {
+        "Name": "Barioth",
+        "Id": 42
+    },
+    {
+        "Name": "Barroth",
+        "Id": 44
+    },
+    {
+        "Name": "Royal Ludroth",
+        "Id": 47
+    },
+    {
+        "Name": "Great Baggi",
+        "Id": 54
+    },
+    {
+        "Name": "Zinogre",
+        "Id": 57
+    },
+    {
+        "Name": "Apex Zinogre",
+        "Id": 1849
+    },
+    {
+        "Name": "Great Wroggi",
+        "Id": 59
+    },
+    {
+        "Name": "Arzuros",
+        "Id": 60
+    },
+    {
+        "Name": "Apex Arzuros",
+        "Id": 1852
+    },
+    {
+        "Name": "Lagombi",
+        "Id": 61
+    },
+    {
+        "Name": "Volvidon",
+        "Id": 62
+    },
+    {
+        "Name": "Mizutsune",
+        "Id": 82
+    },
+    {
+        "Name": "Apex Mizutsune",
+        "Id": 1874
+    },
+    {
+        "Name": "Crimsonglow Valstrax",
+        "Id": 1366
+    },
+    {
+        "Name": "Magnamalo",
+        "Id": 89
+    },
+    {
+        "Name": "Bishaten",
+        "Id": 90
+    },
+    {
+        "Name": "Aknosom",
+        "Id": 91
+    },
+    {
+        "Name": "Tetranadon",
+        "Id": 92
+    },
+    {
+        "Name": "Somnacanth",
+        "Id": 93
+    },
+    {
+        "Name": "Rakna-Kadaki",
+        "Id": 94
+    },
+    {
+        "Name": "Almudron",
+        "Id": 95
+    },
+    {
+        "Name": "Wind Serpent Ibushi",
+        "Id": 96
+    },
+    {
+        "Name": "Goss Harag",
+        "Id": 97
+    },
+    {
+        "Name": "Great Izuchi",
+        "Id": 98
+    },
+    {
+        "Name": "Thunder Serpent Narwa",
+        "Id": 99
+    },
+    {
+        "Name": "Narwa the Allmother",
+        "Id": 1379
+    },
+    {
+        "Name": "Anjanath",
+        "Id": 100
+    },
+    {
+        "Name": "Pukei-Pukei",
+        "Id": 102
+    },
+    {
+        "Name": "Kulu-Ya-Ku",
+        "Id": 107
+    },
+    {
+        "Name": "Jyuratodus",
+        "Id": 108
+    },
+    {
+        "Name": "Tobi-Kadachi",
+        "Id": 109
+    },
+    {
+        "Name": "Bazelgeuse",
+        "Id": 118
+    },
+    {
+        "Name": "Training Tetranadon",
+        "Id": 131
+    },
+    {
+        "Name": "Kelbi (Male)",
+        "Id": 4099
+    },
+    {
+        "Name": "Kelbi (Female)",
+        "Id": 5379
+    },
+    {
+        "Name": "Felyne",
+        "Id": 4103
+    },
+    {
+        "Name": "Melynx",
+        "Id": 4104
+    },
+    {
+        "Name": "Bullfango",
+        "Id": 4109
+    },
+    {
+        "Name": "Popo",
+        "Id": 4110
+    },
+    {
+        "Name": "Anteka",
+        "Id": 4112
+    },
+    {
+        "Name": "Remobra",
+        "Id": 4115
+    },
+    {
+        "Name": "Rhenoplos",
+        "Id": 4121
+    },
+    {
+        "Name": "Bnahabra",
+        "Id": 4122
+    },
+    {
+        "Name": "Altaroth",
+        "Id": 4123
+    },
+    {
+        "Name": "Gajau",
+        "Id": 4125
+    },
+    {
+        "Name": "Jaggi",
+        "Id": 4130
+    },
+    {
+        "Name": "Jaggia",
+        "Id": 4131
+    },
+    {
+        "Name": "Baggi",
+        "Id": 4132
+    },
+    {
+        "Name": "Delex",
+        "Id": 4134
+    },
+    {
+        "Name": "Ludroth",
+        "Id": 4135
+    },
+    {
+        "Name": "Uroktor",
+        "Id": 4136
+    },
+    {
+        "Name": "Slagtoth",
+        "Id": 4137
+    },
+    {
+        "Name": "Gargwa",
+        "Id": 4138
+    },
+    {
+        "Name": "Wroggi",
+        "Id": 4139
+    },
+    {
+        "Name": "Zamite",
+        "Id": 4140
+    },
+    {
+        "Name": "Jagras",
+        "Id": 4145
+    },
+    {
+        "Name": "Kestodon (Male)",
+        "Id": 4147
+    },
+    {
+        "Name": "Kestodon (Female)",
+        "Id": 5427
+    },
+    {
+        "Name": "Bombadgy",
+        "Id": 4186
+    },
+    {
+        "Name": "Izuchi (Male)",
+        "Id": 4187
+    },
+    {
+        "Name": "Izuchi (Female)",
+        "Id": 5467
+    },
+    {
+        "Name": "Rachnoid",
+        "Id": 4188
+    }
+]
