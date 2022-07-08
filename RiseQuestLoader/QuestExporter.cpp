@@ -55,6 +55,10 @@ nlohmann::ordered_json QuestExporter::export_quest(int32_t quest_id) const {
 
         // QuestData
         if (qnormal) {
+            q["QuestText"]["DebugName"] = utility::narrow((*qnormal->get_field<SystemString*>("_DbgName"))->data);
+            q["QuestText"]["DebugClient"] = utility::narrow((*qnormal->get_field<SystemString*>("_DbgClient"))->data);
+            q["QuestText"]["DebugDescription"] = utility::narrow((*qnormal->get_field<SystemString*>("_DbgContent"))->data);
+
             normal["QuestType"] = *qnormal->get_field<uint32_t>("_QuestType");
             normal["QuestLevel"] = *qnormal->get_field<int32_t>("_QuestLv");
             normal["EnemyLevel"] = *qnormal->get_field<int32_t>("_EnemyLv");
@@ -145,6 +149,7 @@ nlohmann::ordered_json QuestExporter::export_quest(int32_t quest_id) const {
             }
 
             normal["Tutorial"] = *qnormal->get_field<bool>("_IsTutorial");
+            normal["FromNpc"] = *qnormal->get_field<bool>("_IsFromNpc");
 
             normal["ArenaParam"]["FenceDefaultActive"] = *qnormal->get_field<bool>("_FenceDefaultActive");
             normal["ArenaParam"]["FenceUptime"] = *qnormal->get_field<uint16_t>("_FenceActiveSec");
@@ -179,7 +184,8 @@ nlohmann::ordered_json QuestExporter::export_quest(int32_t quest_id) const {
                 *qenemy->get_field<API::ManagedObject*>("_VitalTbl"), *qenemy->get_field<API::ManagedObject*>("_AttackTbl"),
                 *qenemy->get_field<API::ManagedObject*>("_OtherTbl"), *qenemy->get_field<API::ManagedObject*>("_StaminaTbl"),
                 *qenemy->get_field<API::ManagedObject*>("_Scale"), *qenemy->get_field<API::ManagedObject*>("_ScaleTbl"),
-                *qenemy->get_field<API::ManagedObject*>("_Difficulty"), *qenemy->get_field<API::ManagedObject*>("_BossMulti")
+                *qenemy->get_field<API::ManagedObject*>("_Difficulty"), *qenemy->get_field<API::ManagedObject*>("_BossMulti"),
+                *qenemy->get_field<API::ManagedObject*>("_IndividualType")
             };
 
             if (std::all_of(tables.begin(), tables.end(), [](const API::ManagedObject* obj) { return obj != nullptr; })) {
@@ -187,17 +193,18 @@ nlohmann::ordered_json QuestExporter::export_quest(int32_t quest_id) const {
                     auto mon = nlohmann::ordered_json::object();
 
                     mon["PathId"] = utility::call<uint8_t>(tables[0], "Get", i);
-                    mon["PartTable"] = utility::call<uint8_t>(tables[1], "Get", i);
+                    mon["PartTable"] = utility::call<uint16_t>(tables[1], "Get", i);
                     mon["SetName"] = utility::str_call(tables[2], "Get", i);
                     mon["SubType"] = utility::call<uint8_t>(tables[3], "Get", i);
-                    mon["HealthTable"] = utility::call<uint8_t>(tables[4], "Get", i);
-                    mon["AttackTable"] = utility::call<uint8_t>(tables[5], "Get", i);
-                    mon["OtherTable"] = utility::call<uint8_t>(tables[6], "Get", i);
+                    mon["HealthTable"] = utility::call<uint16_t>(tables[4], "Get", i);
+                    mon["AttackTable"] = utility::call<uint16_t>(tables[5], "Get", i);
+                    mon["OtherTable"] = utility::call<uint16_t>(tables[6], "Get", i);
                     mon["StaminaTable"] = utility::call<uint8_t>(tables[7], "Get", i);
                     mon["Size"] = utility::call<uint8_t>(tables[8], "Get", i);
                     mon["SizeTable"] = utility::call<int32_t>(tables[9], "Get", i);
                     mon["Difficulty"] = utility::call<int32_t>(tables[10], "Get", i);
                     mon["MultiTable"] = utility::call<uint8_t>(tables[11], "Get", i);
+                    mon["IndividualType"] = utility::call<int32_t>(tables[12], "Get", i);
 
                     enemy["Monsters"][i] = mon;
                 }

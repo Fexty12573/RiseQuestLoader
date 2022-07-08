@@ -13,8 +13,17 @@ enum class QuestCounterTopMenuType : int32_t {
     Talk = 9,
     Urgent = 10,
     Special = 11,
-    Max = 12,
-    None = 13,
+    Normal_Hall_Master = 12,
+    Mystery = 13,
+    Kyousei = 14,
+    Item = 15,
+    Kingdom = 16,
+    Network = 17,
+    ServantRequest = 18,
+    NpcSideQuest = 19,
+    Normal_Hall_HighLow = 20,
+    Max = 21,
+    None = 22,
 };
 
 enum class QuestText {
@@ -38,16 +47,17 @@ enum class QuestText {
 
 enum class QuestType : uint32_t {
     INVALID     = 0,
-    HUNTING     = 1 << 0, //   1
-    KILL        = 1 << 1, //   2
-    CAPTURE     = 1 << 2, //   4
-    BOSSRUSH    = 1 << 3, //   8
-    COLLECTS    = 1 << 4, //  16 (Gathering)
-    TOUR        = 1 << 5, //  32
-    ARENA       = 1 << 6, //  64
-    SPECIAL     = 1 << 7, // 128
-    HYAKURYU    = 1 << 8, // 256
-    TRAINING    = 1 << 9, // 512
+    HUNTING     = 1 << 0,   //    1
+    KILL        = 1 << 1,   //    2
+    CAPTURE     = 1 << 2,   //    4
+    BOSSRUSH    = 1 << 3,   //    8
+    COLLECTS    = 1 << 4,   //   16 (Gathering)
+    TOUR        = 1 << 5,   //   32
+    ARENA       = 1 << 6,   //   64
+    SPECIAL     = 1 << 7,   //  128
+    HYAKURYU    = 1 << 8,   //  256
+    TRAINING    = 1 << 9,   //  512
+    KYOUSEI     = 1 << 10,  // 1024
 };
 
 constexpr bool operator&(QuestType l, QuestType r) {
@@ -82,7 +92,8 @@ enum class EnemyLv : uint32_t {
     Village = 0,
     Low = 1,
     High = 2,
-    Max = 3,
+    Master = 3,
+    Max = 4,
 };
 
 enum class QuestCounterLevelMenuType : int32_t {

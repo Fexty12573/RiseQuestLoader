@@ -27,6 +27,7 @@ public:
             m_description = j["QuestText"]["Description"];
             m_target = j["QuestText"]["Target"];
         }
+        ~CustomQuest() { m_memory_object->release(); }
     };
 
     QuestLoader();
@@ -47,6 +48,7 @@ private:
     static reframework::API::ManagedObject* make_quest_list_hyakuryu_hook(
         void* vmctx, reframework::API::ManagedObject* this_, reframework::API::ManagedObject* src, bool is_village, const int rank);
     static void quest_counter_awake_hook(void* vmctx, reframework::API::ManagedObject* this_);
+    static void init_quest_data_dict_hook(void* vmctx, reframework::API::ManagedObject* this_);
 
 private:
     bool m_initialized = false;
@@ -71,6 +73,7 @@ private:
     std::shared_ptr<utility::FunctionHook> m_make_questno_list_hook{};
     std::shared_ptr<utility::FunctionHook> m_make_quest_list_hyakuryu_hook{};
     std::shared_ptr<utility::FunctionHook> m_quest_counter_awake_hook{};
+    std::shared_ptr<utility::FunctionHook> m_init_quest_data_dict_hook{};
 
     std::unordered_map<int32_t, CustomQuest> m_custom_quests;
 };
