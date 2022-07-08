@@ -66,6 +66,9 @@ namespace RiseQuestEditor
         public string? Client;
         public string? Description;
         public string? Target;
+        public string? DebugName;
+        public string? DebugClient;
+        public string? DebugDescription;
     }
 
     public class QuestData
@@ -137,6 +140,7 @@ namespace RiseQuestEditor
         public uint SupplyTable { get; set; }
         public int[] Icons { get; set; }
         public bool Tutorial { get; set; }
+        public bool FromNpc { get; set; }
         public ArenaParameters ArenaParam { get; set; }
         public ushort AutoMatchHR { get; set; }
         public int BattleBGMType { get; set; }
@@ -184,13 +188,14 @@ namespace RiseQuestEditor
             public byte PathId { get; set; }
             public string SetName { get; set; }
             public byte SubType { get; set; }
-            public byte HealthTable { get; set; }
-            public byte AttackTable { get; set; }
-            public byte PartTable { get; set; }
-            public byte OtherTable { get; set; }
+            public EnemyIndividualType IndividualType { get; set; }
+            public ushort HealthTable { get; set; }
+            public ushort AttackTable { get; set; }
+            public ushort PartTable { get; set; }
+            public ushort OtherTable { get; set; }
             public byte StaminaTable { get; set; }
             public byte Size { get; set; }
-            public byte SizeTable { get; set; }
+            public int SizeTable { get; set; }
             public NandoYuragi Difficulty { get; set; }
             public byte MultiTable { get; set; }
         }

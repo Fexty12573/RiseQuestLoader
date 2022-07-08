@@ -5,11 +5,17 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>dSR3vpg.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Assets\Icons\em037_00_IAM.png" />
     <None Remove="Assets\Icons\em_delivery_IAM.png" />
+    <None Remove="dSR3vpg.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="dSR3vpg.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,7 +32,10 @@
 	<Resource Include="Assets/Icons/em004_00_IAM.png" />
 	<Resource Include="Assets/Icons/em007_00_IAM.png" />
 	<Resource Include="Assets/Icons/em007_07_IAM.png" />
+	<Resource Include="Assets/Icons/em019_00_IAM.png" />
+	<Resource Include="Assets/Icons/em020_00_IAM.png" />
 	<Resource Include="Assets/Icons/em023_00_IAM.png" />
+	<Resource Include="Assets/Icons/em023_05_IAM.png" />
 	<Resource Include="Assets/Icons/em024_00_IAM.png" />
 	<Resource Include="Assets/Icons/em025_00_IAM.png" />
 	<Resource Include="Assets/Icons/em027_00_IAM.png" />
@@ -43,16 +52,26 @@
 	<Resource Include="Assets/Icons/em060_07_IAM.png" />
 	<Resource Include="Assets/Icons/em061_00_IAM.png" />
 	<Resource Include="Assets/Icons/em062_00_IAM.png" />
+	<Resource Include="Assets/Icons/em071_00_IAM.png" />
+	<Resource Include="Assets/Icons/em072_00_IAM.png" />
+	<Resource Include="Assets/Icons/em077_00_IAM.png" />
+	<Resource Include="Assets/Icons/em081_00_IAM.png" />
 	<Resource Include="Assets/Icons/em082_00_IAM.png" />
 	<Resource Include="Assets/Icons/em082_07_IAM.png" />
+	<Resource Include="Assets/Icons/em086_00_IAM.png" />
 	<Resource Include="Assets/Icons/em086_05_IAM.png" />
 	<Resource Include="Assets/Icons/em089_00_IAM.png" />
+	<Resource Include="Assets/Icons/em089_05_IAM.png" />
 	<Resource Include="Assets/Icons/em090_00_IAM.png" />
+	<Resource Include="Assets/Icons/em090_01_IAM.png" />
 	<Resource Include="Assets/Icons/em091_00_IAM.png" />
 	<Resource Include="Assets/Icons/em092_00_IAM.png" />
 	<Resource Include="Assets/Icons/em093_00_IAM.png" />
+	<Resource Include="Assets/Icons/em093_01_IAM.png" />
 	<Resource Include="Assets/Icons/em094_00_IAM.png" />
+	<Resource Include="Assets/Icons/em094_01_IAM.png" />
 	<Resource Include="Assets/Icons/em095_00_IAM.png" />
+	<Resource Include="Assets/Icons/em095_01_IAM.png" />
 	<Resource Include="Assets/Icons/em096_00_IAM.png" />
 	<Resource Include="Assets/Icons/em097_00_IAM.png" />
 	<Resource Include="Assets/Icons/em098_00_IAM.png" />
@@ -64,13 +83,23 @@
 	<Resource Include="Assets/Icons/em108_00_IAM.png" />
 	<Resource Include="Assets/Icons/em109_00_IAM.png" />
 	<Resource Include="Assets/Icons/em118_00_IAM.png" />
+	<Resource Include="Assets/Icons/em132_00_IAM.png" />
+	<Resource Include="Assets/Icons/em133_00_IAM.png" />
+	<Resource Include="Assets/Icons/em134_00_IAM.png" />
+	<Resource Include="Assets/Icons/em135_00_IAM.png" />
+	<Resource Include="Assets/Icons/em136_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems003_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems005_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems006_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems007_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems008_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems009_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems013_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems014_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems016_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems019_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems020_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems021_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems025_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems026_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems027_00_IAM.png" />
@@ -91,6 +120,9 @@
 	<Resource Include="Assets/Icons/ems090_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems091_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems092_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems092_01_IAM.png" />
+	<Resource Include="Assets/Icons/ems093_00_IAM.png" />
+	<Resource Include="Assets/Icons/ems094_00_IAM.png" />
 	<Resource Include="Assets/Icons/em_delivery_IAM.png" />
 	<Resource Include="Assets/Icons/em_exploration_IAM.png" />
 	<Resource Include="Assets/Icons/em_tutorial_IAM.png" />
@@ -118,12 +150,33 @@
 	<Resource Include="Assets/SwapExecType.json" />
 	<Resource Include="Assets/SwapStopType.json" />
 	<Resource Include="Assets/VitalRate.json" />
+	<Resource Include="Assets/IndividualType.json" />
+	<Resource Include="dSR3vpg.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Assets\QuestLevel.json">
       <Generator>MSBuild:Compile</Generator>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

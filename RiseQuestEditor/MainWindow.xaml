@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RiseQuestEditor"
         mc:Ignorable="d"
-        Title="Monster Hunter Rise Quest Editor" Height="620" Width="770">
+        Title="Monster Hunter Rise Quest Editor" Height="620" Width="770" Icon="/dSR3vpg.png" Drop="Window_Drop" AllowDrop="True">
     <Window.CommandBindings>
         <CommandBinding Command="Open" Executed="OpenFile"/>
         <CommandBinding Command="Save" Executed="SaveFile"/>
@@ -53,7 +53,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Menu DockPanel.Dock="Top">
-                <MenuItem Header="File">
+                <MenuItem Header="_File">
                     <MenuItem Header="_Open" Name="OpenFileButton" Command="Open" InputGestureText="Ctrl+O"/>
                     <MenuItem Header="_Save" Name="SaveFileButton" Command="Save" InputGestureText="Ctrl+S"/>
                     <MenuItem Header="S_ave As" Name="SaveFileAsButton" Command="SaveAs" InputGestureText="Ctrl+Shift+S"/>
@@ -113,7 +113,7 @@
 
                                     <Label Grid.Column="2" Grid.Row="0" Content="Quest ID" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                     <Label Grid.Column="2" Grid.Row="1" Content="Quest Level" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                    <Label Grid.Column="2" Grid.Row="2" Content="Monster Level" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <Label Grid.Column="2" Grid.Row="2" Content="Quest Rank" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                     <Label Grid.Column="2" Grid.Row="3" Content="Map" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                     <Label Grid.Column="2" Grid.Row="4" Content="Quest Time" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                     <Label Grid.Column="2" Grid.Row="5" Content="Time Limit" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -236,6 +236,10 @@
                                                 <RowDefinition/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
 
                                             <CheckBox Content="Hunting Quest" Grid.Row="0" Margin="4" Name="HuntingQuest" HorizontalAlignment="Left"/>
                                             <CheckBox Content="Kill Quest" Grid.Row="1" Margin="4" Name="KillQuest" HorizontalAlignment="Left"/>
@@ -247,6 +251,10 @@
                                             <CheckBox Content="Special Quest" Grid.Row="7" Margin="4" Name="SpecialQuest" HorizontalAlignment="Left"/>
                                             <CheckBox Content="Rampage Quest" Grid.Row="8" Margin="4" Name="RampageQuest" HorizontalAlignment="Left"/>
                                             <CheckBox Content="Training Quest" Grid.Row="9" Margin="4" Name="TrainingQuest" HorizontalAlignment="Left"/>
+
+                                            <CheckBox Content="Tutorial" Grid.Row="1" Grid.Column="1" Margin="4" Name="IsTutorial" HorizontalAlignment="Left"/>
+                                            <CheckBox Content="From NPC" Grid.Row="2" Grid.Column="1" Margin="4" Name="IsFromNpc" HorizontalAlignment="Left"/>
+                                            <CheckBox Content="Kyousei Quest" Grid.Row="0" Grid.Column="1" Margin="4" Name="FollowerQuest" HorizontalAlignment="Left"/>
                                         </Grid>
                                     </StackPanel>
                                 </GroupBox>
@@ -311,12 +319,12 @@
                                             <ComboBox Grid.Row="3" Name="Monster1Attack" Margin="5"/>
                                             <ComboBox Grid.Row="4" Name="Monster1PartHp" Margin="5"/>
                                             <ComboBox Grid.Row="5" Name="Monster1Other" SelectionChanged="MonsterOtherChanged" Margin="5"/>
-                                            <ComboBox Grid.Row="6" Name="Monster1Stamina" Margin="5"/>
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="6" Name="Monster1Stamina" Margin="5"/>
                                             <ComboBox Grid.Row="7" Name="Monster1Multi" Margin="5"/>
                                             <ComboBox Grid.Row="8" Name="Monster1Difficulty" Margin="5"/>
+                                            <ComboBox Grid.Row="9" Name="Monster1IndividualType" Margin="5"/>
 
                                             <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster1SubType" Margin="5"/>
-                                            
 
                                             <Label Grid.Row="0" Grid.Column="2" Content="Monster"/>
                                             <Label Grid.Row="1" Grid.Column="2" Content="Sub Type"/>
@@ -327,6 +335,7 @@
                                             <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
                                             <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
                                             <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+                                            <Label Grid.Row="9" Grid.Column="2" Content="Individual Type"/>
                                             
                                         </Grid>
                                     </GroupBox>
@@ -351,7 +360,7 @@
 
 			                                    <TextBox Grid.Row="0" Name="Monster1SetName" Margin="5"/>
 			                                    <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster1SpawnParam" Margin="5"/>
-			                                    <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster1SizeTable" Margin="5"/>
+			                                    <TextBox PreviewTextInput="ValidateUShortTextBox" Grid.Row="3" Name="Monster1SizeTable" Margin="5"/>
 			                                    <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster1Size" Margin="5"/>
 
 			                                    <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster1Info" Margin="5"/>
@@ -397,9 +406,11 @@
                                             <ComboBox Grid.Row="3" Name="Monster2Attack" Margin="5"/>
                                             <ComboBox Grid.Row="4" Name="Monster2PartHp" Margin="5"/>
                                             <ComboBox Grid.Row="5" Name="Monster2Other" SelectionChanged="MonsterOtherChanged" Margin="5"/>
-                                            <ComboBox Grid.Row="6" Name="Monster2Stamina" Margin="5"/>
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="6" Name="Monster2Stamina" Margin="5"/>
                                             <ComboBox Grid.Row="7" Name="Monster2Multi" Margin="5"/>
                                             <ComboBox Grid.Row="8" Name="Monster2Difficulty" Margin="5"/>
+                                            <ComboBox Grid.Row="9" Name="Monster2IndividualType" Margin="5"/>
+
 
                                             <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster2SubType" Margin="5"/>
 
@@ -413,6 +424,7 @@
                                             <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
                                             <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
                                             <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+                                            <Label Grid.Row="9" Grid.Column="2" Content="Individual Type"/>
 
                                         </Grid>
                                     </GroupBox>
@@ -437,7 +449,7 @@
 
                                                 <TextBox Grid.Row="0" Name="Monster2SetName" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster2SpawnParam" Margin="5"/>
-                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster2SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateUShortTextBox" Grid.Row="3" Name="Monster2SizeTable" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster2Size" Margin="5"/>
 
                                                 <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster2Info" Margin="5"/>
@@ -483,9 +495,10 @@
                                             <ComboBox Grid.Row="3" Name="Monster3Attack" Margin="5"/>
                                             <ComboBox Grid.Row="4" Name="Monster3PartHp" Margin="5"/>
                                             <ComboBox Grid.Row="5" Name="Monster3Other" SelectionChanged="MonsterOtherChanged" Margin="5"/>
-                                            <ComboBox Grid.Row="6" Name="Monster3Stamina" Margin="5"/>
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="6" Name="Monster3Stamina" Margin="5"/>
                                             <ComboBox Grid.Row="7" Name="Monster3Multi" Margin="5"/>
                                             <ComboBox Grid.Row="8" Name="Monster3Difficulty" Margin="5"/>
+                                            <ComboBox Grid.Row="9" Name="Monster3IndividualType" Margin="5"/>
 
                                             <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster3SubType" Margin="5"/>
 
@@ -499,6 +512,7 @@
                                             <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
                                             <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
                                             <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+                                            <Label Grid.Row="9" Grid.Column="2" Content="Individual Type"/>
 
                                         </Grid>
                                     </GroupBox>
@@ -523,7 +537,7 @@
 
                                                 <TextBox Grid.Row="0" Name="Monster3SetName" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster3SpawnParam" Margin="5"/>
-                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster3SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateUShortTextBox" Grid.Row="3" Name="Monster3SizeTable" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster3Size" Margin="5"/>
 
                                                 <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster3Info" Margin="5"/>
@@ -569,9 +583,10 @@
                                             <ComboBox Grid.Row="3" Name="Monster4Attack" Margin="5"/>
                                             <ComboBox Grid.Row="4" Name="Monster4PartHp" Margin="5"/>
                                             <ComboBox Grid.Row="5" Name="Monster4Other" SelectionChanged="MonsterOtherChanged" Margin="5"/>
-                                            <ComboBox Grid.Row="6" Name="Monster4Stamina" Margin="5"/>
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="6" Name="Monster4Stamina" Margin="5"/>
                                             <ComboBox Grid.Row="7" Name="Monster4Multi" Margin="5"/>
                                             <ComboBox Grid.Row="8" Name="Monster4Difficulty" Margin="5"/>
+                                            <ComboBox Grid.Row="9" Name="Monster4IndividualType" Margin="5"/>
 
                                             <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster4SubType" Margin="5"/>
 
@@ -585,6 +600,8 @@
                                             <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
                                             <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
                                             <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+                                            <Label Grid.Row="9" Grid.Column="2" Content="Individual Type"/>
+
 
                                         </Grid>
                                     </GroupBox>
@@ -609,7 +626,7 @@
 
                                                 <TextBox Grid.Row="0" Name="Monster4SetName" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster4SpawnParam" Margin="5"/>
-                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster4SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateUShortTextBox" Grid.Row="3" Name="Monster4SizeTable" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster4Size" Margin="5"/>
 
                                                 <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster4Info" Margin="5"/>
@@ -655,9 +672,10 @@
                                             <ComboBox Grid.Row="3" Name="Monster5Attack" Margin="5"/>
                                             <ComboBox Grid.Row="4" Name="Monster5PartHp" Margin="5"/>
                                             <ComboBox Grid.Row="5" Name="Monster5Other" SelectionChanged="MonsterOtherChanged" Margin="5"/>
-                                            <ComboBox Grid.Row="6" Name="Monster5Stamina" Margin="5"/>
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="6" Name="Monster5Stamina" Margin="5"/>
                                             <ComboBox Grid.Row="7" Name="Monster5Multi" Margin="5"/>
                                             <ComboBox Grid.Row="8" Name="Monster5Difficulty" Margin="5"/>
+                                            <ComboBox Grid.Row="9" Name="Monster5IndividualType" Margin="5"/>
 
                                             <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster5SubType" Margin="5"/>
 
@@ -671,6 +689,7 @@
                                             <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
                                             <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
                                             <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+                                            <Label Grid.Row="9" Grid.Column="2" Content="Individual Type"/>
 
                                         </Grid>
                                     </GroupBox>
@@ -695,7 +714,7 @@
 
                                                 <TextBox Grid.Row="0" Name="Monster5SetName" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster5SpawnParam" Margin="5"/>
-                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster5SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateUShortTextBox" Grid.Row="3" Name="Monster5SizeTable" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster5Size" Margin="5"/>
 
                                                 <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster5Info" Margin="5"/>
@@ -741,9 +760,10 @@
                                             <ComboBox Grid.Row="3" Name="Monster6Attack" Margin="5"/>
                                             <ComboBox Grid.Row="4" Name="Monster6PartHp" Margin="5"/>
                                             <ComboBox Grid.Row="5" SelectionChanged="MonsterOtherChanged" Name="Monster6Other" Margin="5"/>
-                                            <ComboBox Grid.Row="6" Name="Monster6Stamina" Margin="5"/>
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="6" Name="Monster6Stamina" Margin="5"/>
                                             <ComboBox Grid.Row="7" Name="Monster6Multi" Margin="5"/>
                                             <ComboBox Grid.Row="8" Name="Monster6Difficulty" Margin="5"/>
+                                            <ComboBox Grid.Row="9" Name="Monster6IndividualType" Margin="5"/>
 
                                             <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster6SubType" Margin="5"/>
 
@@ -757,6 +777,7 @@
                                             <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
                                             <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
                                             <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+                                            <Label Grid.Row="9" Grid.Column="2" Content="Individual Type"/>
 
                                         </Grid>
                                     </GroupBox>
@@ -781,7 +802,7 @@
 
                                                 <TextBox Grid.Row="0" Name="Monster6SetName" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster6SpawnParam" Margin="5"/>
-                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster6SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateUShortTextBox" Grid.Row="3" Name="Monster6SizeTable" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster6Size" Margin="5"/>
 
                                                 <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster6Info" Margin="5"/>
@@ -827,9 +848,10 @@
                                             <ComboBox Grid.Row="3" Name="Monster7Attack" Margin="5"/>
                                             <ComboBox Grid.Row="4" Name="Monster7PartHp" Margin="5"/>
                                             <ComboBox Grid.Row="5" SelectionChanged="MonsterOtherChanged" Name="Monster7Other" Margin="5"/>
-                                            <ComboBox Grid.Row="6" Name="Monster7Stamina" Margin="5"/>
+                                            <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="6" Name="Monster7Stamina" Margin="5"/>
                                             <ComboBox Grid.Row="7" Name="Monster7Multi" Margin="5"/>
                                             <ComboBox Grid.Row="8" Name="Monster7Difficulty" Margin="5"/>
+                                            <ComboBox Grid.Row="9" Name="Monster7IndividualType" Margin="5"/>
 
                                             <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="1" Name="Monster7SubType" Margin="5"/>
 
@@ -843,6 +865,7 @@
                                             <Label Grid.Row="6" Grid.Column="2" Content="Stamina"/>
                                             <Label Grid.Row="7" Grid.Column="2" Content="MP Modifier"/>
                                             <Label Grid.Row="8" Grid.Column="2" Content="Difficulty Variance"/>
+                                            <Label Grid.Row="9" Grid.Column="2" Content="Individual Type"/>
 
                                         </Grid>
                                     </GroupBox>
@@ -867,7 +890,7 @@
 
                                                 <TextBox Grid.Row="0" Name="Monster7SetName" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateNumberTextBox" Grid.Row="2" Name="Monster7SpawnParam" Margin="5"/>
-                                                <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="3" Name="Monster7SizeTable" Margin="5"/>
+                                                <TextBox PreviewTextInput="ValidateUShortTextBox" Grid.Row="3" Name="Monster7SizeTable" Margin="5"/>
                                                 <TextBox PreviewTextInput="ValidateByteTextBox" Grid.Row="4" Name="Monster7Size" Margin="5"/>
 
                                                 <TextBlock Grid.Row="5" Grid.ColumnSpan="3" Name="Monster7Info" Margin="5"/>

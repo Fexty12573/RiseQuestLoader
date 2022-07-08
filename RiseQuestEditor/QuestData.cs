@@ -20,6 +20,7 @@ namespace RiseQuestEditor
         SPECIAL = 1 << 7, // 128
         HYAKURYU = 1 << 8, // 256
         TRAINING = 1 << 9, // 512
+        KYOUSEI = 1 << 10  // 1024
     }
 
     public enum QuestLevel
@@ -48,7 +49,8 @@ namespace RiseQuestEditor
         Village = 0,
         Low = 1,
         High = 2,
-        Max = 3,
+        Master = 3,
+        Max = 4
     }
 
     public enum MapNoType : int
@@ -66,7 +68,12 @@ namespace RiseQuestEditor
         No09 = 9,
         No10 = 10,
         No11 = 11,
-        Max = 12,
+        No31 = 12,
+        No32 = 13,
+        No41 = 14,
+        No42 = 15,
+        No42_A = 16,
+        Max = 17,
     }
 
     public enum QuestOrderType
@@ -87,7 +94,21 @@ namespace RiseQuestEditor
         H50 = 13,
         H90 = 14,
         H100 = 15,
-        MAX = 16,
+        M1 = 16,
+        M2 = 17,
+        M3 = 18,
+        M4 = 19,
+        M5 = 20,
+        M6 = 21,
+        M10 = 22,
+        M20 = 23,
+        M30 = 24,
+        M40 = 25,
+        M50 = 26,
+        M60 = 27,
+        M100 = 28,
+        Only_1 = 29,
+        MAX = 30,
     }
 
     public enum QuestTargetType
@@ -156,6 +177,8 @@ namespace RiseQuestEditor
         HP_EMx2 = 13,
         INIT_RANDOM = 14,
         SWAP_RANDOM = 15,
+        FSM_CONTROL = 16,
+        ENTRY_TIME = 17,
     }
 
     public enum EmsSetNo
@@ -193,9 +216,27 @@ namespace RiseQuestEditor
         m01_ems_set_QN010418 = 30,
         m05_ems_set_QN010617 = 31,
         m21_ems_set_base = 32,
+        m31_ems_set_base = 33,
+        m32_ems_set_base = 34,
+        m01_ems_set_base_MR = 35,
+        m01_ems_set_tour_MR = 36,
+        m02_ems_set_base_MR = 37,
+        m02_ems_set_tour_MR = 38,
+        m03_ems_set_base_MR = 39,
+        m03_ems_set_tour_MR = 40,
+        m03_ems_set_QN315211 = 41,
+        m03_ems_set_QN315300 = 42,
+        m05_ems_set_base_MR = 43,
+        m05_ems_set_tour_MR = 44,
+        m05_ems_set_QN315412 = 45,
+        m31_ems_set_tour = 46,
+        m31_ems_set_QN315101 = 47,
+        m31_ems_set_QN315107 = 48,
+        m32_ems_set_tour = 49,
+        m32_ems_set_QN315314 = 50,
     }
 
-    public enum NandoYuragi
+    public enum NandoYuragi : int
     {
         False = 0,
         True1 = 1,
@@ -217,5 +258,11 @@ namespace RiseQuestEditor
         Normal = 0,
         Nushi = 1,
         Max = 2,
+    }
+
+    public enum EnemyIndividualType : int
+    {
+        Normal = 0,
+        Mystery = 1
     }
 }

@@ -84,6 +84,7 @@ namespace RiseQuestEditor
         public static readonly Dictionary<int, string> BattleBGMType;
         public static readonly Dictionary<int, string> ClearBGMType;
         public static readonly Dictionary<int, string> Item;
+        public static readonly Dictionary<int, string> IndividualType;
 
         public static readonly Dictionary<int, string> HealthRate;
         public static readonly Dictionary<int, string> AttackRate;
@@ -107,6 +108,7 @@ namespace RiseQuestEditor
             SwapStopType = DeserializeDictionary<int, string>("Assets/SwapStopType.json");
             BattleBGMType = DeserializeDictionary<int, string>("Assets/BattleBGMTypes.json");
             ClearBGMType = DeserializeDictionary<int, string>("Assets/QuestClearBGMTypes.json");
+            IndividualType = DeserializeDictionary<int, string>("Assets/IndividualType.json");
 
             MonsterIconName = new Dictionary<int, string>();
             MonsterIconFile = new Dictionary<int, string>();

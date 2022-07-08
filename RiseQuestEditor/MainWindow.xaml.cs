@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Media;
 using System.ComponentModel;
 using WPFCustomMessageBox;
+using System.Runtime.InteropServices;
 
 namespace RiseQuestEditor
 {
@@ -64,6 +65,7 @@ namespace RiseQuestEditor
                 ComboBox multi = (ComboBox)FindName($"Monster{i + 1}Multi");
                 ComboBox dif = (ComboBox)FindName($"Monster{i + 1}Difficulty");
                 ComboBox cond = (ComboBox)FindName($"Monster{i + 1}SpawnCondition");
+                ComboBox type = (ComboBox)FindName($"Monster{i + 1}IndividualType");
 
                 id.ItemsSource = EnumHelper.Monster;
                 hp.ItemsSource = EnumHelper.HealthRate;
@@ -73,6 +75,7 @@ namespace RiseQuestEditor
                 multi.ItemsSource = EnumHelper.MultiRate;
                 dif.ItemsSource = EnumHelper.NandoYuragi;
                 cond.ItemsSource = EnumHelper.SpawnCondition;
+                type.ItemsSource = EnumHelper.IndividualType;
 
                 other.DisplayMemberPath = "Key";
                 multi.DisplayMemberPath = "Key";
@@ -126,8 +129,7 @@ namespace RiseQuestEditor
         {
             if (_hasUnsavedChanges)
             {
-                SystemSounds.Exclamation.Play();
-                var result = CustomMessageBox.ShowYesNoCancel("You have unsaved changes. Continue anyway?", "Warning", "Save", "Don't Save", "Cancel", MessageBoxImage.Warning);
+                var result = WarnUnsavedChanges();
 
                 if (result == MessageBoxResult.Yes && _currentFile != "")
                 {
@@ -159,17 +161,7 @@ namespace RiseQuestEditor
 
             if (dlg.ShowDialog() == true)
             {
-                using StreamReader sr = new(dlg.FileName, Encoding.UTF8);
-                _customQuest = JsonConvert.DeserializeObject<CustomQuest>(sr.ReadToEnd());
-
-                if (_customQuest != null)
-                {
-                    _currentFile = dlg.FileName;
-                    Title = "Monster Hunter Rise Quest Editor - " + System.IO.Path.GetFileName(_currentFile);
-
-                    PopulateEditorFields();
-                    RemoveUnsavedChanges();
-                }
+                LoadFile(dlg.FileName);
             }
         }
 
@@ -192,34 +184,76 @@ namespace RiseQuestEditor
             }
             else
             {
-                MessageBox.Show("Open a Quest first", "Can't Save", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Open a Quest first", "Can't Save", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
         private void SaveFileAs(object? sender, ExecutedRoutedEventArgs? e)
         {
-            SaveFileDialog dlg = new()
+            if (_customQuest != null)
             {
-                CheckFileExists = false,
-                CheckPathExists = false,
-                AddExtension = true,
-                Filter = "Quest Files | *.json",
-                Title = "Save Quest File"
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                string path = System.IO.Path.GetDirectoryName(dlg.FileName)!;
-                if (!Directory.Exists(path))
+                SaveFileDialog dlg = new()
                 {
-                    Directory.CreateDirectory(path);
-                }
+                    CheckFileExists = false,
+                    CheckPathExists = false,
+                    AddExtension = true,
+                    Filter = "Quest Files | *.json",
+                    Title = "Save Quest File"
+                };
 
-                _currentFile = dlg.FileName;
+                if (dlg.ShowDialog() == true)
+                {
+                    string path = System.IO.Path.GetDirectoryName(dlg.FileName)!;
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    _currentFile = dlg.FileName;
+                    Title = "Monster Hunter Rise Quest Editor - " + System.IO.Path.GetFileName(_currentFile);
+
+                    SaveFile(sender, e);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Open a Quest first", "Can't Save", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        public void LoadFile(string path)
+        {
+            if (_hasUnsavedChanges)
+            {
+                var result = WarnUnsavedChanges();
+
+                if (result == MessageBoxResult.Yes && _currentFile != "")
+                {
+                    SaveFile(null, null);
+                }
+                else if (result == MessageBoxResult.Cancel)
+                {
+                    return;
+                }
+            }
+
+            using StreamReader sr = new(path, Encoding.UTF8);
+            _customQuest = JsonConvert.DeserializeObject<CustomQuest>(sr.ReadToEnd());
+
+            if (_customQuest != null)
+            {
+                _currentFile = path;
                 Title = "Monster Hunter Rise Quest Editor - " + System.IO.Path.GetFileName(_currentFile);
 
-                SaveFile(sender, e);
+                PopulateEditorFields();
+                RemoveUnsavedChanges();
             }
+        }
+
+        private static MessageBoxResult WarnUnsavedChanges()
+        {
+            SystemSounds.Exclamation.Play();
+            return CustomMessageBox.ShowYesNoCancel("You have unsaved changes. Continue anyway?", "Warning", "Save", "Don't Save", "Cancel", MessageBoxImage.Warning);
         }
 
         private void SetUnsavedChanges()
@@ -305,6 +339,7 @@ namespace RiseQuestEditor
                 SpecialQuest.IsChecked = data.QuestType.HasFlag(QuestType.SPECIAL);
                 RampageQuest.IsChecked = data.QuestType.HasFlag(QuestType.HYAKURYU);
                 TrainingQuest.IsChecked = data.QuestType.HasFlag(QuestType.TRAINING);
+                FollowerQuest.IsChecked = data.QuestType.HasFlag(QuestType.KYOUSEI);
 
                 if (_customQuest.EnemyData != null)
                 {
@@ -320,9 +355,10 @@ namespace RiseQuestEditor
                         ((ComboBox)FindName($"Monster{i + 1}Multi")).SelectedValue = (int)enemy.Monsters[i].MultiTable;
                         ((ComboBox)FindName($"Monster{i + 1}Difficulty")).SelectedValue = (int)enemy.Monsters[i].Difficulty;
                         ((ComboBox)FindName($"Monster{i + 1}SpawnCondition")).SelectedValue = (int)data.Monsters[i].SpawnCondition;
+                        ((ComboBox)FindName($"Monster{i + 1}IndividualType")).SelectedValue = (int)enemy.Monsters[i].IndividualType;
                         ((TextBox)FindName($"Monster{i + 1}SubType")).Text = enemy.Monsters[i].SubType.ToString();
                         ((TextBox)FindName($"Monster{i + 1}SetName")).Text = enemy.Monsters[i].SetName.ToString();
-                        ((ComboBox)FindName($"Monster{i + 1}Stamina")).SelectedValue = enemy.Monsters[i].StaminaTable;
+                        ((TextBox)FindName($"Monster{i + 1}Stamina")).Text = enemy.Monsters[i].StaminaTable.ToString();
                         ((TextBox)FindName($"Monster{i + 1}SpawnParam")).Text = data.Monsters[i].SpawnParam.ToString();
                         ((TextBox)FindName($"Monster{i + 1}SizeTable")).Text = enemy.Monsters[i].SizeTable.ToString();
                         ((TextBox)FindName($"Monster{i + 1}Size")).Text = enemy.Monsters[i].Size.ToString();
@@ -351,6 +387,9 @@ namespace RiseQuestEditor
                 SwapCondition2.SelectedValue = (int)data.SwapConditions[1];
                 SwapParam2.Text = data.SwapParams[1].ToString();
                 SwapExitTime2.Text = data.SwapExitTimes[1].ToString();
+
+                IsTutorial.IsChecked = data.Tutorial;
+                IsFromNpc.IsChecked = data.FromNpc;
 
                 FenceDefaultActive.IsChecked = data.ArenaParam.FenceDefaultActive;
                 FenceUpTime.Text = data.ArenaParam.FenceUptime.ToString();
@@ -468,8 +507,8 @@ namespace RiseQuestEditor
                 data.Icons[3] = (int)Icon4.SelectedValue;
                 data.Icons[4] = (int)Icon5.SelectedValue;
 
-                Objective1Type.SelectedValue = Convert.ToInt32(data.TargetTypes[0]);
-                Objective2Type.SelectedValue = Convert.ToInt32(data.TargetTypes[1]);
+                data.TargetTypes[0] = (QuestTargetType)Convert.ToInt32(Objective1Type.SelectedValue);
+                data.TargetTypes[1] = (QuestTargetType)Convert.ToInt32(Objective2Type.SelectedValue);
 
                 data.TargetMonsters[0] = Convert.ToUInt32(Objective1Monster.SelectedValue);
                 data.TargetMonsters[1] = Convert.ToUInt32(Objective2Monster.SelectedValue);
@@ -491,6 +530,7 @@ namespace RiseQuestEditor
                 data.QuestType |= (bool)SpecialQuest.IsChecked! ? QuestType.SPECIAL : 0;
                 data.QuestType |= (bool)RampageQuest.IsChecked! ? QuestType.HYAKURYU : 0;
                 data.QuestType |= (bool)TrainingQuest.IsChecked! ? QuestType.TRAINING : 0;
+                data.QuestType |= (bool)FollowerQuest.IsChecked! ? QuestType.KYOUSEI : 0;
 
                 if (_customQuest.EnemyData != null)
                 {
@@ -499,18 +539,19 @@ namespace RiseQuestEditor
                     for (int i = 0; i < 7; i++)
                     {
                         data.Monsters[i].Id = Convert.ToUInt32(((ComboBox)FindName($"Monster{i + 1}Id")).SelectedValue);
-                        enemy.Monsters[i].HealthTable = Convert.ToByte(((ComboBox)FindName($"Monster{i + 1}Hp")).SelectedValue);
-                        enemy.Monsters[i].AttackTable = Convert.ToByte(((ComboBox)FindName($"Monster{i + 1}Attack")).SelectedValue);
-                        enemy.Monsters[i].PartTable = Convert.ToByte(((ComboBox)FindName($"Monster{i + 1}PartHp")).SelectedValue);
-                        enemy.Monsters[i].OtherTable = Convert.ToByte(((ComboBox)FindName($"Monster{i + 1}Other")).SelectedValue);
+                        enemy.Monsters[i].HealthTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}Hp")).SelectedValue);
+                        enemy.Monsters[i].AttackTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}Attack")).SelectedValue);
+                        enemy.Monsters[i].PartTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}PartHp")).SelectedValue);
+                        enemy.Monsters[i].OtherTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}Other")).SelectedValue);
                         enemy.Monsters[i].MultiTable = Convert.ToByte(((ComboBox)FindName($"Monster{i + 1}Multi")).SelectedValue);
                         enemy.Monsters[i].Difficulty = (NandoYuragi)(int)((ComboBox)FindName($"Monster{i + 1}Difficulty")).SelectedValue;
                         data.Monsters[i].SpawnCondition = (BossSetCondition)(int)((ComboBox)FindName($"Monster{i + 1}SpawnCondition")).SelectedValue;
+                        enemy.Monsters[i].IndividualType = (EnemyIndividualType)(int)((ComboBox)FindName($"Monster{i + 1}IndividualType")).SelectedValue;
                         enemy.Monsters[i].SubType = byte.Parse(((TextBox)FindName($"Monster{i + 1}SubType")).Text);
                         enemy.Monsters[i].SetName = ((TextBox)FindName($"Monster{i + 1}SetName")).Text;
-                        enemy.Monsters[i].StaminaTable = Convert.ToByte(((ComboBox)FindName($"Monster{i + 1}Stamina")).SelectedValue);
+                        enemy.Monsters[i].StaminaTable = byte.Parse(((TextBox)FindName($"Monster{i + 1}Stamina")).Text);
                         data.Monsters[i].SpawnParam = uint.Parse(((TextBox)FindName($"Monster{i + 1}SpawnParam")).Text);
-                        enemy.Monsters[i].SizeTable = byte.Parse(((TextBox)FindName($"Monster{i + 1}SizeTable")).Text);
+                        enemy.Monsters[i].SizeTable = int.Parse(((TextBox)FindName($"Monster{i + 1}SizeTable")).Text);
                         enemy.Monsters[i].Size = byte.Parse(((TextBox)FindName($"Monster{i + 1}Size")).Text);
                     }
 
@@ -540,6 +581,9 @@ namespace RiseQuestEditor
                 data.SwapConditions[1] = (SwapSetCondition)(int)SwapCondition2.SelectedValue;
                 data.SwapParams[1] = byte.Parse(SwapParam2.Text);
                 data.SwapExitTimes[1] = byte.Parse(SwapExitTime2.Text);
+
+                data.Tutorial = IsTutorial.IsChecked == true;
+                data.FromNpc = IsFromNpc.IsChecked == true;
 
                 data.ArenaParam = new QuestData.ArenaParameters
                 {
@@ -593,7 +637,7 @@ namespace RiseQuestEditor
 
                 data.WeaponUnlockTable = byte.Parse(RampageWeaponUnlockTable.Text);
                 data.ApexOrderTable = byte.Parse(RampageApexOrderTable.Text);
-                data.ExtraMonsterNandoTable = (sbyte)byte.Parse(RampageExtraMonsterNandoTable.Text);
+                data.ExtraMonsterNandoTable = sbyte.Parse(RampageExtraMonsterNandoTable.Text);
                 data.SubTarget5Wave = byte.Parse(RampageSubTarget5Wave.Text);
                 data.IsVillage = RampageIsVillage.IsChecked == true;
 
@@ -620,7 +664,7 @@ namespace RiseQuestEditor
             }
         }
 
-        private bool IsValidNumber(TextBox textBox, TextCompositionEventArgs e, bool allowNegative = false)
+        private static bool IsValidNumber(TextBox textBox, TextCompositionEventArgs e, bool allowNegative = false)
         {
             if (allowNegative &&
                 e.Text == "-" &&
@@ -632,11 +676,10 @@ namespace RiseQuestEditor
             return !regex.IsMatch(e.Text);
         }
 
-        private string GetNewText(TextBox textBox, TextCompositionEventArgs e)
+        private static string GetNewText(TextBox textBox, TextCompositionEventArgs e)
         {
             if (textBox.SelectedText.Length > 0)
             {
-
                 return (textBox.Text + e.Text).Remove(textBox.SelectionStart, textBox.SelectionLength);
             }
             else
@@ -757,7 +800,7 @@ namespace RiseQuestEditor
         {
             if (sender is ComboBox icon)
             {
-                if ((int)icon.SelectedValue != 999)
+                if (icon.SelectedValue != null && (int)icon.SelectedValue != 999)
                 {
                     var name = (string)icon.GetValue(NameProperty);
                     Image image = (Image)FindName($"IconImage{name.Last()}");
@@ -827,6 +870,15 @@ Thanks:
         private void Property_ContentChanged(object sender, RoutedEventArgs e)
         {
             SetUnsavedChanges();
+        }
+
+        private void Window_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                LoadFile(files[0]);
+            }
         }
     }
 }

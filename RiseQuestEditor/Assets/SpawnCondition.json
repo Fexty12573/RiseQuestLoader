@@ -14,5 +14,7 @@
     "12": "HP Monster x1",
     "13": "HP Monster x2",
     "14": "Spawn Random %",
-    "15": "Swap Random %"
+    "15": "Swap Random %",
+    "16": "FSM Controlled",
+    "17": "Entry Time"
 }

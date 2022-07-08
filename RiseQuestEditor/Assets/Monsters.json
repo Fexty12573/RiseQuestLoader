@@ -8,16 +8,8 @@
         "Id": 1
     },
     {
-        "Name": "Apex Rathian",
-        "Id": 1793
-    },
-    {
         "Name": "Rathalos",
         "Id": 2
-    },
-    {
-        "Name": "Apex Rathalos",
-        "Id": 1294
     },
     {
         "Name": "Khezu",
@@ -32,8 +24,12 @@
         "Id": 7
     },
     {
-        "Name": "Apex Diablos",
-        "Id": 1799
+        "Name": "Daimyo Hermitaur",
+        "Id": 19
+    },
+    {
+        "Name": "Shogun Ceanataur",
+        "Id": 20
     },
     {
         "Name": "Rajang",
@@ -80,20 +76,12 @@
         "Id": 57
     },
     {
-        "Name": "Apex Zinogre",
-        "Id": 1849
-    },
-    {
         "Name": "Great Wroggi",
         "Id": 59
     },
     {
         "Name": "Arzuros",
         "Id": 60
-    },
-    {
-        "Name": "Apex Arzuros",
-        "Id": 1852
     },
     {
         "Name": "Lagombi",
@@ -104,16 +92,24 @@
         "Id": 62
     },
     {
+        "Name": "Gore Magala",
+        "Id": 71
+    },
+    {
+        "Name": "Shagaru Magala",
+        "Id": 72
+    },
+    {
+        "Name": "Seregios",
+        "Id": 77
+    },
+    {
+        "Name": "Astalos",
+        "Id": 81
+    },
+    {
         "Name": "Mizutsune",
         "Id": 82
-    },
-    {
-        "Name": "Apex Mizutsune",
-        "Id": 1874
-    },
-    {
-        "Name": "Crimsonglow Valstrax",
-        "Id": 1366
     },
     {
         "Name": "Magnamalo",
@@ -160,10 +156,6 @@
         "Id": 99
     },
     {
-        "Name": "Narwa the Allmother",
-        "Id": 1379
-    },
-    {
         "Name": "Anjanath",
         "Id": 100
     },
@@ -188,16 +180,92 @@
         "Id": 118
     },
     {
-        "Name": "Training Tetranadon",
-        "Id": 131
+        "Name": "Malzeno",
+        "Id": 132
     },
     {
-        "Name": "Kelbi (Male)",
+        "Name": "Lunagaron",
+        "Id": 133
+    },
+    {
+        "Name": "Garangolm",
+        "Id": 134
+    },
+    {
+        "Name": "Gaismagorm",
+        "Id": 135
+    },
+    {
+        "Name": "Espinas",
+        "Id": 136
+    },
+    {
+        "Name": "Blood Orange Bishaten",
+        "Id": 346
+    },
+    {
+        "Name": "Aurora Somnacanth",
+        "Id": 349
+    },
+    {
+        "Name": "Pyre Rakna-Kadaki",
+        "Id": 350
+    },
+    {
+        "Name": "Magma Almudron",
+        "Id": 351
+    },
+    {
+        "Name": "Furious Rajang",
+        "Id": 1303
+    },
+    {
+        "Name": "Crimson Glow Valstrax",
+        "Id": 1366
+    },
+    {
+        "Name": "Scorned Magnamalo",
+        "Id": 1369
+    },
+    {
+        "Name": "Narwa the Allmother",
+        "Id": 1379
+    },
+    {
+        "Name": "Apex Rathian",
+        "Id": 1793
+    },
+    {
+        "Name": "Apex Rathalos",
+        "Id": 1794
+    },
+    {
+        "Name": "Apex Diablos",
+        "Id": 1799
+    },
+    {
+        "Name": "Apex Zinogre",
+        "Id": 1849
+    },
+    {
+        "Name": "Apex Arzuros",
+        "Id": 1852
+    },
+    {
+        "Name": "Apex Mizutsune",
+        "Id": 1874
+    },
+    {
+        "Name": "Kelbi",
         "Id": 4099
     },
     {
-        "Name": "Kelbi (Female)",
-        "Id": 5379
+        "Name": "Hornetaur",
+        "Id": 4101
+    },
+    {
+        "Name": "Vespoid",
+        "Id": 4102
     },
     {
         "Name": "Felyne",
@@ -206,6 +274,10 @@
     {
         "Name": "Melynx",
         "Id": 4104
+    },
+    {
+        "Name": "Velociprey",
+        "Id": 4105
     },
     {
         "Name": "Bullfango",
@@ -222,6 +294,14 @@
     {
         "Name": "Remobra",
         "Id": 4115
+    },
+    {
+        "Name": "Hermitaur",
+        "Id": 4116
+    },
+    {
+        "Name": "Ceanataur",
+        "Id": 4117
     },
     {
         "Name": "Rhenoplos",
@@ -284,27 +364,43 @@
         "Id": 4145
     },
     {
-        "Name": "Kestodon (Male)",
+        "Name": "Kestodon",
         "Id": 4147
-    },
-    {
-        "Name": "Kestodon (Female)",
-        "Id": 5427
     },
     {
         "Name": "Bombadgy",
         "Id": 4186
     },
     {
-        "Name": "Izuchi (Male)",
+        "Name": "Izuchi",
         "Id": 4187
-    },
-    {
-        "Name": "Izuchi (Female)",
-        "Id": 5467
     },
     {
         "Name": "Rachnoid",
         "Id": 4188
+    },
+    {
+        "Name": "Gowngoat",
+        "Id": 4189
+    },
+    {
+        "Name": "Boggi",
+        "Id": 4190
+    },
+    {
+        "Name": "Pyrantula",
+        "Id": 4444
+    },
+    {
+        "Name": "Kelbi",
+        "Id": 5379
+    },
+    {
+        "Name": "Kestodon",
+        "Id": 5427
+    },
+    {
+        "Name": "Izuchi",
+        "Id": 5467
     }
 ]
