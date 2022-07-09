@@ -11,6 +11,8 @@
 using namespace reframework;
 namespace fs = std::filesystem;
 
+using ManagedObject = reframework::API::ManagedObject;
+
 QuestLoader::QuestLoader() = default;
 
 std::shared_ptr<QuestLoader> QuestLoader::get() {
@@ -137,17 +139,37 @@ bool QuestLoader::initialize() {
             return false;
         }
     }
+    // 0f 85 b0 00 00 00 f6 42 13
+    const auto results = utility::scanmem({0x0f, 0x85, 0xb0, 0x00, 0x00, 0x00, 0xf6, 0x42, 0x13, 0x01});
+    if (results.empty()) {
+        api->log_error("[QuestLoader] Failed to find object allocator");
+        OutputDebugStringA("[QuestLoader] Failed to find object allocator");
+        return false;
+    }
 
-    new_instance = reinterpret_cast<decltype(new_instance)>(0x143b3c900);
+    void* result = static_cast<byte*>(results[0]) - 0x16;
+    api->log_info("[QuestLoader] Found object allocator at {:p}", result);
+    OutputDebugStringA(fmt::format("[QuestLoader] Found object allocator at {:p}", result).c_str());
+
+    new_instance = static_cast<decltype(new_instance)>(result);
 
     m_initialized = true;
     return true;
 }
 
 void QuestLoader::read_quests() {
+    const auto& api = API::get();
+    if (!fs::exists("reframework/quests")) {
+        fs::create_directories("reframework/quests");
+    }
+
     for (const auto& entry : fs::directory_iterator("reframework/quests")) {
         if (entry.path().extension() == ".json") {
-            parse_quest(entry);
+            try {
+                parse_quest(entry);
+            } catch (const std::exception& e) {
+                api->log_error("C++ Exception Thrown: {}", e.what());
+            }
         }
     }
 }
@@ -162,7 +184,7 @@ void QuestLoader::render_ui() {
     if (API::get()->reframework()->is_drawing_ui()) {
         ImGui::Begin("Quest Loader");
 
-        if (ImGui::CollapsingHeader("Quest Exporter")) {
+        if (ImGui::TreeNode("Quest Exporter")) {
             static int quest_id = 0;
             ImGui::InputInt("Quest ID", &quest_id);
 
@@ -190,16 +212,67 @@ void QuestLoader::render_ui() {
                     std::ofstream(fmt::format("./reframework/plugins/quests/q{}.json", q.value("QuestID", 0))) << q.dump(4);
                 }
             }
+
+            ImGui::TreePop();
         }
         
-        if (ImGui::CollapsingHeader("Quest Loader")) {
+        if (ImGui::TreeNode("Quest Loader")) {
+            const auto quest_manager = m_quest_exporter.get_quest_manager();
+            const auto questdict = *quest_manager->get_field<ManagedObject*>("_QuestDataDictionary");
+
             if (ImGui::Button("Reload Quests")) {
+                for (auto& quest : m_custom_quests) {
+                    quest.second.cleanup(questdict);
+                }
+
+                m_custom_quests.clear();
                 read_quests();
             }
+
+            if (ImGui::TreeNode("Replacement Quests")) {
+                for (auto& [id, quest] : m_custom_quests) {
+                    if (quest.m_is_replacement) {
+                        if (ImGui::Checkbox(fmt::format("[{}] {}", id, quest.m_name).c_str(), &quest.m_enabled)) {
+                            if (quest.m_enabled) {
+                                quest.enable(questdict);
+                            } else {
+                                quest.disable(questdict);
+                            }
+                        }
+                    }
+                }
+
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode("Custom Quests")) {
+                std::vector<int> to_erase{};
+                for (auto& [id, quest] : m_custom_quests) {
+                    if (!quest.m_is_replacement) {
+                        ImGui::PushID(id);
+                        if (ImGui::Button("Unload")) {
+                            to_erase.emplace_back(id);
+                        }
+
+                        ImGui::SameLine();
+                        ImGui::Text("[%d] %s", id, quest.m_name.c_str());
+                    }
+                }
+
+                for (const auto& id : to_erase) {
+                    m_custom_quests[id].cleanup(questdict);
+                    m_custom_quests.erase(id);
+                }
+
+                ImGui::TreePop();
+            }
+
+            ImGui::TreePop();
         }
 
-        if (ImGui::CollapsingHeader("Debug")) {
+        if (ImGui::TreeNode("Debug")) {
             ImGui::Checkbox("Skip Hook", &m_skip_hook);
+            ImGui::TreePop();
         }
 
         ImGui::End();
@@ -210,6 +283,8 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
     const auto& api = API::get();
     nlohmann::json j{};
     bool is_rampage_quest = false;
+    const auto quest_manager = m_quest_exporter.get_quest_manager();
+    const auto questdict = *quest_manager->get_field<ManagedObject*>("_QuestDataDictionary");
 
     try {
         std::ifstream(path) >> j;
@@ -223,10 +298,17 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
 
     const auto quest_id = j["QuestID"].get<int32_t>();
 
+    OutputDebugStringA(fmt::format("[QuestLoader] Loading Quest {}", quest_id).c_str());
+
     if (const auto it = m_custom_quests.find(quest_id); it != m_custom_quests.end()) {
+        OutputDebugStringA(fmt::format("[QuestLoader] Found quest {}, cleaning up...", quest_id).c_str());
+        it->second.cleanup(questdict);
         m_custom_quests.erase(it);
+        OutputDebugStringA(fmt::format("[QuestLoader] Cleanup finished").c_str());
     }
     
+    OutputDebugStringA(fmt::format("[QuestLoader] Creating quest...").c_str());
+
     const auto quest = new_instance(api->get_vm_context(), m_quest_data, 0);
     if (quest == nullptr) {
         api->log_error("Failed to create quest instance");
@@ -273,7 +355,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
         *qnormal->get_field<int32_t>("_TimeLimit") = normal["TimeLimit"];
         *qnormal->get_field<int32_t>("_QuestLife") = normal["Carts"];
         
-        if (const auto conditions = qnormal->get_field<API::ManagedObject*>("_OrderType")) {
+        if (const auto conditions = qnormal->get_field<ManagedObject*>("_OrderType")) {
             *conditions = utility::create_managed_array("snow.quest.QuestOrderType", normal["QuestConditions"].size());
             (*conditions)->add_ref();
 
@@ -282,7 +364,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             }
         }
 
-        if (const auto targets = qnormal->get_field<API::ManagedObject*>("_TargetType")) {
+        if (const auto targets = qnormal->get_field<ManagedObject*>("_TargetType")) {
             *targets = utility::create_managed_array("snow.quest.QuestTargetType", normal["TargetTypes"].size());
             (*targets)->add_ref();
 
@@ -291,7 +373,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             }
         }
 
-        if (const auto targets = qnormal->get_field<API::ManagedObject*>("_TgtEmType")) {
+        if (const auto targets = qnormal->get_field<ManagedObject*>("_TgtEmType")) {
             *targets = utility::create_managed_array("snow.enemy.EnemyDef.EmTypes", normal["TargetMonsters"].size());
             (*targets)->add_ref();
 
@@ -300,7 +382,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             }
         }
 
-        if (const auto items = qnormal->get_field<API::ManagedObject*>("_TgtItemId")) {
+        if (const auto items = qnormal->get_field<ManagedObject*>("_TgtItemId")) {
             *items = utility::create_managed_array("snow.data.ContentsIdSystem.ItemId", normal["TargetItemIds"].size());
             (*items)->add_ref();
 
@@ -309,7 +391,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             }
         }
 
-        if (const auto counts = qnormal->get_field<API::ManagedObject*>("_TgtNum")) {
+        if (const auto counts = qnormal->get_field<ManagedObject*>("_TgtNum")) {
             *counts = utility::create_managed_array("System.UInt32", normal["TargetAmounts"].size());
             (*counts)->add_ref();
 
@@ -318,9 +400,9 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             }
         }
 
-        if (const auto monsters = qnormal->get_field<API::ManagedObject*>("_BossEmType")) {
-            if (const auto conds = qnormal->get_field<API::ManagedObject*>("_BossSetCondition")) {
-                if (const auto params = qnormal->get_field<API::ManagedObject*>("_BossSetParam")) {
+        if (const auto monsters = qnormal->get_field<ManagedObject*>("_BossEmType")) {
+            if (const auto conds = qnormal->get_field<ManagedObject*>("_BossSetCondition")) {
+                if (const auto params = qnormal->get_field<ManagedObject*>("_BossSetParam")) {
                     constexpr uint32_t max_monster_count = 7;
 
                     *monsters = utility::create_managed_array("snow.enemy.EnemyDef.EmTypes", max_monster_count);
@@ -345,7 +427,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
         *qnormal->get_field<uint8_t>("_InitExtraEmNum") = normal["ExtraMonsterCount"];
         *qnormal->get_field<bool>("_IsSwapExitMarionette") = normal["SwapExitRide"];
 
-        if (const auto rates = qnormal->get_field<API::ManagedObject*>("_SwapEmRate")) {
+        if (const auto rates = qnormal->get_field<ManagedObject*>("_SwapEmRate")) {
             *rates = utility::create_managed_array("System.Byte", normal["SwapFrequencies"].size());
             (*rates)->add_ref();
 
@@ -354,7 +436,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             }
         }
 
-        if (const auto conds = qnormal->get_field<API::ManagedObject*>("_SwapSetCondition")) {
+        if (const auto conds = qnormal->get_field<ManagedObject*>("_SwapSetCondition")) {
             *conds = utility::create_managed_array("snow.QuestManager.SwapSetCondition", normal["SwapConditions"].size());
             (*conds)->add_ref();
 
@@ -363,7 +445,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             }
         }
 
-        if (const auto params = qnormal->get_field<API::ManagedObject*>("_SwapSetParam")) {
+        if (const auto params = qnormal->get_field<ManagedObject*>("_SwapSetParam")) {
             *params = utility::create_managed_array("System.Byte", normal["SwapParams"].size());
             (*params)->add_ref();
 
@@ -372,7 +454,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             }
         }
 
-        if (const auto counts = qnormal->get_field<API::ManagedObject*>("_SwapExitTime")) {
+        if (const auto counts = qnormal->get_field<ManagedObject*>("_SwapExitTime")) {
             *counts = utility::create_managed_array("System.Byte", normal["SwapExitTimes"].size());
             (*counts)->add_ref();
 
@@ -391,7 +473,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
 
         *qnormal->get_field<uint32_t>("_SupplyTbl") = normal["SupplyTable"];
 
-        if (const auto icons = qnormal->get_field<API::ManagedObject*>("_Icon")) {
+        if (const auto icons = qnormal->get_field<ManagedObject*>("_Icon")) {
             constexpr uint32_t quest_icon_count = 5;
 
             *icons = utility::create_managed_array("snow.gui.SnowGuiCommonUtility.Icon.EnemyIconFrameForQuestOrder", quest_icon_count);
@@ -410,7 +492,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
         *qnormal->get_field<uint16_t>("_FenceDefaultWaitSec") = normal["ArenaParam"]["FenceInitialDelay"];
         *qnormal->get_field<uint16_t>("_FenceReloadSec") = normal["ArenaParam"]["FenceCooldown"];
 
-        if (const auto pillars = qnormal->get_field<API::ManagedObject*>("_IsUsePillar")) {
+        if (const auto pillars = qnormal->get_field<ManagedObject*>("_IsUsePillar")) {
             constexpr uint32_t arena_pillar_count = 3;
 
             *pillars = utility::create_managed_array("System.Boolean", arena_pillar_count);
@@ -437,13 +519,13 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
         *qenemy->get_field<uint8_t>("_ZakoOther") = enemy["SmallMonsters"]["OtherTable"];
         *qenemy->get_field<uint8_t>("_ZakoMulti") = enemy["SmallMonsters"]["MultiTable"];
 
-        std::vector tables = {qenemy->get_field<API::ManagedObject*>("_RouteNo"),
-            qenemy->get_field<API::ManagedObject*>("_PartsTbl"), qenemy->get_field<API::ManagedObject*>("_InitSetName"),
-            qenemy->get_field<API::ManagedObject*>("_SubType"), qenemy->get_field<API::ManagedObject*>("_VitalTbl"),
-            qenemy->get_field<API::ManagedObject*>("_AttackTbl"), qenemy->get_field<API::ManagedObject*>("_OtherTbl"),
-            qenemy->get_field<API::ManagedObject*>("_StaminaTbl"), qenemy->get_field<API::ManagedObject*>("_Scale"),
-            qenemy->get_field<API::ManagedObject*>("_ScaleTbl"), qenemy->get_field<API::ManagedObject*>("_Difficulty"),
-            qenemy->get_field<API::ManagedObject*>("_BossMulti"), qenemy->get_field<API::ManagedObject*>("_IndividualType")
+        std::vector tables = {qenemy->get_field<ManagedObject*>("_RouteNo"),
+            qenemy->get_field<ManagedObject*>("_PartsTbl"), qenemy->get_field<ManagedObject*>("_InitSetName"),
+            qenemy->get_field<ManagedObject*>("_SubType"), qenemy->get_field<ManagedObject*>("_VitalTbl"),
+            qenemy->get_field<ManagedObject*>("_AttackTbl"), qenemy->get_field<ManagedObject*>("_OtherTbl"),
+            qenemy->get_field<ManagedObject*>("_StaminaTbl"), qenemy->get_field<ManagedObject*>("_Scale"),
+            qenemy->get_field<ManagedObject*>("_ScaleTbl"), qenemy->get_field<ManagedObject*>("_Difficulty"),
+            qenemy->get_field<ManagedObject*>("_BossMulti"), qenemy->get_field<ManagedObject*>("_IndividualType")
         };
 
         if (std::all_of(tables.begin(), tables.end(), [](auto** obj) { return obj != nullptr; })) {
@@ -472,7 +554,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
                 utility::call(*tables[1], "Set", i, mon["PartTable"].get<uint16_t>());
 
                 if (const auto str = utility::create_managed_string(mon["SetName"].get<std::string>())) {
-                    reinterpret_cast<API::ManagedObject*>(str)->add_ref();
+                    reinterpret_cast<ManagedObject*>(str)->add_ref();
                     utility::call(*tables[2], "Set", i, str);
                 }
 
@@ -500,7 +582,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             *qrampage->get_field<int32_t>("_RandomSeed") = rampage["Seed"];
             *qrampage->get_field<uint8_t>("_Attr") = rampage["QuestAttr"];
 
-            if (const auto waves = qrampage->get_field<API::ManagedObject*>("_WaveData")) {
+            if (const auto waves = qrampage->get_field<ManagedObject*>("_WaveData")) {
                 *waves = utility::create_managed_array("snow.quest.HyakuryuQuestData.WaveData", rampage["Waves"].size());
                 (*waves)->add_ref();
 
@@ -519,7 +601,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
                         *qwave->get_field<int32_t>("_BossEmNandoTblNo") = wave["BossMonsterNandoTable"];
                         *qwave->get_field<int32_t>("_WaveEmNandoTblNo") = wave["WaveMonsterNandoTable"];
 
-                        if (const auto monsters = qwave->get_field<API::ManagedObject*>("_EmTable")) {
+                        if (const auto monsters = qwave->get_field<ManagedObject*>("_EmTable")) {
                             *monsters = utility::create_managed_array("snow.enemy.EnemyDef.EmTypes", wave["Monsters"].size());
                             (*monsters)->add_ref();
 
@@ -543,7 +625,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
             *qrampage->get_field<uint8_t>("_NushiOrderTblNo") = rampage["ApexOrderTable"];
             *qrampage->get_field<uint8_t>("_HmUnlockTblNo") = rampage["WeaponUnlockTable"];
 
-            if (const auto subtargets = qrampage->get_field<API::ManagedObject*>("_SubTarget")) {
+            if (const auto subtargets = qrampage->get_field<ManagedObject*>("_SubTarget")) {
                 *subtargets = utility::create_managed_array("snow.quest.QuestTargetType", rampage["SubTargets"].size());
                 (*subtargets)->add_ref();
 
@@ -565,44 +647,64 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
         qrampage->release();
     }
 
-    const auto quest_manager = m_quest_exporter.get_quest_manager();
-    const auto questdict = *quest_manager->get_field<API::ManagedObject*>("_QuestDataDictionary");
+    const bool is_replacement = is_existing_quest(quest_id);
+    const auto original = is_replacement ? utility::call(questdict, "get_Item", quest_id) : nullptr;
 
-    if (utility::call<bool>(questdict, "ContainsKey", quest_id)) {
-        m_custom_quests[quest_id] = {j, quest};
-        utility::call(questdict, "Insert", quest_id, quest, false);
-    } else {
-        m_custom_quests[quest_id] = {j, quest};
-        utility::call(questdict, "Add", quest_id, quest);
-    }
+    m_custom_quests[quest_id] = {j, quest, original};
+    utility::call(questdict, "Insert", quest_id, quest, false);
 }
 
-SystemString* QuestLoader::get_quest_text_hook(void* vmctx, API::ManagedObject* this_, QuestText type, void* qi) {
+bool QuestLoader::is_existing_quest(int32_t quest_id) const {
+    const auto manager = m_quest_exporter.get_quest_manager();
+    
+    const auto quest_data = 
+        *(*manager->get_field<ManagedObject*>("_normalQuestData"))->get_field<REArray<ManagedObject*>*>("_Param");
+    const auto quest_data_kohaku =
+        *(*manager->get_field<ManagedObject*>("_nomalQuestDataKohaku"))->get_field<REArray<ManagedObject*>*>("_Param");
+
+    if (std::any_of(quest_data->begin(), quest_data->end(), [quest_id](const ManagedObject* obj) 
+        { return *obj->get_field<uint32_t>("_QuestNo") == quest_id; })) {
+        return true;
+    }
+
+    if (std::any_of(quest_data_kohaku->begin(), quest_data_kohaku->end(),
+            [quest_id](const ManagedObject* obj) { return *obj->get_field<uint32_t>("_QuestNo") == quest_id; })) {
+        return true;
+    }
+    
+    return false;
+}
+
+SystemString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_, QuestText type, void* qi) {
     const auto quest_id = utility::call<int32_t>(this_, "getQuestNo");
     const auto loader = get();
 
 
     if (loader->m_custom_quests.count(quest_id)) {
-        switch (type) {
-        case QuestText::TITLE:
-            return utility::create_managed_string(loader->m_custom_quests[quest_id].m_name);
-        case QuestText::CLIENT:
-            return utility::create_managed_string(loader->m_custom_quests[quest_id].m_client); 
-        case QuestText::REQUEST:
-            return utility::create_managed_string(loader->m_custom_quests[quest_id].m_description);
-        case QuestText::TARGET:
-            return utility::create_managed_string(loader->m_custom_quests[quest_id].m_target);
-        default: 
-            return loader->m_get_quest_text_hook->call_original<SystemString*>(vmctx, this_, type, qi);
+        const auto& quest = loader->m_custom_quests[quest_id];
+
+        if (!quest.m_is_replacement || quest.m_enabled) {
+            switch (type) {
+            case QuestText::TITLE:
+                return utility::create_managed_string(quest.m_name);
+            case QuestText::CLIENT:
+                return utility::create_managed_string(quest.m_client);
+            case QuestText::REQUEST:
+                return utility::create_managed_string(quest.m_description);
+            case QuestText::TARGET:
+                return utility::create_managed_string(quest.m_target);
+            default:
+                return loader->m_get_quest_text_hook->call_original<SystemString*>(vmctx, this_, type, qi);
+            }
         }
     }
 
     return loader->m_get_quest_text_hook->call_original<SystemString*>(vmctx, this_, type, qi);
 }
 
-API::ManagedObject* QuestLoader::make_questno_list_hook(void* vmctx, API::ManagedObject* this_, API::ManagedObject* src, bool is_quick_match) {
+ManagedObject* QuestLoader::make_questno_list_hook(void* vmctx, ManagedObject* this_, ManagedObject* src, bool is_quick_match) {
     const auto loader = get();
-    const auto list = loader->m_make_questno_list_hook->call_original<API::ManagedObject*>(vmctx, this_, src, is_quick_match);
+    const auto list = loader->m_make_questno_list_hook->call_original<ManagedObject*>(vmctx, this_, src, is_quick_match);
 
     if (loader->m_skip_hook) {
         return list;
@@ -626,33 +728,35 @@ API::ManagedObject* QuestLoader::make_questno_list_hook(void* vmctx, API::Manage
     const auto quest_level = utility::call<QuestLevel>(loader->m_quest_counter, "convertLeveLMenuToQuestLevel", level);
     
     for (const auto& [id, quest] : loader->m_custom_quests) {
-        if (quest_level == utility::call<QuestLevel>(quest.m_memory_object, "getQuestLv")) {
-            const auto enemy_level = utility::call<EnemyLv>(quest.m_memory_object, "getEnemyLv");
-            const auto quest_type = utility::call<QuestType>(quest.m_memory_object, "getQuestType");
-            bool add_quest = false;
-            if (type == QuestCounterTopMenuType::Normal_Vil && enemy_level == EnemyLv::Village ||
-                type == QuestCounterTopMenuType::Normal_Hall_Low && enemy_level == EnemyLv::Low ||
-                type == QuestCounterTopMenuType::Normal_Hall_High && enemy_level == EnemyLv::High ||
-                type == QuestCounterTopMenuType::Normal_Hall_Master && enemy_level == EnemyLv::Master) {
-                if (is_normal_quest(quest_type)) {
-                    add_quest = true;
+        if (!quest.m_is_replacement) { // Only explicitly add fully custom quests. Replacements are already in the list
+            if (quest_level == utility::call<QuestLevel>(quest.m_memory_object, "getQuestLv")) {
+                const auto enemy_level = utility::call<EnemyLv>(quest.m_memory_object, "getEnemyLv");
+                const auto quest_type = utility::call<QuestType>(quest.m_memory_object, "getQuestType");
+                bool add_quest = false;
+                if (type == QuestCounterTopMenuType::Normal_Vil && enemy_level == EnemyLv::Village ||
+                    type == QuestCounterTopMenuType::Normal_Hall_Low && enemy_level == EnemyLv::Low ||
+                    type == QuestCounterTopMenuType::Normal_Hall_High && enemy_level == EnemyLv::High ||
+                    type == QuestCounterTopMenuType::Normal_Hall_Master && enemy_level == EnemyLv::Master) {
+                    if (is_normal_quest(quest_type)) {
+                        add_quest = true;
+                    }
+                } else if (type == QuestCounterTopMenuType::Training) {
+                    if (quest_type & QuestType::TRAINING) {
+                        add_quest = true;
+                    }
+                } else if (type == QuestCounterTopMenuType::Arena) {
+                    if (quest_type & QuestType::ARENA) {
+                        add_quest = true;
+                    }
+                } else if (type == QuestCounterTopMenuType::Kyousei) {
+                    if (quest_type & QuestType::KYOUSEI) {
+                        add_quest = true;
+                    }
                 }
-            } else if (type == QuestCounterTopMenuType::Training) {
-                if (quest_type & QuestType::TRAINING) {
-                    add_quest = true;
-                }
-            } else if (type == QuestCounterTopMenuType::Arena) {
-                if (quest_type & QuestType::ARENA) {
-                    add_quest = true;
-                }
-            } else if (type == QuestCounterTopMenuType::Kyousei) {
-                if (quest_type & QuestType::KYOUSEI) {
-                    add_quest = true;
-                }
-            }
 
-            if (add_quest) {
-                utility::call(list, "Add", id);
+                if (add_quest) {
+                    utility::call(list, "Add", id);
+                }
             }
         }
     }
@@ -660,29 +764,31 @@ API::ManagedObject* QuestLoader::make_questno_list_hook(void* vmctx, API::Manage
     return list;
 }
 
-API::ManagedObject* QuestLoader::make_quest_list_hyakuryu_hook(void* vmctx, API::ManagedObject* this_, API::ManagedObject* src, bool is_village, const int rank) {
+ManagedObject* QuestLoader::make_quest_list_hyakuryu_hook(void* vmctx, ManagedObject* this_, ManagedObject* src, bool is_village, const int rank) {
     const auto loader = get();
-    const auto list = loader->m_make_quest_list_hyakuryu_hook->call_original<API::ManagedObject*>(vmctx, this_, src, is_village, rank);
+    const auto list = loader->m_make_quest_list_hyakuryu_hook->call_original<ManagedObject*>(vmctx, this_, src, is_village, rank);
 
     if (!is_village) {
         for (const auto& [id, quest] : loader->m_custom_quests) {
-            bool add_quest = false;
-            if (utility::call<QuestType>(quest.m_memory_object, "getQuestType") & QuestType::HYAKURYU) {
-                const auto quest_level = utility::call<QuestLevel>(quest.m_memory_object, "getQuestLv");
+            if (!quest.m_is_replacement) {
+                bool add_quest = false;
+                if (utility::call<QuestType>(quest.m_memory_object, "getQuestType") & QuestType::HYAKURYU) {
+                    const auto quest_level = utility::call<QuestLevel>(quest.m_memory_object, "getQuestLv");
 
-                if (rank == 0) { // High
-                    if (quest_level >= QuestLevel::QL_H_HIGH_START) {
-                        add_quest = true;
-                    }
-                } else { // Low
-                    if (quest_level <= QuestLevel::QL_H_LOW_END) {
-                        add_quest = true;
+                    if (rank == 0) { // High
+                        if (quest_level >= QuestLevel::QL_H_HIGH_START) {
+                            add_quest = true;
+                        }
+                    } else { // Low
+                        if (quest_level <= QuestLevel::QL_H_LOW_END) {
+                            add_quest = true;
+                        }
                     }
                 }
-            }
 
-            if (add_quest) {
-                utility::call(list, "Add", quest.m_memory_object);
+                if (add_quest) {
+                    utility::call(list, "Add", quest.m_memory_object);
+                }
             }
         }
     }
@@ -690,14 +796,14 @@ API::ManagedObject* QuestLoader::make_quest_list_hyakuryu_hook(void* vmctx, API:
     return list;
 }
 
-void QuestLoader::quest_counter_awake_hook(void* vmctx, reframework::API::ManagedObject* this_) {
+void QuestLoader::quest_counter_awake_hook(void* vmctx, ManagedObject* this_) {
     const auto loader = get();
     loader->m_quest_counter = this_;
 
     return loader->m_quest_counter_awake_hook->call_original<void>(vmctx, this_);
 }
 
-void QuestLoader::init_quest_data_dict_hook(void* vmctx, reframework::API::ManagedObject* this_) {
+void QuestLoader::init_quest_data_dict_hook(void* vmctx, ManagedObject* this_) {
     const auto loader = get();
 
     loader->m_init_quest_data_dict_hook->call_original<void>(vmctx, this_);

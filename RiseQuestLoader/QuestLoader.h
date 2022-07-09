@@ -17,17 +17,58 @@ public:
         std::string m_description;
         std::string m_target;
 
+        int32_t m_quest_id{0};
+
         reframework::API::ManagedObject* m_memory_object{};
+        reframework::API::ManagedObject* m_original_object{};
+        bool m_is_replacement;
+        bool m_enabled;
+
+        void enable(reframework::API::ManagedObject* questdict) {
+            if (m_is_replacement) {
+                m_enabled = true;
+                utility::call(questdict, "set_Item", m_quest_id, m_memory_object);
+            }
+        }
+
+        void disable(reframework::API::ManagedObject* questdict) {
+            if (m_is_replacement) {
+                m_enabled = false;
+                utility::call(questdict, "set_Item", m_quest_id, m_original_object);
+            }
+        }
+
+        // Only call right before object is destroyed
+        void cleanup(reframework::API::ManagedObject* questdict) {
+            if (m_is_replacement) {
+                m_enabled = false;
+                
+                utility::call(questdict, "set_Item", m_quest_id, m_original_object);
+            } else {
+                utility::call(questdict, "Remove", m_quest_id);
+            }
+        }
 
         CustomQuest() = default;
-        CustomQuest(const nlohmann::json& j, reframework::API::ManagedObject* quest)
-            : m_memory_object(quest) {
+        CustomQuest(const nlohmann::json& j, reframework::API::ManagedObject* quest, reframework::API::ManagedObject* original)
+            : m_memory_object(quest), m_original_object(original) {
+            if (m_original_object) {
+                m_is_replacement = true;
+                m_enabled = true;
+            } else {
+                m_is_replacement = false;
+                m_enabled = false;
+            }
+
+            m_quest_id = j.value("QuestID", 0);
             m_name = j["QuestText"]["Name"];
             m_client = j["QuestText"]["Client"];
             m_description = j["QuestText"]["Description"];
             m_target = j["QuestText"]["Target"];
         }
-        ~CustomQuest() { m_memory_object->release(); }
+        ~CustomQuest() {
+            m_memory_object->release();
+        }
     };
 
     QuestLoader();
@@ -41,6 +82,7 @@ public:
 
 private:
     void parse_quest(const std::filesystem::path& path);
+    [[nodiscard]] bool is_existing_quest(int32_t quest_id) const;
 
     static SystemString* get_quest_text_hook(void* vmctx, reframework::API::ManagedObject* this_, QuestText type, void* qi);
     static reframework::API::ManagedObject* make_questno_list_hook(
