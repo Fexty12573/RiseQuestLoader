@@ -1,6 +1,9 @@
 #pragma once
 
 #include "API.hpp"
+#include "API.hpp"
+#include "API.hpp"
+#include "API.hpp"
 
 #include <memory>
 #include <string>
@@ -15,7 +18,39 @@ public:
     wchar_t data[256];  // 0x0014
 };
 
+template <class T> class SystemArray {
+public:
+    void* object_info;      // 0x0000
+    uint32_t ref_count;     // 0x0008
+    int32_t _0;             // 0x000C
+    void* contained_type;   // 0x0010
+    uint32_t _1;            // 0x0018
+    uint32_t count;         // 0x001C
+    T elements[1];          // 0x0020
+};
+
+template <class T> class REArray;
+
+
 namespace utility {
+
+template <class T>
+REArray<T>* to_re_array(reframework::API::ManagedObject* obj) {
+    return reinterpret_cast<REArray<T>*>(obj);
+}
+
+template <class T> const REArray<T>* to_re_array(const reframework::API::ManagedObject* obj) {
+    return reinterpret_cast<const REArray<T>*>(obj);
+}
+
+template <class T>
+reframework::API::ManagedObject* to_managed_object(REArray<T>* array) {
+    return reinterpret_cast<reframework::API::ManagedObject*>(array);
+}
+
+template <class T> const reframework::API::ManagedObject* to_managed_object(const REArray<T>* array) {
+    return reinterpret_cast<const reframework::API::ManagedObject*>(array);
+}
 
 template <class T = reframework::API::ManagedObject*, class... Args>
 T call(reframework::API::ManagedObject* obj, std::string_view name, Args... args) {
@@ -78,3 +113,26 @@ reframework::API::ManagedObject* create_managed_array(std::string_view type, siz
 reframework::API::ManagedObject* create_managed_array(const reframework::API::TypeDefinition* type, size_t length);
 
 } // namespace utility
+
+template <class T> class REArray : SystemArray<T> {
+public:
+    using iterator = T*;
+    using const_iterator = const T*;
+
+    [[nodiscard]] size_t size() const { return SystemArray<T>::count; }
+    const T& at(size_t idx) const { return SystemArray<T>::elements[idx]; }
+    T& at(size_t idx) { return SystemArray<T>::elements[idx]; }
+
+    T get_item(uint32_t idx) const { return utility::call<T>(utility::to_managed_object(this), "get_Item", idx); }
+    void set_item(uint32_t idx, const T& value) { return utility::call(utility::to_managed_object(this), "set_Item", idx, value); }
+
+    iterator begin() { return &SystemArray<T>::elements[0]; }
+    const_iterator begin() const { return &SystemArray<T>::elements[0]; }
+    iterator end() { return SystemArray<T>::elements + size(); }
+    const_iterator end() const { return SystemArray<T>::elements + size(); }
+
+    [[nodiscard]] bool contains(const T& value) { return utility::call<bool>(utility::to_managed_object(this), "Contains", value); }
+
+    const T& operator[](size_t idx) const { return at(idx); }
+    T& operator[](size_t idx) { return at(idx); }
+};

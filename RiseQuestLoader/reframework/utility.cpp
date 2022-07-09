@@ -36,7 +36,7 @@ utility::Pattern utility::make_pattern(std::string_view pattern) {
     
     Pattern p{};
 
-    for (auto i = 0u; i < len; ++i) {
+    for (auto i = 0ull; i < len; ++i) {
         const char c = str[i];
 
         if (c != '?') {
