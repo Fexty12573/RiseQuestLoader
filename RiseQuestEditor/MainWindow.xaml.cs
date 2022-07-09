@@ -150,6 +150,51 @@ namespace RiseQuestEditor
             RemoveUnsavedChanges();
         }
 
+        private void NewFile(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (_hasUnsavedChanges)
+            {
+                var result = WarnUnsavedChanges();
+
+                if (result == MessageBoxResult.Yes && _currentFile != "")
+                {
+                    SaveFile(null, null);
+                }
+                else if (result == MessageBoxResult.Cancel)
+                {
+                    return;
+                }
+            }
+
+            _customQuest = new CustomQuest();
+            PopulateEditorFields();
+
+            SaveFileDialog dlg = new()
+            {
+                CheckFileExists = false,
+                CheckPathExists = false,
+                AddExtension = true,
+                Filter = "Quest Files | *.json",
+                Title = "Save Quest File"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                string path = Path.GetDirectoryName(dlg.FileName)!;
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                _currentFile = dlg.FileName;
+                Title = "Monster Hunter Rise Quest Editor - " + System.IO.Path.GetFileName(_currentFile);
+
+                using StreamWriter writer = new(_currentFile, false, Encoding.UTF8);
+                writer.Write(JsonConvert.SerializeObject(_customQuest, Formatting.Indented, new ByteArrayJsonConverter()));
+                RemoveUnsavedChanges();
+            }
+        }
+
         private void OpenFile(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog dlg = new()

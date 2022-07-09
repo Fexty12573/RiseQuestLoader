@@ -24,6 +24,15 @@ namespace RiseQuestEditor
         {
             return RampageData != null;
         }
+
+        public CustomQuest()
+        {
+            QuestID = 0;
+            QuestText = new QuestText();
+            QuestData = new QuestData();
+            EnemyData = new EnemyData();
+            RampageData = null;
+        }
     }
 
     public class ByteArrayJsonConverter : JsonConverter
@@ -69,6 +78,17 @@ namespace RiseQuestEditor
         public string? DebugName;
         public string? DebugClient;
         public string? DebugDescription;
+
+        public QuestText()
+        {
+            Name = "";
+            Client = "";
+            Description = "";
+            Target = "";
+            DebugName = "";
+            DebugClient = "";
+            DebugDescription = "";
+        }
     }
 
     public class QuestData
@@ -148,17 +168,28 @@ namespace RiseQuestEditor
 
         public QuestData()
         {
+            Reward = new Rewards();
+            ArenaParam = new ArenaParameters();
             QuestConditions = new QuestOrderType[2];
             TargetTypes = new QuestTargetType[2];
             TargetMonsters = new uint[2];
             TargetItemIds = new uint[2];
             TargetAmounts = new uint[2];
-            Monsters = new Monster[7];
+            Monsters = new Monster[7]
+            {
+                new Monster(),
+                new Monster(),
+                new Monster(),
+                new Monster(),
+                new Monster(),
+                new Monster(),
+                new Monster()
+            };
             SwapFrequencies = new byte[2];
             SwapConditions = new SwapSetCondition[2];
             SwapParams = new byte[2];
             SwapExitTimes = new byte[2];
-            Icons = new int[5];
+            Icons = new int[5] { 999, 999, 999, 999, 999 };
         }
     }
 
@@ -198,6 +229,23 @@ namespace RiseQuestEditor
             public int SizeTable { get; set; }
             public NandoYuragi Difficulty { get; set; }
             public byte MultiTable { get; set; }
+
+            public MonsterData()
+            {
+                PathId = 0;
+                SetName = "";
+                SubType = 0;
+                IndividualType = EnemyIndividualType.Normal;
+                HealthTable = 0;
+                AttackTable = 0;
+                PartTable = 0;
+                OtherTable = 0;
+                StaminaTable = 0;
+                Size = 100;
+                SizeTable = 0;
+                Difficulty = NandoYuragi.False;
+                MultiTable = 0;
+            }
         }
 
         public SmallMonsterData SmallMonsters { get; set; }
@@ -205,7 +253,16 @@ namespace RiseQuestEditor
 
         public EnemyData()
         {
-            Monsters = new MonsterData[7];
+            Monsters = new MonsterData[7]
+            {
+                new MonsterData(),
+                new MonsterData(),
+                new MonsterData(),
+                new MonsterData(),
+                new MonsterData(),
+                new MonsterData(),
+                new MonsterData()
+            };
         }
     }
 
@@ -250,7 +307,12 @@ namespace RiseQuestEditor
 
         public RampageData()
         {
-            Waves = new WaveData[3];
+            Waves = new WaveData[3]
+            {
+                new WaveData(),
+                new WaveData(),
+                new WaveData()
+            };
             SubTargets = new QuestTargetType[6];
         }
     }

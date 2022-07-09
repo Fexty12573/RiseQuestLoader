@@ -7,12 +7,14 @@
         mc:Ignorable="d"
         Title="Monster Hunter Rise Quest Editor" Height="620" Width="770" Icon="/dSR3vpg.png" Drop="Window_Drop" AllowDrop="True">
     <Window.CommandBindings>
-        <CommandBinding Command="Open" Executed="OpenFile"/>
+        <CommandBinding Command="New" Executed="NewFile"/>
+	    <CommandBinding Command="Open" Executed="OpenFile"/>
         <CommandBinding Command="Save" Executed="SaveFile"/>
         <CommandBinding Command="SaveAs" Executed="SaveFileAs"/>
         <CommandBinding Command="Close" Executed="ExitProgram"/>
     </Window.CommandBindings>
     <Window.InputBindings>
+        <KeyBinding Command="New" Key="N" Modifiers="Ctrl"/>
 		<KeyBinding Command="Open" Key="O" Modifiers="Ctrl"/>
         <KeyBinding Command="Save" Key="S" Modifiers="Ctrl"/>
         <KeyBinding Command="SaveAs" Key="S" Modifiers="Ctrl+Shift"/>
@@ -54,7 +56,8 @@
             </Grid.RowDefinitions>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_Open" Name="OpenFileButton" Command="Open" InputGestureText="Ctrl+O"/>
+                    <MenuItem Header="_New" Name="NewFileButton" Command="New" InputGestureText="Ctrl+N"/>
+	                <MenuItem Header="_Open" Name="OpenFileButton" Command="Open" InputGestureText="Ctrl+O"/>
                     <MenuItem Header="_Save" Name="SaveFileButton" Command="Save" InputGestureText="Ctrl+S"/>
                     <MenuItem Header="S_ave As" Name="SaveFileAsButton" Command="SaveAs" InputGestureText="Ctrl+Shift+S"/>
                     <MenuItem Header="_Close" Name="ExitProgramButton" Command="Close" InputGestureText="Ctrl+Q"/>
