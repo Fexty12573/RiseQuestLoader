@@ -11,7 +11,7 @@
 
 using namespace reframework;
 using REGenericFunction = void*(*)(...);
-
+std::mutex g_entry_mutex{};
 
 bool initialize() {
     if (g_initialized) {
@@ -51,10 +51,24 @@ bool initialize() {
 }
 
 inline void imgui_render() {
+    std::lock_guard _{g_entry_mutex};
+    if (!g_initialized) {
+        if (!initialize()) {
+            return;
+        }
+    }
+
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
     QuestLoader::get()->render_ui();
+
+    ImGui::EndFrame();
+    ImGui::Render();
 }
 
 void on_present() {
+    std::lock_guard _{g_entry_mutex};
     if (!g_initialized) {
         if (!initialize()) {
             return;
@@ -65,14 +79,6 @@ void on_present() {
 
     if (renderer->renderer_type == REFRAMEWORK_RENDERER_D3D11) {
         ImGui_ImplDX11_NewFrame();
-        ImGui_ImplWin32_NewFrame();
-        ImGui::NewFrame();
-
-        imgui_render();
-
-        ImGui::EndFrame();
-        ImGui::Render();
-
         g_d3d11.render_imgui();
     } else if (renderer->renderer_type == REFRAMEWORK_RENDERER_D3D12) {
         const auto command_queue = static_cast<ID3D12CommandQueue*>(renderer->command_queue);
@@ -82,14 +88,6 @@ void on_present() {
         }
 
         ImGui_ImplDX12_NewFrame();
-        ImGui_ImplWin32_NewFrame();
-        ImGui::NewFrame();
-
-        imgui_render();
-
-        ImGui::EndFrame();
-        ImGui::Render();
-
         g_d3d12.render_imgui();
     }
 }
@@ -135,6 +133,7 @@ __declspec(dllexport) bool reframework_plugin_initialize(const REFrameworkPlugin
     funcs->on_message(reinterpret_cast<REFOnMessageCb>(on_message));
     funcs->on_device_reset(on_device_reset);
     funcs->on_present(on_present);
+    funcs->on_pre_application_entry("BeginRendering", imgui_render);
 
     return true;
 }
