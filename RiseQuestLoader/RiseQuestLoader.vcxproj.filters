@@ -116,4 +116,9 @@
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Xsd Include="notes.txt">
+      <Filter>Resource Files</Filter>
+    </Xsd>
+  </ItemGroup>
 </Project>

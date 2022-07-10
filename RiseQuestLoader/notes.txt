@@ -1,0 +1,8 @@
+﻿so this 100 HR points is actual 100 HR points, but 80% MR points, so 80
+
+couldn't find my quest in the quest list, so changed it from 5* to 4* after leaving the menu, loaded up 5* quests again and crashed
+
+
+TODO:
+- make quest time a dropdown
+- 
