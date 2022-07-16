@@ -82,10 +82,10 @@ namespace RiseQuestEditor
             public QuestInfo_(string indentifier)
             {
                 Language = indentifier;
-                Name = "N/A";
-                Client = "N/A";
-                Description = "N/A";
-                Target = "N/A";
+                Name = "";
+                Client = "";
+                Description = "";
+                Target = "";
             }
         }
 

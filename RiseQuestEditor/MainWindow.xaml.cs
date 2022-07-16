@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Media;
 using System.ComponentModel;
 using WPFCustomMessageBox;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace RiseQuestEditor
@@ -687,7 +688,16 @@ namespace RiseQuestEditor
 
                 text.FallbackLanguage = EnumHelper.Languages[FallbackLanguage.SelectedIndex].Identifier;
 
-                _customQuest.QuestText = text;
+                List<int> toRemove = new();
+                for (int i = 0; i < text.QuestInfo.Count; i++)
+                {
+                    var info = text.QuestInfo[i];
+                    if (info.Name == "" && info.Client == "" && info.Description == "" && info.Target == "")
+                        toRemove.Add(i);
+                }
+
+                foreach (int n in toRemove)
+                    text.QuestInfo.RemoveAt(n);
             }
 
             if (_customQuest.RampageData != null)
@@ -1000,10 +1010,10 @@ Thanks:
                 {
                     text.QuestInfo.Add(new QuestText.QuestInfo_(newLang.Identifier));
 
-                    QuestName.Text = "N/A";
-                    QuestClient.Text = "N/A";
-                    QuestDesc.Text = "N/A";
-                    QuestTarget.Text = "N/A";
+                    QuestName.Text = "";
+                    QuestClient.Text = "";
+                    QuestDesc.Text = "";
+                    QuestTarget.Text = "";
                 }
 
                 _selectedLanguage = newIndex;
