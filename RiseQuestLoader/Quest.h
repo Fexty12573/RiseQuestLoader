@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 enum class QuestCounterTopMenuType : int32_t {
     Normal_Vil = 0,

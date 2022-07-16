@@ -1,8 +1,8 @@
 #pragma once
 
 #include "FunctionHook.h"
-#include "QuestExporter.h"
 #include "Quest.h"
+#include "QuestExporter.h"
 
 #include <filesystem>
 #include <memory>
@@ -12,10 +12,15 @@
 class QuestLoader {
 public:
     struct CustomQuest {
-        std::string m_name;
-        std::string m_client;
-        std::string m_description;
-        std::string m_target;
+        struct QuestInfo {
+            std::string m_name;
+            std::string m_client;
+            std::string m_description;
+            std::string m_target;
+        };
+
+        std::map<GameLanguage, QuestInfo> m_quest_infos;
+        GameLanguage m_fallback_language{GameLanguage::NONE};
 
         int32_t m_quest_id{0};
 
@@ -49,10 +54,20 @@ public:
             }
         }
 
+        [[nodiscard]] const QuestInfo& get_quest_info(GameLanguage language = GameLanguage::NONE) const {
+            if (language == GameLanguage::NONE || !m_quest_infos.contains(language)) {
+                return m_quest_infos.at(m_fallback_language);
+            }
+
+            return m_quest_infos.at(language);
+        }
+
         CustomQuest() = default;
         CustomQuest(const nlohmann::json& j, reframework::API::ManagedObject* quest, reframework::API::ManagedObject* original)
             : m_memory_object(quest), m_original_object(original) {
+            m_memory_object->add_ref();
             if (m_original_object) {
+                m_original_object->add_ref();
                 m_is_replacement = true;
                 m_enabled = true;
             } else {
@@ -61,13 +76,22 @@ public:
             }
 
             m_quest_id = j.value("QuestID", 0);
-            m_name = j["QuestText"]["Name"];
-            m_client = j["QuestText"]["Client"];
-            m_description = j["QuestText"]["Description"];
-            m_target = j["QuestText"]["Target"];
+            m_fallback_language = language::get_language(j["QuestText"]["FallbackLanguage"]);
+
+            for (const auto& info : j["QuestText"]["QuestInfo"]) {
+                m_quest_infos[language::get_language(info["Language"])] = {
+                    info["Name"],
+                    info["Client"],
+                    info["Description"],
+                    info["Target"]
+                };
+            }
         }
         ~CustomQuest() {
             m_memory_object->release();
+            if (m_original_object) {
+                m_original_object->release();
+            }
         }
     };
 
@@ -91,6 +115,7 @@ private:
         void* vmctx, reframework::API::ManagedObject* this_, reframework::API::ManagedObject* src, bool is_village, const int rank);
     static void quest_counter_awake_hook(void* vmctx, reframework::API::ManagedObject* this_);
     static void init_quest_data_dict_hook(void* vmctx, reframework::API::ManagedObject* this_);
+    static const wchar_t* get_message_hook(void* this_, _GUID* guid, GameLanguage language);
 
 private:
     bool m_initialized = false;
@@ -116,6 +141,7 @@ private:
     std::shared_ptr<utility::FunctionHook> m_make_quest_list_hyakuryu_hook{};
     std::shared_ptr<utility::FunctionHook> m_quest_counter_awake_hook{};
     std::shared_ptr<utility::FunctionHook> m_init_quest_data_dict_hook{};
+    std::shared_ptr<utility::FunctionHook> m_get_message_hook{};
 
     std::unordered_map<int32_t, CustomQuest> m_custom_quests;
 };

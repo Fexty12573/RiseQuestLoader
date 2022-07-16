@@ -1,5 +1,4 @@
 #include "QuestExporter.h"
-#include "Quest.h"
 
 using namespace reframework;
 
@@ -22,11 +21,16 @@ bool QuestExporter::initialize() {
         return false;
     }
 
+    m_message_manager = API::get()->get_managed_singleton("snow.gui.MessageManager");
+    if (!m_message_manager) {
+        return false;
+    }
+
     m_initialized = true;
     return true;
 }
 
-nlohmann::ordered_json QuestExporter::export_quest(int32_t quest_id) const {
+nlohmann::ordered_json QuestExporter::export_quest(int32_t quest_id) {
     if (!m_initialized) {
         return {};
     }
@@ -46,11 +50,26 @@ nlohmann::ordered_json QuestExporter::export_quest(int32_t quest_id) const {
         auto rampage = nlohmann::ordered_json::object();
 
         // QuestText
-        text["Name"] = utility::str_call(quest, "getQuestText", QuestText::TITLE, nullptr);
-        text["Client"] = utility::str_call(quest, "getQuestText", QuestText::CLIENT, nullptr);
-        text["Description"] = utility::str_call(quest, "getQuestText", QuestText::REQUEST, nullptr);
-        text["Target"] = utility::str_call(quest, "getQuestText", QuestText::TARGET, nullptr);
 
+        text["QuestInfo"] = nlohmann::ordered_json::array();
+
+        for (const auto& [language, identifier] : language::s_language_identifiers) {
+            if (language != GameLanguage::NONE) {
+                m_override_language = language;
+                auto entry = nlohmann::ordered_json::object();
+
+                entry["Language"] = identifier;
+                entry["Name"] = utility::str_call(quest, "getQuestText", QuestText::TITLE, nullptr);
+                entry["Client"] = utility::str_call(quest, "getQuestText", QuestText::CLIENT, nullptr);
+                entry["Description"] = utility::str_call(quest, "getQuestText", QuestText::REQUEST, nullptr);
+                entry["Target"] = utility::str_call(quest, "getQuestText", QuestText::TARGET, nullptr);
+
+                text["QuestInfo"].push_back(entry);
+            }
+        }
+
+        m_override_language = GameLanguage::NONE;
+        text["FallbackLanguage"] = language::get_language_identifier(GameLanguage::ENG);
         q["QuestText"] = text;
 
         // QuestData
@@ -275,7 +294,7 @@ nlohmann::ordered_json QuestExporter::export_quest(int32_t quest_id) const {
     return {};
 }
 
-std::vector<nlohmann::ordered_json> QuestExporter::export_all_quests() const {
+std::vector<nlohmann::ordered_json> QuestExporter::export_all_quests() {
     if (!m_initialized) {
         return {};
     }
@@ -305,4 +324,3 @@ std::vector<nlohmann::ordered_json> QuestExporter::export_all_quests() const {
 
     return quests;
 }
-

@@ -75,6 +75,9 @@
     <ClInclude Include="Quest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Language.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui_impl_dx11.cpp">
@@ -94,9 +97,6 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OutputDebugStringBuf.h">
-      <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="reframework\utility.cpp">
       <Filter>Header Files\dependencies\reframework</Filter>

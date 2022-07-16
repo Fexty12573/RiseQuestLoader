@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>FMT_HEADER_ONLY;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -153,6 +153,7 @@
     <ClInclude Include="imgui\imgui_impl_dx12.h" />
     <ClInclude Include="imgui\imgui_impl_win32.h" />
     <ClInclude Include="imgui\re2_imconfig.hpp" />
+    <ClInclude Include="Language.h" />
     <ClInclude Include="Plugin.h" />
     <ClInclude Include="Quest.h" />
     <ClInclude Include="QuestExporter.h" />
@@ -170,7 +171,6 @@
     <ClCompile Include="imgui\imgui_impl_dx12.cpp" />
     <ClCompile Include="imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="OutputDebugStringBuf.h" />
     <ClCompile Include="QuestExporter.cpp" />
     <ClCompile Include="QuestLoader.cpp" />
     <ClCompile Include="reframework\utility.cpp" />
