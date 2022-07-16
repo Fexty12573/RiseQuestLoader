@@ -1,22 +1,11 @@
 #pragma once
 
 #include "API.hpp"
-#include "API.hpp"
-#include "API.hpp"
-#include "API.hpp"
 
 #include <memory>
 #include <string>
 
-class SystemString {
-public:
-    void* object_info;  // 0x0000
-    uint32_t ref_count; // 0x0008
-    int16_t _0;         // 0x000C
-    char _1[2];         // 0x000E
-    int32_t size;       // 0x0010
-    wchar_t data[256];  // 0x0014
-};
+class SystemString;
 
 template <class T> class SystemArray {
 public:
@@ -33,6 +22,8 @@ template <class T> class REArray;
 
 
 namespace utility {
+
+void log(const std::string& msg);
 
 template <class T>
 REArray<T>* to_re_array(reframework::API::ManagedObject* obj) {
@@ -113,6 +104,21 @@ reframework::API::ManagedObject* create_managed_array(std::string_view type, siz
 reframework::API::ManagedObject* create_managed_array(const reframework::API::TypeDefinition* type, size_t length);
 
 } // namespace utility
+
+class SystemString
+{
+public:
+    void* object_info;  // 0x0000
+    uint32_t ref_count; // 0x0008
+    int16_t _0;         // 0x000C
+    char _1[2];         // 0x000E
+    int32_t size;       // 0x0010
+    wchar_t data[256];  // 0x0014
+
+    [[nodiscard]] std::string to_str() const { return utility::narrow(data); }
+    [[nodiscard]] std::wstring to_wstr() const { return data; }
+    [[nodiscard]] std::wstring_view to_view() const { return data; }
+};
 
 template <class T> class REArray : SystemArray<T> {
 public:

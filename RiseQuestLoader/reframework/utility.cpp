@@ -5,6 +5,14 @@
 #include <Windows.h>
 #include <Psapi.h>
 
+#define DEBUG_LOG 1
+
+void utility::log(const std::string& msg) {
+#if DEBUG_LOG
+    OutputDebugStringA(("[QuestLoader] " + msg).c_str());
+#endif
+}
+
 std::string utility::narrow(std::wstring_view str) {
     const auto length = WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.length()), nullptr, 0, nullptr, nullptr);
     std::string narrowStr{};
