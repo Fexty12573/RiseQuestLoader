@@ -3,6 +3,9 @@
 couldn't find my quest in the quest list, so changed it from 5* to 4* after leaving the menu, loaded up 5* quests again and crashed
 
 
+
+@Silvris#5472 Regarding the text tags, there's a lot of them (31 in total), but I don't have the exact tags for them so idk.
+
 TODO:
 - make quest time a dropdown
 - 

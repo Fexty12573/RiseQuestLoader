@@ -109,7 +109,6 @@ void on_device_reset() {
 }
 
 bool on_message(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
-    //OutputDebugString(TEXT("[FEXTY] on_message"));
     ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam);
 
     return !ImGui::GetIO().WantCaptureMouse && !ImGui::GetIO().WantCaptureKeyboard;
@@ -142,7 +141,7 @@ __declspec(dllexport) bool reframework_plugin_initialize(const REFrameworkPlugin
 
 BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID) {
     if (reason == DLL_PROCESS_ATTACH) {
-        redirect_cout();
+        utility::log("Loaded");
     }
 
     return TRUE;
@@ -210,17 +209,4 @@ void set_imgui_style() noexcept {
     fonts->Clear();
     fonts->AddFontFromMemoryCompressedTTF(RobotoMedium_compressed_data, RobotoMedium_compressed_size, 16.0f);
     fonts->Build();
-}
-
-void redirect_cout() {
-#if REDIRECT_COUT && defined(_WIN32)
-    static OutputDebugStringBuf<char> charStringBuf;
-    static OutputDebugStringBuf<wchar_t> wcharStringBuf;
-
-    std::cout.rdbuf(&charStringBuf);
-    std::cerr.rdbuf(&charStringBuf);
-
-    std::wcout.rdbuf(&wcharStringBuf);
-    std::wcerr.rdbuf(&wcharStringBuf);
-#endif
 }

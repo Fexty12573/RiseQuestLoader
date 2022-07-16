@@ -52,14 +52,14 @@ private:
     template <> struct MessageOutputer<char, std::char_traits<char>> {
         template <typename TIterator> void operator()(TIterator begin, TIterator end) const {
             const std::string s(begin, end);
-            OutputDebugStringA(s.c_str());
+            OutputDebugStringA(("[F] " + s).c_str());
         }
     };
 
     template <> struct MessageOutputer<wchar_t, std::char_traits<wchar_t>> {
         template <typename TIterator> void operator()(TIterator begin, TIterator end) const {
             const std::wstring s(begin, end);
-            OutputDebugStringW(s.c_str());
+            OutputDebugStringW((L"[F] " + s).c_str());
         }
     };
 };
