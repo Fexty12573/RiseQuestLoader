@@ -265,4 +265,49 @@ namespace RiseQuestEditor
         Normal = 0,
         Mystery = 1
     }
+
+    namespace via.gui.MessageTag
+    {
+        public enum Type
+        {
+            Unknown = 0,
+            Page = 1,               // <PAGE>
+            Line = 2,               // <LINE>
+            Size = 3,               // <SIZE #></SIZE>
+            Font = 4,               // <FONT ...></FONT>
+            Color = 5,              // <COLOR></COLOR>
+            Char = 6,               // <CHAR ???>
+            Space = 7,              // <BLANK>
+            Wordwrap = 8,           // <WRAP>
+            Center = 9,             // <CENTER></CENTER>
+            Left = 10,              // <LEFT></LEFT>
+            Right = 11,             // <RIGHT></RIGHT>
+            Top = 12,               // <TOP></TOP>
+            Bottom = 13,            // <BOTTOM></BOTTOM>
+            Time = 14,              // <TIME>
+            Ruby = 15,              // <RUBY></RUBY>
+            RubyB = 16,             // <RUBYB></RUBYB>
+            RubyRB = 17,            // <RB></RB>
+            RubyRT = 18,            // <RT></RT>
+            Event = 19,             // <EVENT ???>
+            TCU = 20,               // <TCU></TCU>
+            Draw = 21,              // ???
+            GlowDraw = 22,          // ???
+            ShadowDraw = 23,        // ???
+            DistanceFieldDraw = 24, // ???
+            Sprite = 25,            // <SPRITE ???>
+            Baseline = 26,          // <BSL></BSL>
+            Glow = 27,              // <GLOW></GLOW>
+            Shadow = 28,            // <SHADOW></SHADOW>
+            DistanceField = 29,     // ???
+            Italic = 30,            // <ITALIC></ITALIC>
+            Bold = 31,              // <BOLD></BOLD>
+        }
+        
+        // Other:
+        // <LSNR {M}{F}>
+        // <SPKR {M}{F}>
+        // <REF ???/>
+        // <ICON NAME>
+    }
 }

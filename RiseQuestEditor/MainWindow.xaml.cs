@@ -24,6 +24,7 @@ namespace RiseQuestEditor
         private CustomQuest? _customQuest;
         private string _currentFile;
         private bool _hasUnsavedChanges;
+        private int _selectedLanguage;
 
         public MainWindow()
         {
@@ -120,9 +121,16 @@ namespace RiseQuestEditor
             Wave3Monster3.ItemsSource = EnumHelper.Monster;
             Wave3Monster4.ItemsSource = EnumHelper.Monster;
 
+            GameLanguage.ItemsSource = EnumHelper.Languages;
+            FallbackLanguage.ItemsSource = EnumHelper.Languages;
+
+            GameLanguage.DisplayMemberPath = "Value.Name";
+            FallbackLanguage.DisplayMemberPath = "Value.Name";
+
             RemoveUnsavedChanges();
 
             _currentFile = "";
+            _selectedLanguage = 0;
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -450,10 +458,21 @@ namespace RiseQuestEditor
             {
                 QuestText text = _customQuest.QuestText;
 
-                QuestName.Text = text.Name;
-                QuestClient.Text = text.Client;
-                QuestDesc.Text = text.Description;
-                QuestTarget.Text = text.Target;
+                foreach (var info in text.QuestInfo)
+                {
+                    if (info.Language == text.FallbackLanguage)
+                    {
+                        QuestName.Text = info.Name;
+                        QuestClient.Text = info.Client;
+                        QuestDesc.Text = info.Description;
+                        QuestTarget.Text = info.Target;
+                    }
+                }
+
+                int index = EnumHelper.GetLanguageIndex(text.FallbackLanguage!);
+                _selectedLanguage = index;
+                GameLanguage.SelectedIndex = index;
+                FallbackLanguage.SelectedIndex = index;
             }
 
             if (_customQuest.RampageData != null)
@@ -651,10 +670,22 @@ namespace RiseQuestEditor
             {
                 QuestText text = _customQuest.QuestText;
 
-                text.Name = QuestName.Text;
-                text.Client = QuestClient.Text;
-                text.Description = QuestDesc.Text;
-                text.Target = QuestTarget.Text;
+                for (int i = 0; i < text.QuestInfo.Count; i++)
+                {
+                    var info = text.QuestInfo[i];
+                    if (info.Language == EnumHelper.Languages[GameLanguage.SelectedIndex].Identifier)
+                    {
+                        info.Name = QuestName.Text;
+                        info.Client = QuestClient.Text;
+                        info.Description = QuestDesc.Text;
+                        info.Target = QuestTarget.Text;
+                        text.QuestInfo[i] = info;
+
+                        break;
+                    }
+                }
+
+                text.FallbackLanguage = EnumHelper.Languages[FallbackLanguage.SelectedIndex].Identifier;
 
                 _customQuest.QuestText = text;
             }
@@ -692,6 +723,7 @@ namespace RiseQuestEditor
                 data.SubTargets[3] = (QuestTargetType)(int)RampageSubTarget4.SelectedValue;
                 data.SubTargets[4] = (QuestTargetType)(int)RampageSubTarget5.SelectedValue;
                 data.SubTargets[5] = (QuestTargetType)(int)RampageSubTarget6.SelectedValue;
+                
 
                 for (int i = 0; i < 3; i++)
                 {
@@ -923,6 +955,58 @@ Thanks:
             {
                 var files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 LoadFile(files[0]);
+            }
+        }
+
+        private void GameLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_customQuest != null)
+            {
+                var text = _customQuest.QuestText!;
+                for (int i = 0; i < text.QuestInfo.Count; i++)
+                {
+                    var info = text.QuestInfo[i];
+                    if (info.Language == EnumHelper.Languages[_selectedLanguage].Identifier)
+                    {
+                        info.Name = QuestName.Text;
+                        info.Client = QuestClient.Text;
+                        info.Description = QuestDesc.Text;
+                        info.Target = QuestTarget.Text;
+                        text.QuestInfo[i] = info;
+
+                        break;
+                    }
+                }
+
+                int newIndex = GameLanguage.SelectedIndex;
+                Language newLang = EnumHelper.Languages[newIndex];
+
+                bool found = false;
+                foreach (var info in text.QuestInfo)
+                {
+                    if (info.Language == newLang.Identifier)
+                    {
+                        found = true;
+                        QuestName.Text = info.Name;
+                        QuestClient.Text = info.Client;
+                        QuestDesc.Text = info.Description;
+                        QuestTarget.Text = info.Target;
+
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    text.QuestInfo.Add(new QuestText.QuestInfo_(newLang.Identifier));
+
+                    QuestName.Text = "N/A";
+                    QuestClient.Text = "N/A";
+                    QuestDesc.Text = "N/A";
+                    QuestTarget.Text = "N/A";
+                }
+
+                _selectedLanguage = newIndex;
             }
         }
     }

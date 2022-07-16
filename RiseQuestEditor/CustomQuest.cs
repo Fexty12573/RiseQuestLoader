@@ -71,20 +71,35 @@ namespace RiseQuestEditor
 
     public class QuestText
     {
-        public string? Name;
-        public string? Client;
-        public string? Description;
-        public string? Target;
+        public struct QuestInfo_
+        {
+            public string? Language;
+            public string? Name;
+            public string? Client;
+            public string? Description;
+            public string? Target;
+
+            public QuestInfo_(string indentifier)
+            {
+                Language = indentifier;
+                Name = "N/A";
+                Client = "N/A";
+                Description = "N/A";
+                Target = "N/A";
+            }
+        }
+
+        public List<QuestInfo_> QuestInfo;
+        public string? FallbackLanguage;
         public string? DebugName;
         public string? DebugClient;
         public string? DebugDescription;
 
         public QuestText()
         {
-            Name = "";
-            Client = "";
-            Description = "";
-            Target = "";
+            QuestInfo = new List<QuestInfo_>();
+
+            FallbackLanguage = "ENG";
             DebugName = "";
             DebugClient = "";
             DebugDescription = "";

@@ -1,0 +1,67 @@
+﻿[
+    {
+        "Id": 0,
+        "Identifier": "JPN",
+        "Name": "Japanese"
+    },
+    {
+        "Id": 1,
+        "Identifier": "ENG",
+        "Name": "English"
+    },
+    {
+        "Id": 2,
+        "Identifier": "FRE",
+        "Name": "French"
+    },
+    {
+        "Id": 3,
+        "Identifier": "ITA",
+        "Name": "Italian"
+    },
+    {
+        "Id": 4,
+        "Identifier": "GER",
+        "Name": "German"
+    },
+    {
+        "Id": 5,
+        "Identifier": "SPA",
+        "Name": "Spanish"
+    },
+    {
+        "Id": 6,
+        "Identifier": "RUS",
+        "Name": "Russian"
+    },
+    {
+        "Id": 7,
+        "Identifier": "POL",
+        "Name": "Polish"
+    },
+    {
+        "Id": 10,
+        "Identifier": "POR",
+        "Name": "Portuguese"
+    },
+    {
+        "Id": 11,
+        "Identifier": "KOR",
+        "Name": "Korean"
+    },
+    {
+        "Id": 12,
+        "Identifier": "ZHT",
+        "Name": "Chinese (Traditional)"
+    },
+    {
+        "Id": 13,
+        "Identifier": "ZHS",
+        "Name": "Chinese (Simplified)"
+    },
+    {
+        "Id": 21,
+        "Identifier": "ARA",
+        "Name": "Arabic"
+    }
+]

@@ -1111,16 +1111,17 @@
 	                        <Grid.RowDefinitions>
 		                        <RowDefinition Height="20*"/>
 		                        <RowDefinition Height="20*"/>
-		                        <RowDefinition Height="100*"/>
 		                        <RowDefinition Height="20*"/>
+		                        <RowDefinition Height="100*"/>
 		                        <RowDefinition Height="20*"/>
 		                        <RowDefinition Height="20*"/>
 		                        <RowDefinition Height="20*"/>
 	                        </Grid.RowDefinitions>
 
-                            <TextBox Grid.Row="0" Name="QuestName" HorizontalContentAlignment="Left" Margin="5" Text=""/>
-                            <TextBox Grid.Row="1" Name="QuestClient" HorizontalContentAlignment="Left" Margin="5" Text=""/>
-                            <TextBox Grid.Row="2" Name="QuestDesc" VerticalAlignment="Stretch" Text="">
+                            <ComboBox Grid.Row="0" Name="GameLanguage" Margin="5" SelectionChanged="GameLanguage_SelectionChanged"/>
+                            <TextBox Grid.Row="1" Name="QuestName" HorizontalContentAlignment="Left" Margin="5" Text=""/>
+                            <TextBox Grid.Row="2" Name="QuestClient" HorizontalContentAlignment="Left" Margin="5" Text=""/>
+                            <TextBox Grid.Row="3" Name="QuestDesc" VerticalAlignment="Stretch" Text="">
 	                            <TextBox.HorizontalContentAlignment>Left</TextBox.HorizontalContentAlignment>
                                 <TextBox.VerticalContentAlignment>Top</TextBox.VerticalContentAlignment>
                                 <TextBox.Margin>5</TextBox.Margin>
@@ -1129,12 +1130,15 @@
                                 <TextBox.Height>Auto</TextBox.Height>
                                 <TextBox.VerticalScrollBarVisibility>Auto</TextBox.VerticalScrollBarVisibility>
                             </TextBox>
-                            <TextBox Grid.Row="3" Name="QuestTarget" HorizontalContentAlignment="Left" Margin="5" Text=""/>
+                            <TextBox Grid.Row="4" Name="QuestTarget" HorizontalContentAlignment="Left" Margin="5" Text=""/>
+                            <ComboBox Grid.Row="6" Name="FallbackLanguage" Margin="5"/>
 
-                            <Label Grid.Row="0" Grid.Column="2" Content="Quest Name"/>
-                            <Label Grid.Row="1" Grid.Column="2" Content="Quest Client"/>
-                            <Label Grid.Row="2" Grid.Column="2" Content="Quest Description" VerticalAlignment="Top" Margin="1,5,0,0"/>
-                            <Label Grid.Row="3" Grid.Column="2" Content="Quest Target"/>
+                            <Label Grid.Row="0" Grid.Column="2" Content="Language"/>
+                            <Label Grid.Row="1" Grid.Column="2" Content="Quest Name"/>
+                            <Label Grid.Row="2" Grid.Column="2" Content="Quest Client"/>
+                            <Label Grid.Row="3" Grid.Column="2" Content="Quest Description" VerticalAlignment="Top" Margin="1,5,0,0"/>
+                            <Label Grid.Row="4" Grid.Column="2" Content="Quest Target"/>
+                            <Label Grid.Row="6" Grid.Column="2" Content="Fallback Language"/>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Rampage" Name="RampageTab" FontSize="16">

@@ -64,6 +64,13 @@ namespace RiseQuestEditor
         }
     }
 
+    public struct Language
+    {
+        public int Id { get; set; }
+        public string Identifier { get; set; }
+        public string Name { get; set; }
+    }
+
     public class EnumHelper
     {
         public static readonly Dictionary<int, string> EmsSetNo;
@@ -91,6 +98,7 @@ namespace RiseQuestEditor
         public static readonly Dictionary<int, string> PartsRate;
         public static readonly Dictionary<int, OtherInfo> OtherRate;
         public static readonly Dictionary<int, MultiInfo> MultiRate;
+        public static readonly Dictionary<int, Language> Languages;
 
         static EnumHelper()
         {
@@ -114,6 +122,7 @@ namespace RiseQuestEditor
             MonsterIconFile = new Dictionary<int, string>();
             Monster = new Dictionary<int, string>();
             Item = new Dictionary<int, string>();
+            Languages = new Dictionary<int, Language>();
 
             HealthRate = DeserializeDictionary<int, string>("Assets/VitalRate.json");
             AttackRate = DeserializeDictionary<int, string>("Assets/AttackRate.json");
@@ -121,9 +130,42 @@ namespace RiseQuestEditor
             OtherRate = DeserializeDictionary<int, OtherInfo>("Assets/OtherRate.json");
             MultiRate = DeserializeDictionary<int, MultiInfo>("Assets/MultiRate.json");
 
+
             ParseMonsterIcons();
             ParseMonsters();
             ParseItems();
+            ParseLanguages();
+        }
+
+        public static int GetLanguageId(string identifier)
+        {
+            return GetLanguage(identifier).Id;
+        }
+
+        public static int GetLanguageIndex(string identifier)
+        {
+            foreach (var language in Languages)
+            {
+                if (language.Value.Identifier == identifier)
+                {
+                    return language.Key;
+                }
+            }
+
+            throw new Exception($"Unknown language identifier '{identifier}'");
+        }
+
+        public static Language GetLanguage(string identifier)
+        {
+            foreach (var language in Languages)
+            {
+                if (language.Value.Identifier == identifier)
+                {
+                    return language.Value;
+                }
+            }
+
+            throw new Exception($"Unknown language identifier '{identifier}'");
         }
 
         private static void ParseMonsterIcons()
@@ -157,9 +199,20 @@ namespace RiseQuestEditor
             }
         }
 
+        private static void ParseLanguages()
+        {
+            var rawLangs = DeserializeList<Language>("Assets/Languages.json");
+
+            int i = 0;
+            foreach (Language lang in rawLangs)
+            {
+                Languages[i] = lang;
+                ++i;
+            }
+        }
+
         private static Dictionary<K, V> DeserializeDictionary<K, V>(string file) where K : notnull
         {
-
             using StreamReader sr = GetAsset(file);
             return JsonConvert.DeserializeObject<Dictionary<K, V>>(sr.ReadToEnd())!;
         }
