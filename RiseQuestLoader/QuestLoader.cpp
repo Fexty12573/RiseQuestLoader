@@ -791,6 +791,10 @@ ManagedObject* QuestLoader::make_questno_list_hook(void* vmctx, ManagedObject* t
                     if (quest_type & QuestType::KYOUSEI) {
                         add_quest = true;
                     }
+                } else if (type == QuestCounterTopMenuType::FreeSide) {
+                    if (quest_type & QuestType::TOUR) {
+                        add_quest = true;
+                    }
                 }
 
                 if (add_quest) {
