@@ -5,13 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RiseQuestEditor"
         mc:Ignorable="d"
-        Title="Monster Hunter Rise Quest Editor" Height="620" Width="770" Icon="/dSR3vpg.png" Drop="Window_Drop" AllowDrop="True">
-    <Window.CommandBindings>
-        <CommandBinding Command="New" Executed="NewFile"/>
+        Title="Monster Hunter Rise Quest Editor" Height="620" Width="770" Icon="/dSR3vpg.png" Drop="Window_Drop" AllowDrop="True"
+        xmlns:e="clr-namespace:RiseQuestEditor">
+	<Window.CommandBindings>
+		<CommandBinding Command="New" Executed="NewFile"/>
 	    <CommandBinding Command="Open" Executed="OpenFile"/>
         <CommandBinding Command="Save" Executed="SaveFile"/>
         <CommandBinding Command="SaveAs" Executed="SaveFileAs"/>
         <CommandBinding Command="Close" Executed="ExitProgram"/>
+        <CommandBinding Command="e:Command.ApplyBold" Executed="ApplyTextEditBold_Click"/>
+        <CommandBinding Command="e:Command.ApplyItalics" Executed="ApplyTextEditItalic_Click"/>
+        <CommandBinding Command="e:Command.ApplyShadow" Executed="ApplyTextEditShadow_Click"/>
+        <CommandBinding Command="e:Command.ApplyGlow" Executed="ApplyTextEditGlow_Click"/>
+        <CommandBinding Command="e:Command.ApplySize" Executed="ApplyTextEditSize_Click"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Command="New" Key="N" Modifiers="Ctrl"/>
@@ -19,9 +25,14 @@
         <KeyBinding Command="Save" Key="S" Modifiers="Ctrl"/>
         <KeyBinding Command="SaveAs" Key="S" Modifiers="Ctrl+Shift"/>
         <KeyBinding Command="Close" Key="Q" Modifiers="Ctrl"/>
+        <KeyBinding Command="e:Command.ApplyBold" Key="B" Modifiers="Ctrl"/>
+        <KeyBinding Command="e:Command.ApplyItalics" Key="I" Modifiers="Ctrl"/>
+        <KeyBinding Command="e:Command.ApplyShadow" Key="H" Modifiers="Ctrl"/>
+        <KeyBinding Command="e:Command.ApplyGlow" Key="G" Modifiers="Ctrl"/>
+        <KeyBinding Command="e:Command.ApplySize" Key="S" Modifiers="Ctrl+Alt"/>
     </Window.InputBindings>
 	<Grid>
-	    <Grid.Resources>
+		<Grid.Resources>
 		    <Style TargetType="TextBox">
                 <EventSetter Event="TextChanged" Handler="Property_ContentChanged"/>
 			    <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -62,8 +73,16 @@
                     <MenuItem Header="S_ave As" Name="SaveFileAsButton" Command="SaveAs" InputGestureText="Ctrl+Shift+S"/>
                     <MenuItem Header="_Close" Name="ExitProgramButton" Command="Close" InputGestureText="Ctrl+Q"/>
                 </MenuItem>
-                <MenuItem Header="Edit"></MenuItem>
-                <MenuItem Header="Help">
+                <MenuItem Header="_Edit">
+                    <MenuItem Header="_Text">
+                        <MenuItem Header="_Bold" Name="BoldButton" Command="e:Command.ApplyBold" InputGestureText="Ctrl+B"/>
+                        <MenuItem Header="_Italic" Name="ItalicButton" Command="e:Command.ApplyItalics" InputGestureText="Ctrl+I"/>
+                        <MenuItem Header="_Shadow" Name="ShadowButton" Command="e:Command.ApplyShadow" InputGestureText="Ctrl+H"/>
+                        <MenuItem Header="_Glow" Name="GlowButton" Command="e:Command.ApplyGlow" InputGestureText="Ctrl+G"/>
+                        <MenuItem Header="Si_ze" Name="SizeButton" Command="e:Command.ApplySize" InputGestureText="Ctrl+Alt+S"/>
+                    </MenuItem>
+                </MenuItem>
+	            <MenuItem Header="Help">
                     <MenuItem Header="Usage" Name="UsageButton" Click="UsageButton_Click"/>
                     <MenuItem Header="About" Name="AboutButton" Click="AboutButton_Click"/>
                 </MenuItem>

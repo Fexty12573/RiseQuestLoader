@@ -1009,5 +1009,108 @@ Thanks:
                 _selectedLanguage = newIndex;
             }
         }
+
+        private TextBox? GetSelectedTextBox()
+        {
+            if (QuestName.IsFocused)
+                return QuestName;
+            else if (QuestDesc.IsFocused)
+                return QuestDesc;
+            else if (QuestClient.IsFocused)
+                return QuestClient;
+            else if (QuestTarget.IsFocused)
+                return QuestTarget;
+
+            return null;
+        }
+
+        private void ApplyTextEditBold_Click(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (_customQuest != null)
+            {
+                TextBox? textBox = GetSelectedTextBox();
+                if (textBox != null)
+                {
+                    string text = textBox.Text;
+                    int start = textBox.SelectionStart;
+                    int end = start + textBox.SelectionLength;
+
+                    textBox.Text = $"{text[..start]}<BOLD>{textBox.SelectedText}</BOLD>{text[end..]}";
+                }
+            }
+        }
+
+        private void ApplyTextEditItalic_Click(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (_customQuest != null)
+            {
+                TextBox? textBox = GetSelectedTextBox();
+                if (textBox != null)
+                {
+                    string text = textBox.Text;
+                    int start = textBox.SelectionStart;
+                    int end = start + textBox.SelectionLength;
+
+                    textBox.Text = $"{text[..start]}<ITALIC>{textBox.SelectedText}</ITALIC>{text[end..]}";
+                }
+            }
+        }
+
+        private void ApplyTextEditShadow_Click(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (_customQuest != null)
+            {
+                TextBox? textBox = GetSelectedTextBox();
+                if (textBox != null)
+                {
+                    string text = textBox.Text;
+                    int start = textBox.SelectionStart;
+                    int end = start + textBox.SelectionLength;
+
+                    textBox.Text = $"{text[..start]}<SHADOW>{textBox.SelectedText}</SHADOW>{text[end..]}";
+                }
+            }
+        }
+
+        private void ApplyTextEditGlow_Click(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (_customQuest != null)
+            {
+                TextBox? textBox = GetSelectedTextBox();
+                if (textBox != null)
+                {
+                    string text = textBox.Text;
+                    int start = textBox.SelectionStart;
+                    int end = start + textBox.SelectionLength;
+
+                    textBox.Text = $"{text[..start]}<GLOW>{textBox.SelectedText}</GLOW>{text[end..]}";
+                }
+            }
+        }
+
+        private void ApplyTextEditSize_Click(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (_customQuest != null)
+            {
+                TextBox? textBox = GetSelectedTextBox();
+                if (textBox != null)
+                {
+                    string text = textBox.Text;
+                    int start = textBox.SelectionStart;
+                    int end = start + textBox.SelectionLength;
+
+                    textBox.Text = $"{text[..start]}<SIZE 1>{textBox.SelectedText}</SIZE>{text[end..]}";
+                }
+            }
+        }
+    }
+
+    public static class Command
+    {
+        public static readonly RoutedUICommand ApplyBold = new("Bold", "ApplyBold", typeof(MainWindow));
+        public static readonly RoutedUICommand ApplyItalics = new("Italics", "ApplyItalics", typeof(MainWindow));
+        public static readonly RoutedUICommand ApplyShadow = new("Shadow", "ApplyShadow", typeof(MainWindow));
+        public static readonly RoutedUICommand ApplyGlow = new("Glow", "ApplyGlow", typeof(MainWindow));
+        public static readonly RoutedUICommand ApplySize = new("Size", "ApplySize", typeof(MainWindow));
     }
 }
