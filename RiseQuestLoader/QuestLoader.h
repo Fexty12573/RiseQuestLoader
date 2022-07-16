@@ -59,7 +59,12 @@ public:
                 return m_quest_infos.at(m_fallback_language);
             }
 
-            return m_quest_infos.at(language);
+            const auto& info = m_quest_infos.at(language);
+            if (info.m_name.empty() && info.m_client.empty() && info.m_description.empty() && info.m_target.empty()) {
+                return m_quest_infos.at(m_fallback_language);
+            }
+
+            return info;
         }
 
         CustomQuest() = default;
