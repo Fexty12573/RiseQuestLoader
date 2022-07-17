@@ -201,7 +201,7 @@ void QuestLoader::read_quests() {
             try {
                 parse_quest(entry);
             } catch (const std::exception& e) {
-                api->log_error("C++ Exception Thrown: {}", e.what());
+                api->log_error("C++ Exception Thrown while parsing quest: {}", e.what());
             }
         }
     }
