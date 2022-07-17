@@ -55,6 +55,11 @@ bool QuestLoader::initialize() {
         return false;
     }
 
+    m_resource_manager = static_cast<ResourceManager*>(api->get_native_singleton("via.ResourceManager"));
+    if (!m_resource_manager) {
+        return false;
+    }
+
     if (!m_get_quest_text_hook) {
         if (const auto get_quest_text = m_quest_data->find_method("getQuestTextCore")) {
             const auto func = get_quest_text->get_function_raw();
@@ -220,24 +225,24 @@ void QuestLoader::render_ui() {
             if (ImGui::Button("Export Quest")) {
                 const auto q = m_quest_exporter.export_quest(quest_id);
 
-                const std::filesystem::path path = "./reframework/plugins/quests";
+                const std::filesystem::path path = QuestExportPath;
                 if (!exists(path)) {
                     create_directories(path);
                 }
 
-                std::ofstream(fmt::format("./reframework/plugins/quests/q{}.json", quest_id)) << q.dump(4);
+                std::ofstream(fmt::format("{}/q{}.json", QuestExportPath, quest_id)) << q.dump(4);
             }
 
             if (ImGui::Button("Export All Quests")) {
                 const auto quests = m_quest_exporter.export_all_quests();
 
-                const std::filesystem::path path = "./reframework/plugins/quests";
+                const std::filesystem::path path = QuestExportPath;
                 if (!exists(path)) {
                     create_directories(path);
                 }
 
                 for (const auto& q : quests) {
-                    std::ofstream(fmt::format("./reframework/plugins/quests/q{}.json", q.value("QuestID", 0))) << q.dump(4);
+                    std::ofstream(fmt::format("{}/q{}.json", QuestExportPath, q.value("QuestID", 0))) << q.dump(4);
                 }
             }
 
@@ -717,7 +722,7 @@ SystemString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_
         const auto& quest = loader->m_custom_quests[quest_id];
 
         if (!quest.m_is_replacement || quest.m_enabled) {
-            const auto language = utility::call<GameLanguage>(loader->m_quest_exporter.get_message_manager(), "get_nowLanguage");
+            const auto language = loader->m_resource_manager->get_language();
             const auto& info = quest.get_quest_info(language);
 
             switch (type) {

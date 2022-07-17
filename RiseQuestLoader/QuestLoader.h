@@ -100,6 +100,12 @@ public:
         }
     };
 
+    struct ResourceManager {
+        [[nodiscard]] GameLanguage get_language() const {
+            return *reinterpret_cast<const GameLanguage*>(reinterpret_cast<const uint8_t*>(this) + 0x43C);
+        }
+    };
+
     QuestLoader();
 
     static std::shared_ptr<QuestLoader> get();
@@ -125,6 +131,7 @@ private:
 private:
     bool m_initialized = false;
     QuestExporter m_quest_exporter{};
+    ResourceManager* m_resource_manager{};
 
     reframework::API::TypeDefinition* m_quest_data{};
     reframework::API::TypeDefinition* m_normal_quest_data{};
@@ -140,6 +147,8 @@ private:
     constexpr static void* QuestDataClassInfo = reinterpret_cast<void*>(0x14bf02e10); 
     constexpr static void* NormalQuestDataClassInfo = reinterpret_cast<void*>(0x14bf02e10); 
     constexpr static void* NormalQuestDataForEnemyClassInfo = reinterpret_cast<void*>(0x14bf02e10);
+
+    static constexpr const char* QuestExportPath = "./reframework/exported_quests";
 
     std::shared_ptr<utility::FunctionHook> m_get_quest_text_hook{};
     std::shared_ptr<utility::FunctionHook> m_make_questno_list_hook{};
