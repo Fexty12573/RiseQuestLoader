@@ -215,6 +215,7 @@ void QuestLoader::render_ui() {
     }
 
     if (API::get()->reframework()->is_drawing_ui()) {
+        ImGui::SetNextWindowPos({100, 40}, ImGuiCond_FirstUseEver);
         ImGui::Begin("Quest Loader");
 
         if (ImGui::TreeNode("Quest Exporter")) {
@@ -254,6 +255,10 @@ void QuestLoader::render_ui() {
             const auto questdict = *quest_manager->get_field<ManagedObject*>("_QuestDataDictionary");
 
             if (ImGui::Button("Reload Quests")) {
+                if (utility::call<bool>(quest_manager, "isActiveQuest")) {
+                    utility::call(quest_manager, "questCancel");
+                }
+
                 for (auto& quest : m_custom_quests) {
                     quest.second.cleanup(questdict);
                 }
@@ -303,10 +308,10 @@ void QuestLoader::render_ui() {
             ImGui::TreePop();
         }
 
-        if (ImGui::TreeNode("Debug")) {
+        /*if (ImGui::TreeNode("Debug")) {
             ImGui::Checkbox("Skip Hook", &m_skip_hook);
             ImGui::TreePop();
-        }
+        }*/
 
         ImGui::End();
     }
@@ -326,7 +331,7 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
     }
 
     if (!j.contains("QuestID")) {
-        return;
+        throw std::exception("Not a valid Quest File. Quest ID is missing.");
     }
 
     const auto quest_id = j["QuestID"].get<int32_t>();
