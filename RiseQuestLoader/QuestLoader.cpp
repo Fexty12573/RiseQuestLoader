@@ -146,6 +146,23 @@ bool QuestLoader::initialize() {
             return false;
         }
     }
+
+    if (!m_is_single_quest_hook) {
+        if (const auto init = api->tdb()->find_method("snow.quest.QuestUtility", "isSingleQuest")) {
+            const auto func = init->get_function_raw();
+
+            m_is_single_quest_hook = std::make_shared<utility::FunctionHook>(func, is_single_quest_hook);
+            if (!m_is_single_quest_hook) {
+                m_is_single_quest_hook.reset();
+                return false;
+            }
+
+            m_is_single_quest_hook->create();
+        } else {
+            return false;
+        }
+    }
+
     // 0f 85 b0 00 00 00 f6 42 13
     auto results = utility::scanmem({0x0f, 0x85, 0xb0, 0x00, 0x00, 0x00, 0xf6, 0x42, 0x13, 0x01});
     if (results.empty()) {
@@ -873,4 +890,14 @@ const wchar_t* QuestLoader::get_message_hook(void* this_, _GUID* guid, GameLangu
     }
 
     return loader->m_get_message_hook->call_original<const wchar_t*>(this_, guid, language);
+}
+
+bool QuestLoader::is_single_quest_hook(void* vmctx, int32_t quest_id) {
+    const auto loader = get();
+
+    if (loader->m_custom_quests.contains(quest_id)) {
+        return false;
+    }
+
+    return loader->m_get_message_hook->call_original<bool>(vmctx, quest_id);
 }

@@ -127,6 +127,7 @@ private:
     static void quest_counter_awake_hook(void* vmctx, reframework::API::ManagedObject* this_);
     static void init_quest_data_dict_hook(void* vmctx, reframework::API::ManagedObject* this_);
     static const wchar_t* get_message_hook(void* this_, _GUID* guid, GameLanguage language);
+    static bool is_single_quest_hook(void* vmctx, int32_t quest_id);
 
 private:
     bool m_initialized = false;
@@ -156,6 +157,7 @@ private:
     std::shared_ptr<utility::FunctionHook> m_quest_counter_awake_hook{};
     std::shared_ptr<utility::FunctionHook> m_init_quest_data_dict_hook{};
     std::shared_ptr<utility::FunctionHook> m_get_message_hook{};
+    std::shared_ptr<utility::FunctionHook> m_is_single_quest_hook{};
 
     std::unordered_map<int32_t, CustomQuest> m_custom_quests;
 };
