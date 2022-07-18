@@ -938,7 +938,11 @@ Wyvern Riding: {other.WyvernRide}";
 
         private void UsageButton_Click(object sender, RoutedEventArgs e)
         {
-
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+            {
+                FileName = "https://github.com/mhvuze/MonsterHunterRiseModding/wiki/Custom-Quest-Editing",
+                UseShellExecute = true
+            });
         }
 
         private void AboutButton_Click(object sender, RoutedEventArgs e)
@@ -949,7 +953,8 @@ Made by Fexty
 Thanks:
 - DSC-173 for help with understanding the quest fields.
 - praydog for developing REFramework which helped greatly in understanding quest structure.
-- Aradi147 for his MHW Quest Editor, which I took heavy inspiration from.";
+- Aradi147 for his MHW Quest Editor, which I took heavy inspiration from.
+- Everyone who helped testing";
 
             MessageBox.Show(about, "About");
         }
