@@ -9,3 +9,6 @@ $ ./vcpkg install imgui minhook fmt --triplet=x64-windows-static
 ```
 
 Open the solution in Visual Studio, select x64 Release, and build.
+
+## Usage
+Usage instructions can be found on the [Modding Wiki](https://github.com/mhvuze/MonsterHunterRiseModding/wiki/Custom-Quest-Editing).
