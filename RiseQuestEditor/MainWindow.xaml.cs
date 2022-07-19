@@ -940,7 +940,7 @@ Wyvern Riding: {other.WyvernRide}";
         {
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
             {
-                FileName = "https://github.com/mhvuze/MonsterHunterRiseModding/wiki/Custom-Quest-Editing",
+                FileName = "https://github.com/mhvuze/MonsterHunterRiseModding/wiki/Quest-Editor-Field-Breakdown",
                 UseShellExecute = true
             });
         }
@@ -1127,5 +1127,6 @@ Thanks:
         public static readonly RoutedUICommand ApplyShadow = new("Shadow", "ApplyShadow", typeof(MainWindow));
         public static readonly RoutedUICommand ApplyGlow = new("Glow", "ApplyGlow", typeof(MainWindow));
         public static readonly RoutedUICommand ApplySize = new("Size", "ApplySize", typeof(MainWindow));
+        public static readonly RoutedUICommand ApplyColor = new("Color", "ApplyColor", typeof(MainWindow));
     }
 }
