@@ -899,5 +899,5 @@ bool QuestLoader::is_single_quest_hook(void* vmctx, int32_t quest_id) {
         return false;
     }
 
-    return loader->m_get_message_hook->call_original<bool>(vmctx, quest_id);
+    return loader->m_is_single_quest_hook->call_original<bool>(vmctx, quest_id);
 }
