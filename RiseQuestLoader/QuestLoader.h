@@ -17,6 +17,7 @@ public:
             std::string m_client;
             std::string m_description;
             std::string m_target;
+            std::string m_failure_condition;
         };
 
         std::map<GameLanguage, QuestInfo> m_quest_infos;
@@ -88,7 +89,8 @@ public:
                     info["Name"],
                     info["Client"],
                     info["Description"],
-                    info["Target"]
+                    info["Target"],
+                    info["Fail"]
                 };
             }
         }

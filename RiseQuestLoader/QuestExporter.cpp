@@ -63,6 +63,7 @@ nlohmann::ordered_json QuestExporter::export_quest(int32_t quest_id) {
                 entry["Client"] = utility::str_call(quest, "getQuestText", QuestText::CLIENT, nullptr);
                 entry["Description"] = utility::str_call(quest, "getQuestText", QuestText::REQUEST, nullptr);
                 entry["Target"] = utility::str_call(quest, "getQuestText", QuestText::TARGET, nullptr);
+                entry["Fail"] = utility::str_call(quest, "getQuestText", QuestText::MISS, nullptr);
 
                 text["QuestInfo"].push_back(entry);
             }

@@ -756,6 +756,8 @@ SystemString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_
                 return utility::create_managed_string(info.m_description);
             case QuestText::TARGET:
                 return utility::create_managed_string(info.m_target);
+            case QuestText::MISS:
+                return utility::create_managed_string(info.m_failure_condition);
             default:
                 return loader->m_get_quest_text_hook->call_original<SystemString*>(vmctx, this_, type, qi);
             }
