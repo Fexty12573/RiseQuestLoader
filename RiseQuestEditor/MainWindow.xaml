@@ -18,6 +18,7 @@
         <CommandBinding Command="e:Command.ApplyShadow" Executed="ApplyTextEditShadow_Click"/>
         <CommandBinding Command="e:Command.ApplyGlow" Executed="ApplyTextEditGlow_Click"/>
         <CommandBinding Command="e:Command.ApplySize" Executed="ApplyTextEditSize_Click"/>
+        <CommandBinding Command="e:Command.ApplyColor" Executed="ApplyTextEditColor_Click"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Command="New" Key="N" Modifiers="Ctrl"/>
@@ -30,6 +31,7 @@
         <KeyBinding Command="e:Command.ApplyShadow" Key="H" Modifiers="Ctrl"/>
         <KeyBinding Command="e:Command.ApplyGlow" Key="G" Modifiers="Ctrl"/>
         <KeyBinding Command="e:Command.ApplySize" Key="S" Modifiers="Ctrl+Alt"/>
+        <KeyBinding Command="e:Command.ApplyColor" Key="C" Modifiers="Ctrl+Alt"/>
     </Window.InputBindings>
 	<Grid>
 		<Grid.Resources>
@@ -80,6 +82,7 @@
                         <MenuItem Header="_Shadow" Name="ShadowButton" Command="e:Command.ApplyShadow" InputGestureText="Ctrl+H"/>
                         <MenuItem Header="_Glow" Name="GlowButton" Command="e:Command.ApplyGlow" InputGestureText="Ctrl+G"/>
                         <MenuItem Header="Si_ze" Name="SizeButton" Command="e:Command.ApplySize" InputGestureText="Ctrl+Alt+S"/>
+                        <MenuItem Header="_Color" Name="ColorButton" Command="e:Command.ApplyColor" InputGestureText="Ctrl+Alt+C"/>
                     </MenuItem>
                 </MenuItem>
 	            <MenuItem Header="Help">
@@ -1138,9 +1141,9 @@
 	                        </Grid.RowDefinitions>
 
                             <ComboBox Grid.Row="0" Name="GameLanguage" Margin="5" SelectionChanged="GameLanguage_SelectionChanged"/>
-                            <TextBox Grid.Row="1" Name="QuestName" HorizontalContentAlignment="Left" Margin="5" Text=""/>
-                            <TextBox Grid.Row="2" Name="QuestClient" HorizontalContentAlignment="Left" Margin="5" Text=""/>
-                            <TextBox Grid.Row="3" Name="QuestDesc" VerticalAlignment="Stretch" Text="">
+                            <TextBox Grid.Row="1" Name="QuestName" SelectionChanged="QuestInfo_SelectionChanged" HorizontalContentAlignment="Left" Margin="5" Text=""/>
+                            <TextBox Grid.Row="2" Name="QuestClient" SelectionChanged="QuestInfo_SelectionChanged" HorizontalContentAlignment="Left" Margin="5" Text=""/>
+                            <TextBox Grid.Row="3" Name="QuestDesc" VerticalAlignment="Stretch" Text="" SelectionChanged="QuestInfo_SelectionChanged">
 	                            <TextBox.HorizontalContentAlignment>Left</TextBox.HorizontalContentAlignment>
                                 <TextBox.VerticalContentAlignment>Top</TextBox.VerticalContentAlignment>
                                 <TextBox.Margin>5</TextBox.Margin>
@@ -1150,6 +1153,7 @@
                                 <TextBox.VerticalScrollBarVisibility>Auto</TextBox.VerticalScrollBarVisibility>
                             </TextBox>
                             <TextBox Grid.Row="4" Name="QuestTarget" HorizontalContentAlignment="Left" Margin="5" Text=""/>
+                            <TextBox Grid.Row="5" Name="QuestFail" HorizontalContentAlignment="Left" Margin="5" Text=""/>
                             <ComboBox Grid.Row="6" Name="FallbackLanguage" Margin="5"/>
 
                             <Label Grid.Row="0" Grid.Column="2" Content="Language"/>
@@ -1157,7 +1161,10 @@
                             <Label Grid.Row="2" Grid.Column="2" Content="Quest Client"/>
                             <Label Grid.Row="3" Grid.Column="2" Content="Quest Description" VerticalAlignment="Top" Margin="1,5,0,0"/>
                             <Label Grid.Row="4" Grid.Column="2" Content="Quest Target"/>
+                            <Label Grid.Row="5" Grid.Column="2" Content="Quest Failure"/>
                             <Label Grid.Row="6" Grid.Column="2" Content="Fallback Language"/>
+
+                            <Rectangle Grid.Row="3" Grid.Column="2" Name="ColorBox" Fill="White" StrokeThickness="1" Stroke="Black" Margin="10,60,0,0" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left"/>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Rampage" Name="RampageTab" FontSize="16">

@@ -78,6 +78,7 @@ namespace RiseQuestEditor
             public string? Client;
             public string? Description;
             public string? Target;
+            public string? Fail;
 
             public QuestInfo_(string indentifier)
             {
@@ -86,6 +87,7 @@ namespace RiseQuestEditor
                 Client = "";
                 Description = "";
                 Target = "";
+                Fail = "";
             }
         }
 

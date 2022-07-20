@@ -13,6 +13,7 @@ using System.Media;
 using System.ComponentModel;
 using WPFCustomMessageBox;
 using System.Collections.Generic;
+using System.Windows.Media;
 using System.Runtime.InteropServices;
 
 namespace RiseQuestEditor
@@ -467,6 +468,7 @@ namespace RiseQuestEditor
                         QuestClient.Text = info.Client;
                         QuestDesc.Text = info.Description;
                         QuestTarget.Text = info.Target;
+                        QuestFail.Text = info.Fail;
                     }
                 }
 
@@ -680,6 +682,7 @@ namespace RiseQuestEditor
                         info.Client = QuestClient.Text;
                         info.Description = QuestDesc.Text;
                         info.Target = QuestTarget.Text;
+                        info.Fail = QuestFail.Text;
                         text.QuestInfo[i] = info;
 
                         break;
@@ -733,7 +736,7 @@ namespace RiseQuestEditor
                 data.SubTargets[3] = (QuestTargetType)(int)RampageSubTarget4.SelectedValue;
                 data.SubTargets[4] = (QuestTargetType)(int)RampageSubTarget5.SelectedValue;
                 data.SubTargets[5] = (QuestTargetType)(int)RampageSubTarget6.SelectedValue;
-                
+
 
                 for (int i = 0; i < 3; i++)
                 {
@@ -987,6 +990,7 @@ Thanks:
                         info.Client = QuestClient.Text;
                         info.Description = QuestDesc.Text;
                         info.Target = QuestTarget.Text;
+                        info.Fail = QuestFail.Text;
                         text.QuestInfo[i] = info;
 
                         break;
@@ -1006,6 +1010,7 @@ Thanks:
                         QuestClient.Text = info.Client;
                         QuestDesc.Text = info.Description;
                         QuestTarget.Text = info.Target;
+                        QuestFail.Text = info.Fail;
 
                         break;
                     }
@@ -1019,6 +1024,7 @@ Thanks:
                     QuestClient.Text = "";
                     QuestDesc.Text = "";
                     QuestTarget.Text = "";
+                    QuestFail.Text = "";
                 }
 
                 _selectedLanguage = newIndex;
@@ -1116,6 +1122,62 @@ Thanks:
 
                     textBox.Text = $"{text[..start]}<SIZE 1>{textBox.SelectedText}</SIZE>{text[end..]}";
                 }
+            }
+        }
+
+        private void ApplyTextEditColor_Click(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (_customQuest != null)
+            {
+                TextBox? textBox = GetSelectedTextBox();
+                if (textBox != null)
+                {
+
+                    string text = textBox.Text;
+                    int start = textBox.SelectionStart;
+                    int end = start + textBox.SelectionLength;
+
+                    textBox.Text = $"{text[..start]}<COLOR 000000>{textBox.SelectedText}</COLOR>{text[end..]}";
+                }
+            }
+        }
+
+        private void QuestInfo_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            bool colorDisplayed = false;
+
+            if (_customQuest != null)
+            {
+                Regex regex = new(@"<(COLOR|color) ([0-9a-fA-F]+)>[^<]*</(COLOR|color)>");
+                TextBox? textBox = GetSelectedTextBox();
+                if (textBox != null)
+                {
+                    Match match = regex.Match(textBox.Text);
+                    if (match.Success)
+                    {
+                        int start = match.Index;
+                        int end = start + match.Length;
+                        
+                        if (textBox.SelectionStart >= start && textBox.SelectionStart + textBox.SelectionLength < end)
+                        {
+                            int color = int.Parse(match.Groups[2].Value, System.Globalization.NumberStyles.HexNumber);
+
+                            byte r = (byte)((color & 0xFF0000) >> 0x10);
+                            byte g = (byte)((color & 0x00FF00) >> 0x08);
+                            byte b = (byte)((color & 0x0000FF) >> 0x00);
+
+                            ColorBox.Visibility = Visibility.Visible;
+                            ColorBox.Fill = new SolidColorBrush(Color.FromRgb(r, g, b));
+                            colorDisplayed = true;
+                        }
+                    }
+                }
+            }
+
+            if (!colorDisplayed)
+            {
+                ColorBox.Visibility = Visibility.Hidden;
+                ColorBox.Fill = Brushes.White;
             }
         }
     }
