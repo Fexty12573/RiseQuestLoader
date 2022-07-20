@@ -90,7 +90,7 @@ public:
                     info["Client"],
                     info["Description"],
                     info["Target"],
-                    info["Fail"]
+                    info.value("Fail", "")
                 };
             }
         }
