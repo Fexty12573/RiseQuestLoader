@@ -460,8 +460,16 @@ namespace RiseQuestEditor
             {
                 QuestText text = _customQuest.QuestText;
 
-                foreach (var info in text.QuestInfo)
+                for (int i = 0; i < text.QuestInfo.Count; ++i)
                 {
+                    var info = text.QuestInfo[i];
+
+                    if (info.Fail == null)
+                    {
+                        info.Fail = "";
+                        text.QuestInfo[i] = info;
+                    }
+
                     if (info.Language == text.FallbackLanguage)
                     {
                         QuestName.Text = info.Name;
@@ -567,6 +575,7 @@ namespace RiseQuestEditor
                     Points = uint.Parse(VillagePoints.Text),
                     HRP = uint.Parse(HrPoints.Text)
                 };
+                data.SupplyTable = uint.Parse(SupplyTable.Text);
 
                 data.Icons[0] = (int)Icon1.SelectedValue;
                 data.Icons[1] = (int)Icon2.SelectedValue;

@@ -88,6 +88,10 @@
 	<Resource Include="Assets/Icons/em134_00_IAM.png" />
 	<Resource Include="Assets/Icons/em135_00_IAM.png" />
 	<Resource Include="Assets/Icons/em136_00_IAM.png" />
+	<Resource Include="Assets/Icons/em001_02_IAM.png" />
+	<Resource Include="Assets/Icons/em002_02_IAM.png" />
+	<Resource Include="Assets/Icons/em037_02_IAM.png" />
+	<Resource Include="Assets/Icons/em118_05_IAM.png" />
 	<Resource Include="Assets/Icons/ems003_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems005_00_IAM.png" />
 	<Resource Include="Assets/Icons/ems006_00_IAM.png" />

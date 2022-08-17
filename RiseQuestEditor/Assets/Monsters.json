@@ -216,6 +216,18 @@
         "Id": 351
     },
     {
+        "Name": "Gold Rathian",
+        "Id": 513
+    },
+    {
+        "Name": "Silver Rathalos",
+        "Id": 514
+    },
+    {
+        "Name": "Lucent Nargacuga",
+        "Id": 549
+    },
+    {
         "Name": "Furious Rajang",
         "Id": 1303
     },
@@ -230,6 +242,10 @@
     {
         "Name": "Narwa the Allmother",
         "Id": 1379
+    },
+    {
+        "Name": "Seething Bazelgeuse",
+        "Id": 1398
     },
     {
         "Name": "Apex Rathian",
