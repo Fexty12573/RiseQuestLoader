@@ -51,6 +51,21 @@ bool QuestLoader::initialize() {
         return false;
     }
 
+    m_set_info = api->tdb()->find_type("snow.enemy.EnemyBossInitSetData.SetInfo");
+    if (!m_set_info) {
+        return false;
+    }
+
+    m_lot_info = api->tdb()->find_type("snow.enemy.EnemyBossInitSetData.LotInfo");
+    if (!m_lot_info) {
+        return false;
+    }
+
+    m_init_pos = api->tdb()->find_type("snow.EnemyBossInitSetInfo");
+    if (!m_init_pos) {
+        return false;
+    }
+
     if (!m_quest_exporter.initialize()) {
         return false;
     }
@@ -163,6 +178,38 @@ bool QuestLoader::initialize() {
         }
     }
 
+    if (!m_find_boss_init_set_info_hook) {
+        if (const auto method = api->tdb()->find_method("snow.enemy.EnemyManager", "findBossInitSetInfo")) {
+            const auto func = method->get_function_raw();
+
+            m_find_boss_init_set_info_hook = std::make_shared<utility::FunctionHook>(func, find_boss_init_set_info_hook);
+            if (!m_find_boss_init_set_info_hook) {
+                m_find_boss_init_set_info_hook.reset();
+                return false;
+            }
+
+            m_find_boss_init_set_info_hook->create();
+        } else {
+            return false;
+        }
+    }
+
+    if (!m_find_boss_init_position_hook) {
+        if (const auto method = api->tdb()->find_method("snow.enemy.EnemyManager", "findBossInitPosition")) {
+            const auto func = method->get_function_raw();
+
+            m_find_boss_init_position_hook = std::make_shared<utility::FunctionHook>(func, find_boss_init_position_hook);
+            if (!m_find_boss_init_position_hook) {
+                m_find_boss_init_position_hook.reset();
+                return false;
+            }
+
+            m_find_boss_init_position_hook->create();
+        } else {
+            return false;
+        }
+    }
+
     // 0f 85 b0 00 00 00 f6 42 13
     auto results = utility::scanmem({0x0f, 0x85, 0xb0, 0x00, 0x00, 0x00, 0xf6, 0x42, 0x13, 0x01});
     if (results.empty()) {
@@ -172,7 +219,7 @@ bool QuestLoader::initialize() {
     }
 
     void* result = static_cast<byte*>(results[0]) - 0x16;
-    api->log_info("[QuestLoader] Found object allocator at {:p}", result);
+    api->log_info("[QuestLoader] Found object allocator at {}", result);
     utility::log(fmt::format("[QuestLoader] Found object allocator at {:p}", result));
 
     new_instance = static_cast<decltype(new_instance)>(result);
@@ -191,7 +238,7 @@ bool QuestLoader::initialize() {
         result = static_cast<byte*>(results[0]) - 0x39;
 
         const auto msg = fmt::format("Found via::gui::MessageManager::getMessage at {:p}", result);
-        api->log_error(msg.c_str());
+        api->log_info(msg.c_str());
         utility::log(msg);
 
         m_get_message_hook = std::make_shared<utility::FunctionHook>(result, get_message_hook);
@@ -222,6 +269,21 @@ void QuestLoader::read_quests() {
             }
         }
     }
+
+    const fs::path spawn_path = "reframework/quests/spawn/stage";
+    if (!fs::exists(spawn_path)) {
+        fs::create_directories(spawn_path);
+    }
+
+    for (const auto& entry : fs::directory_iterator(spawn_path)) {
+        if (entry.path().extension() == ".json") {
+            try {
+                parse_spawn(entry);
+            } catch (const std::exception& e) {
+                api->log_error("C++ Exception Thrown while parsing spawn: {}", e.what());
+            }
+        }
+    }
 }
 
 void QuestLoader::render_ui() {
@@ -232,7 +294,7 @@ void QuestLoader::render_ui() {
     }
 
     if (API::get()->reframework()->is_drawing_ui()) {
-        ImGui::SetNextWindowPos({100, 40}, ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowPos({1000, 40}, ImGuiCond_FirstUseEver);
         ImGui::Begin("Quest Loader");
 
         if (ImGui::TreeNode("Quest Exporter")) {
@@ -281,6 +343,7 @@ void QuestLoader::render_ui() {
                 }
 
                 m_custom_quests.clear();
+                m_custom_spawns.clear();
                 read_quests();
             }
 
@@ -714,6 +777,15 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
     log_refcounts("PostInsert");
 }
 
+void QuestLoader::parse_spawn(const std::filesystem::path& path) {
+    nlohmann::json j{};
+    std::ifstream(path) >> j;
+
+    utility::log("Loading Spawn '" + path.string() + "'");
+
+    m_custom_spawns.emplace_back(j);
+}
+
 bool QuestLoader::is_existing_quest(int32_t quest_id) const {
     const auto manager = m_quest_exporter.get_quest_manager();
     
@@ -902,4 +974,122 @@ bool QuestLoader::is_single_quest_hook(void* vmctx, int32_t quest_id) {
     }
 
     return loader->m_is_single_quest_hook->call_original<bool>(vmctx, quest_id);
+}
+
+ManagedObject* QuestLoader::create_set_info_object(const CustomSpawn::SpawnSetter& setter) const {
+    const auto info = new_instance(API::get()->get_vm_context(), m_set_info, 0);
+    if (info == nullptr) {
+        return nullptr;
+    }
+
+    const auto set_name = utility::create_managed_string(setter.m_set_name);
+    reinterpret_cast<ManagedObject*>(set_name)->add_ref();
+
+    const auto lot_infos = reinterpret_cast<REArray<ManagedObject*>*>(utility::create_managed_array(m_lot_info, setter.m_spawn_infos.size()));
+
+    for (auto i = 0u; i < lot_infos->size(); ++i) {
+        const auto lot_info = new_instance(API::get()->get_vm_context(), m_lot_info, 0);
+        lot_info->add_ref();
+
+        if (lot_info != nullptr) {
+            *lot_info->get_field<int32_t>("Lot") = setter.m_spawn_infos[i].m_chance;
+            *lot_info->get_field<int32_t>("Block") = setter.m_spawn_infos[i].m_block;
+            *lot_info->get_field<int32_t>("_ID") = setter.m_spawn_infos[i].m_id;
+        }
+
+        lot_infos->set_item(i, lot_info);
+    }
+
+    *info->get_field<SystemString*>("_SetName") = set_name;
+    *info->get_field<REArray<ManagedObject*>*>("Info") = lot_infos;
+
+    return info;
+}
+
+ManagedObject* QuestLoader::create_init_pos_object(const CustomSpawn::SpawnInfo& info) const {
+    const auto init_pos = new_instance(API::get()->get_vm_context(), m_init_pos, 0);
+    if (init_pos == nullptr) {
+        return nullptr;
+    }
+
+    SystemString* unique_name = utility::create_managed_string("CustomSpawn");
+    reinterpret_cast<ManagedObject*>(unique_name)->add_ref();
+
+    *init_pos->get_field<int>("_BlockNo") = info.m_block;
+    *init_pos->get_field<int>("_UniqueID") = info.m_id;
+    *init_pos->get_field<CustomSpawn::SpawnInfo::Vec3>("_Pos") = *info.m_coordinates;
+    *init_pos->get_field<SystemString*>("_UniqueName") = unique_name;
+    *init_pos->get_field<float>("_Radius") = 10.0f;
+    *init_pos->get_field<int>("_PosType") = 0;
+    *init_pos->get_field<float>("_Angle") = 10.0f;
+
+    return init_pos;
+}
+
+ManagedObject* QuestLoader::find_boss_init_set_info_hook(void* vmctx, ManagedObject* this_, int em, MapNoType map, SystemString* set_name) {
+    const auto loader = get();
+    const auto result = loader->m_find_boss_init_set_info_hook->call_original<ManagedObject*>(vmctx, this_, em, map, set_name);
+
+    const int quest_id = utility::call<int>(loader->m_quest_exporter.get_quest_manager(), "getQuestNo");
+
+    if (result != nullptr) {
+        loader->m_last_spawn_setter = nullptr;
+        return result;
+    }
+
+    const std::string name = set_name->to_str();
+    for (auto& spawn : loader->m_custom_spawns) {
+        if (spawn.matches_quest(quest_id)) {
+            if (spawn.m_map == map) {
+                for (auto& setter : spawn.m_setters) {
+                    utility::log(fmt::format("Checking Setter '{}' against '{}'", setter.m_set_name, name));
+                    if (setter.m_set_name == name) {
+                        loader->m_last_spawn_setter = &setter;
+
+                        auto object = setter.m_object;
+
+                        if (object == nullptr) {
+                            utility::log(fmt::format("Creating New object for setter '{}'", setter.m_set_name));
+                            object = loader->create_set_info_object(setter);
+                            setter.set_object(object);
+                        }
+
+                        return object;
+                    }
+                }
+            }
+        }
+    }
+
+    loader->m_last_spawn_setter = nullptr;
+    return nullptr;
+}
+
+ManagedObject* QuestLoader::find_boss_init_position_hook(void* vmctx, ManagedObject* this_, int block, int id, MapNoType map, bool is_safety) {
+    const auto loader = get();
+    const auto result = loader->m_find_boss_init_position_hook->call_original<ManagedObject*>(vmctx, this_, block, id, map, is_safety);
+
+    if (result != nullptr) {
+        return result;
+    }
+
+    if (loader->m_last_spawn_setter != nullptr) {
+        auto& setter = *loader->m_last_spawn_setter;
+
+        for (auto& info : setter.m_spawn_infos) {
+            if (info.m_block == block && info.m_id == id) {
+                loader->m_last_spawn_setter = nullptr;
+                auto object = info.m_object;
+
+                if (object == nullptr) {
+                    object = loader->create_init_pos_object(info);
+                    info.set_object(object);
+                }
+
+                return object;
+            }
+        }
+    }
+
+    return nullptr;
 }

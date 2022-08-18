@@ -27,8 +27,8 @@ public:
 
         reframework::API::ManagedObject* m_memory_object{};
         reframework::API::ManagedObject* m_original_object{};
-        bool m_is_replacement;
-        bool m_enabled;
+        bool m_is_replacement{false};
+        bool m_enabled{true};
 
         void enable(reframework::API::ManagedObject* questdict) {
             if (m_is_replacement) {
@@ -102,6 +102,208 @@ public:
         }
     };
 
+    struct CustomSpawn {
+        struct SpawnInfo {
+            struct Vec3 {
+                float X, Y, Z;
+            };
+
+            int32_t m_chance;
+            int32_t m_block;
+            int32_t m_id;
+            Vec3* m_coordinates;
+            reframework::API::ManagedObject* m_object;
+
+            [[nodiscard]] bool has_custom_coordinates() const {
+                return m_coordinates != nullptr;
+            }
+
+            void set_object(reframework::API::ManagedObject* obj) {
+                if (m_object != nullptr) {
+                    m_object->release();
+                }
+
+                obj->add_ref();
+                m_object = obj;
+            }
+
+            SpawnInfo(int chance, int block, int id, const nlohmann::json& coords)
+                : m_chance(chance)
+                , m_block(block)
+                , m_id(id)
+                , m_object(nullptr) {
+                if (coords.type() != nlohmann::detail::value_t::null) {
+                    m_coordinates = new Vec3 {
+                        coords.value("X", 0.0f),
+                        coords.value("Y", 0.0f),
+                        coords.value("Z", 0.0f)
+                    };
+                } else {
+                    m_coordinates = nullptr;
+                }
+            }
+            SpawnInfo(const SpawnInfo& info)
+                : m_chance(info.m_chance), m_block(info.m_block), m_id(info.m_id) {
+                m_coordinates = new Vec3(*info.m_coordinates);
+                set_object(info.m_object);
+            }
+            SpawnInfo(SpawnInfo&& info) noexcept
+                : m_chance(info.m_chance), m_block(info.m_block), m_id(info.m_id) {
+                m_object = info.m_object;
+                m_coordinates = info.m_coordinates;
+
+                info.m_chance = 0;
+                info.m_block = 0;
+                info.m_id = 0;
+                info.m_object = nullptr;
+                info.m_coordinates = nullptr;
+            }
+            SpawnInfo& operator=(const SpawnInfo& info) {
+                if (this != &info) {
+                    m_chance = info.m_chance;
+                    m_block = info.m_block;
+                    m_id = info.m_id;
+                    m_coordinates = new Vec3(*info.m_coordinates);
+                    set_object(info.m_object);
+                }
+
+                return *this;
+            }
+            SpawnInfo& operator=(SpawnInfo&& info) noexcept {
+                if (this != &info) {
+                    m_chance = info.m_chance;
+                    m_block = info.m_block;
+                    m_id = info.m_id;
+                    m_coordinates = info.m_coordinates;
+                    m_object = info.m_object;
+
+                    info.m_chance = 0;
+                    info.m_block = 0;
+                    info.m_id = 0;
+                    info.m_coordinates = nullptr;
+                    info.m_object = nullptr;
+                }
+
+                return *this;
+            }
+            ~SpawnInfo() {
+                delete m_coordinates;
+            }
+        };
+        struct SpawnSetter {
+            std::string m_set_name;
+            std::vector<SpawnInfo> m_spawn_infos;
+            reframework::API::ManagedObject* m_object{nullptr};
+
+            void set_object(reframework::API::ManagedObject* obj) {
+                if (m_object != nullptr) {
+                    m_object->release();
+                }
+
+
+                obj->add_ref();
+                m_object = obj;
+            }
+
+            SpawnSetter() = default;
+            SpawnSetter(const SpawnSetter& setter) {
+                m_set_name = setter.m_set_name;
+                m_spawn_infos = setter.m_spawn_infos;
+                set_object(setter.m_object);
+            }
+            SpawnSetter(SpawnSetter&& setter) noexcept
+                : m_set_name(std::move(setter.m_set_name)), m_spawn_infos(std::move(setter.m_spawn_infos)) {
+                m_object = setter.m_object;
+
+                setter.m_set_name = "";
+                setter.m_spawn_infos = {};
+                setter.m_object = nullptr;
+            }
+            SpawnSetter& operator=(const SpawnSetter& setter) {
+                if (this != &setter) {
+                    m_set_name = setter.m_set_name;
+                    m_spawn_infos = setter.m_spawn_infos;
+                    set_object(setter.m_object);
+                }
+                
+                return *this;
+            }
+            SpawnSetter& operator=(SpawnSetter&& setter) noexcept {
+                if (this != &setter) {
+                    m_set_name = std::move(setter.m_set_name);
+                    m_spawn_infos = std::move(setter.m_spawn_infos);
+                    set_object(setter.m_object);
+
+                    setter.m_set_name = "";
+                    setter.m_spawn_infos = {};
+                    setter.m_object = nullptr;
+                }
+
+                return *this;
+            }
+            ~SpawnSetter() {
+                if (m_object != nullptr) {
+                    m_object->release();
+                }
+            }
+        };
+
+        MapNoType m_map;
+        std::vector<SpawnSetter> m_setters;
+        int m_quest_id_lock = -1;
+
+        [[nodiscard]] const SpawnSetter* get_spawn_setter(std::string_view name) const {
+            for (const auto& setter : m_setters) {
+                if (setter.m_set_name == name) {
+                    return &setter;
+                }
+            }
+
+            return nullptr;
+        }
+        [[nodiscard]] bool matches_quest(int id) const {
+            if (m_quest_id_lock == -1) {
+                return true;
+            }
+
+            return m_quest_id_lock == id;
+        }
+
+        explicit CustomSpawn(const nlohmann::json& j) {
+            m_map = j["Map"];
+
+            if (j.contains("QuestID")) {
+                const auto& qid = j["QuestID"];
+
+                if (qid.type() == nlohmann::detail::value_t::null) {
+                    m_quest_id_lock = -1;
+                } else {
+                    m_quest_id_lock = qid.get<int>();
+                }
+            } else {
+                m_quest_id_lock = -1;
+            }
+            
+
+            for (const auto& setter : j["Setters"]) {
+                SpawnSetter spawn_setter{};
+
+                spawn_setter.m_set_name = setter["SetName"];
+
+                for (const auto& spawn : setter["Spawns"]) {
+                    spawn_setter.m_spawn_infos.emplace_back(
+                        spawn.value("Chance", 0), 
+                        spawn.value("Area", 0), 
+                        spawn.value("SubSpawn", 0), 
+                        spawn["Coordinates"]
+                    );
+                }
+
+                m_setters.push_back(std::move(spawn_setter));
+            }
+        }
+    };
+
     struct ResourceManager {
         [[nodiscard]] GameLanguage get_language() const {
             return *reinterpret_cast<const GameLanguage*>(reinterpret_cast<const uint8_t*>(this) + 0x43C);
@@ -119,7 +321,10 @@ public:
 
 private:
     void parse_quest(const std::filesystem::path& path);
+    void parse_spawn(const std::filesystem::path& path);
     [[nodiscard]] bool is_existing_quest(int32_t quest_id) const;
+    [[nodiscard]] reframework::API::ManagedObject* create_set_info_object(const CustomSpawn::SpawnSetter& setter) const;
+    [[nodiscard]] reframework::API::ManagedObject* create_init_pos_object(const CustomSpawn::SpawnInfo& info) const;
 
     static SystemString* get_quest_text_hook(void* vmctx, reframework::API::ManagedObject* this_, QuestText type, void* qi);
     static reframework::API::ManagedObject* make_questno_list_hook(
@@ -130,6 +335,10 @@ private:
     static void init_quest_data_dict_hook(void* vmctx, reframework::API::ManagedObject* this_);
     static const wchar_t* get_message_hook(void* this_, _GUID* guid, GameLanguage language);
     static bool is_single_quest_hook(void* vmctx, int32_t quest_id);
+    static reframework::API::ManagedObject* find_boss_init_set_info_hook(
+        void* vmctx, reframework::API::ManagedObject* this_, int em, MapNoType map, SystemString* set_name);
+    static reframework::API::ManagedObject* find_boss_init_position_hook(
+        void* vmctx, reframework::API::ManagedObject* this_, int block, int id, MapNoType map, bool is_safety);
 
 private:
     bool m_initialized = false;
@@ -140,8 +349,12 @@ private:
     reframework::API::TypeDefinition* m_normal_quest_data{};
     reframework::API::TypeDefinition* m_normal_quest_data_for_enemy{};
     reframework::API::TypeDefinition* m_rampage_data{};
+    reframework::API::TypeDefinition* m_set_info{};
+    reframework::API::TypeDefinition* m_lot_info{};
+    reframework::API::TypeDefinition* m_init_pos{};
 
     reframework::API::ManagedObject* m_quest_counter{};
+    CustomSpawn::SpawnSetter* m_last_spawn_setter{};
 
     bool m_skip_hook = false;
 
@@ -160,6 +373,9 @@ private:
     std::shared_ptr<utility::FunctionHook> m_init_quest_data_dict_hook{};
     std::shared_ptr<utility::FunctionHook> m_get_message_hook{};
     std::shared_ptr<utility::FunctionHook> m_is_single_quest_hook{};
+    std::shared_ptr<utility::FunctionHook> m_find_boss_init_set_info_hook{};
+    std::shared_ptr<utility::FunctionHook> m_find_boss_init_position_hook{};
 
     std::unordered_map<int32_t, CustomQuest> m_custom_quests;
+    std::vector<CustomSpawn> m_custom_spawns;
 };

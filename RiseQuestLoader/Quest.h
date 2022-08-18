@@ -116,3 +116,23 @@ enum class QuestRank : uint32_t {
     High = 1,
     Max = 2,
 };
+
+enum class MapNoType : int32_t {
+    Stage_Name_00,
+    ShrineRuins,
+    SandyPlains,
+    FloodedForest,
+    FrostCaverns,
+    LavaCaverns,
+    Stage_Name_06,
+    RedStronghold,
+    Stage_Name_08,
+    InfernalSprings,
+    Arena,
+    CoralPalace,
+    Jungle,
+    Citadel,
+    Stage_Name_14,
+    YawningAbyss,
+    Stage_Name_42
+};

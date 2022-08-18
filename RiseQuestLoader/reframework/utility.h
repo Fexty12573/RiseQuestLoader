@@ -130,7 +130,7 @@ public:
     T& at(size_t idx) { return SystemArray<T>::elements[idx]; }
 
     T get_item(uint32_t idx) const { return utility::call<T>(utility::to_managed_object(this), "get_Item", idx); }
-    void set_item(uint32_t idx, const T& value) { return utility::call(utility::to_managed_object(this), "set_Item", idx, value); }
+    void set_item(uint32_t idx, const T& value) { utility::call(utility::to_managed_object(this), "set_Item", idx, value); }
 
     iterator begin() { return &SystemArray<T>::elements[0]; }
     const_iterator begin() const { return &SystemArray<T>::elements[0]; }
