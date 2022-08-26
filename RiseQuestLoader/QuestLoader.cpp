@@ -348,16 +348,20 @@ void QuestLoader::render_ui() {
             }
 
             if (ImGui::TreeNode("Replacement Quests")) {
-                for (auto& [id, quest] : m_custom_quests) {
-                    if (quest.m_is_replacement) {
-                        if (ImGui::Checkbox(fmt::format("[{}] {}", id, quest.get_quest_info().m_name).c_str(), &quest.m_enabled)) {
-                            if (quest.m_enabled) {
-                                quest.enable(questdict);
-                            } else {
-                                quest.disable(questdict);
+                try {
+                    for (auto& [id, quest] : m_custom_quests) {
+                        if (quest.m_is_replacement) {
+                            if (ImGui::Checkbox(fmt::format("[{}] {}", id, quest.get_quest_info().m_name).c_str(), &quest.m_enabled)) {
+                                if (quest.m_enabled) {
+                                    quest.enable(questdict);
+                                } else {
+                                    quest.disable(questdict);
+                                }
                             }
                         }
                     }
+                } catch (const std::exception& e) {
+                    utility::log(e.what());
                 }
 
                 ImGui::TreePop();
