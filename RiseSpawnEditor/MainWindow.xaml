@@ -1,0 +1,134 @@
+﻿<Window x:Class="RiseSpawnEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RiseSpawnEditor"
+        mc:Ignorable="d"
+        Title="Custom Spawn Editor" Height="636" Width="612" FontSize="16" SizeToContent="Height" AllowDrop="True" Drop="Window_Drop">
+    <Window.CommandBindings>
+        <CommandBinding Command="New" Executed="NewFile"/>
+        <CommandBinding Command="Open" Executed="OpenFile"/>
+        <CommandBinding Command="Save" Executed="SaveFile"/>
+        <CommandBinding Command="SaveAs" Executed="SaveFileAs"/>
+        <CommandBinding Command="Close" Executed="ExitProgram"/>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Command="New" Key="N" Modifiers="Ctrl"/>
+        <KeyBinding Command="Open" Key="O" Modifiers="Ctrl"/>
+        <KeyBinding Command="Save" Key="S" Modifiers="Ctrl"/>
+        <KeyBinding Command="SaveAs" Key="S" Modifiers="Ctrl+Shift"/>
+        <KeyBinding Command="Close" Key="Q" Modifiers="Ctrl"/>
+    </Window.InputBindings>
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="TextBox">
+	            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="Height" Value="30"/>
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Menu DockPanel.Dock="Top" IsMainMenu="True" FontSize="14">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New" Name="NewFileButton" Command="New" InputGestureText="Ctrl+N"/>
+                <MenuItem Header="_Open" Name="OpenFileButton" Command="Open" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="_Save" Name="SaveFileButton" Command="Save" InputGestureText="Ctrl+S"/>
+                <MenuItem Header="S_ave As" Name="SaveFileAsButton" Command="SaveAs" InputGestureText="Ctrl+Shift+S"/>
+                <MenuItem Header="_Close" Name="ExitProgramButton" Command="Close" InputGestureText="Ctrl+Q"/>
+            </MenuItem>
+            <MenuItem Header="_Edit" Name="EditMenu">
+                <MenuItem Header="Insert Coordinates" Name="InsertCoordinatesButton"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_Usage" Name="UsageButton" Click="UsageButton_Click"/>
+                <MenuItem Header="_About" Name="AboutButton" Click="AboutButton_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <Border Padding="10" BorderBrush="Black" Margin="0,23,0,0" Grid.RowSpan="2">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="40*"/>
+                        <ColumnDefinition Width="60*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Grid.Row="0" Name="QuestID" Margin="5"/>
+                    <Button Grid.Row="0" Grid.Column="2" Name="RemoveQuestID" Content="Remove Quest ID" Margin="5" Click="RemoveQuestID_Click"/>
+                    <ComboBox Grid.Row="1" Name="Map" Margin="5"/>
+                    <ComboBox Grid.Row="2" Name="Setter" Margin="5" SelectionChanged="Setter_SelectionChanged"/>
+                    <Button Grid.Row="2" Grid.Column="2" Name="AddSetter" Content="Add Setter" Click="AddSetter_Click" Margin="5"/>
+                    <TextBox Grid.Row="3" Name="SetName" Margin="5" TextChanged="SetName_TextChanged"/>
+
+                    <Label Content="Quest ID" Grid.Row="0" Grid.Column="1" Name="QuestIDLabel" Margin="5"/>
+                    <Label Content="Map" Grid.Row="1"  Grid.Column="1" Name="MapLabel" Margin="5"/>
+                    <Label Content="Setter" Grid.Row="2" Grid.Column="1" Name="SetterLabel" Margin="5"/>
+                    <Label Content="Set Name" Grid.Row="3" Grid.Column="1" Name="SetNameLabel" Margin="5"/>
+
+                    <StackPanel Grid.Row="4" Grid.ColumnSpan="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <ComboBox Grid.Row="0" Name="Spawn" Margin="5" SelectionChanged="Spawn_SelectionChanged"/>
+                            <Label Content="Spawn" Grid.Row="0" Grid.Column="1" Name="SpawnLabel" Margin="5"/>
+                            <GroupBox Header="Setter" Grid.Row="1" Grid.ColumnSpan="2">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBox Grid.Row="0" Name="SpawnChance" Margin="5" PreviewTextInput="ValidateIntTextBox" Text="0" TextChanged="SpawnChance_TextChanged"/>
+                                        <TextBox Grid.Row="1" Name="SpawnArea" Margin="5" PreviewTextInput="ValidateIntTextBox" Text="0" TextChanged="SpawnArea_TextChanged"/>
+                                        <TextBox Grid.Row="2" Name="SubSpawn" Margin="5" PreviewTextInput="ValidateIntTextBox" Text="0" TextChanged="SubSpawn_TextChanged"/>
+                                        <CheckBox Grid.Row="3" Content="Has Coordinates" Name="HasCoordinates" Margin="5" VerticalContentAlignment="Center" Checked="HasCoordinates_IsCheckedChanged" Unchecked="HasCoordinates_IsCheckedChanged"/>
+                                        <TextBox Grid.Row="4" Name="XCoord" Margin="5" IsEnabled="False" Text="0" PreviewTextInput="ValidateDoubleTextBox" TextChanged="XCoord_TextChanged"/>
+                                        <TextBox Grid.Row="5" Name="YCoord" Margin="5" IsEnabled="False" Text="0" PreviewTextInput="ValidateDoubleTextBox" TextChanged="YCoord_TextChanged"/>
+                                        <TextBox Grid.Row="6" Name="ZCoord" Margin="5" IsEnabled="False" Text="0" PreviewTextInput="ValidateDoubleTextBox" TextChanged="ZCoord_TextChanged"/>
+
+                                        <Label Content="Spawn Chance" Grid.Row="0" Grid.Column="1" Name="SpawnChanceLabel" Margin="5"/>
+                                        <Label Content="Spawn Area" Grid.Row="1" Grid.Column="1" Name="SpawnAreaLabel" Margin="5"/>
+                                        <Label Content="Sub Spawn" Grid.Row="2" Grid.Column="1" Name="SubSpawnLabel" Margin="5"/>
+                                        <Label Content="X" Grid.Row="4" Grid.Column="1" Name="XLabel" Margin="5"/>
+                                        <Label Content="Y" Grid.Row="5" Grid.Column="1" Name="YLabel" Margin="5"/>
+                                        <Label Content="Z" Grid.Row="6" Grid.Column="1" Name="ZLabel" Margin="5"/>
+                                    </Grid>
+                                </StackPanel>
+                            </GroupBox>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

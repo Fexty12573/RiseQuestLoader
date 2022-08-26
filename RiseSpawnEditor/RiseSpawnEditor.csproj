@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>em_exploration_IAM.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="em_exploration_IAM.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="WPFCustomMessageBox" Version="1.0.7" />
+  </ItemGroup>
+
+
+	<ItemGroup>
+        <Resource Include="../RiseQuestEditor/Assets/Map.json" />
+        <Resource Include="./Assets/SpawnData.json" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Folder Include="Assets\" />
+	</ItemGroup>
+
+</Project>
