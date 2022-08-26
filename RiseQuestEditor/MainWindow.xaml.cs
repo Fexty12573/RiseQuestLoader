@@ -28,6 +28,9 @@ namespace RiseQuestEditor
         private bool _hasUnsavedChanges;
         private int _selectedLanguage;
 
+        private static readonly string _version = "1.3.0";
+        public static string Version => _version;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -961,6 +964,8 @@ Wyvern Riding: {other.WyvernRide}";
         {
             string about = $@"Monster Hunter Rise Quest Editor
 Made by Fexty
+
+Version: {Version}
 
 Thanks:
 - DSC-173 for help with understanding the quest fields.
