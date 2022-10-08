@@ -37,8 +37,7 @@ namespace RiseSpawnEditor
 
         private bool _changedProperty;
 
-        private static readonly string _version = "1.0.0";
-        public static string Version => _version;
+        public static string Version => "1.0.0";
 
         public MainWindow()
         {

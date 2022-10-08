@@ -28,7 +28,7 @@ namespace RiseQuestEditor
         private bool _hasUnsavedChanges;
         private int _selectedLanguage;
 
-        public static string Version => "1.3.0";
+        public static string Version => "1.4.0";
 
         public MainWindow()
         {
