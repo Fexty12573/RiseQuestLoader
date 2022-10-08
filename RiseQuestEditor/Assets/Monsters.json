@@ -44,6 +44,10 @@
         "Id": 25
     },
     {
+        "Name": "Risen Chameleos",
+        "Id": 2073
+    },
+    {
         "Name": "Teostra",
         "Id": 27
     },
@@ -110,6 +114,10 @@
     {
         "Name": "Mizutsune",
         "Id": 82
+    },
+    {
+        "Name": "Violet Mizutsune",
+        "Id": 594
     },
     {
         "Name": "Magnamalo",
@@ -202,6 +210,10 @@
     {
         "Name": "Espinas",
         "Id": 136
+    },
+    {
+        "Name": "Flaming Espinas",
+        "Id": 392
     },
     {
         "Name": "Blood Orange Bishaten",

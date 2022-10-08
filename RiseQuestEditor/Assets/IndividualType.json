@@ -1,4 +1,8 @@
 ﻿{
     "0": "Normal",
-    "1": "Afflicted"
+    "1": "Afflicted",
+    "2": "Risen (Level 0)",
+    "3": "Risen (Level 1)",
+    "4": "Risen (Level 2)",
+    "5": "Risen (Level 3)"
 }

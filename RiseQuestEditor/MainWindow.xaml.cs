@@ -28,8 +28,7 @@ namespace RiseQuestEditor
         private bool _hasUnsavedChanges;
         private int _selectedLanguage;
 
-        private static readonly string _version = "1.3.0";
-        public static string Version => _version;
+        public static string Version => "1.3.0";
 
         public MainWindow()
         {
@@ -61,17 +60,17 @@ namespace RiseQuestEditor
             SwapCondition1.ItemsSource = EnumHelper.SwapCondition;
             SwapCondition2.ItemsSource = EnumHelper.SwapCondition;
 
-            for (int i = 0; i < 7; i++)
+            for (var i = 0; i < 7; i++)
             {
-                ComboBox id = (ComboBox)FindName($"Monster{i + 1}Id");
-                ComboBox hp = (ComboBox)FindName($"Monster{i + 1}Hp");
-                ComboBox atk = (ComboBox)FindName($"Monster{i + 1}Attack");
-                ComboBox part = (ComboBox)FindName($"Monster{i + 1}PartHp");
-                ComboBox other = (ComboBox)FindName($"Monster{i + 1}Other");
-                ComboBox multi = (ComboBox)FindName($"Monster{i + 1}Multi");
-                ComboBox dif = (ComboBox)FindName($"Monster{i + 1}Difficulty");
-                ComboBox cond = (ComboBox)FindName($"Monster{i + 1}SpawnCondition");
-                ComboBox type = (ComboBox)FindName($"Monster{i + 1}IndividualType");
+                var id = (ComboBox)FindName($"Monster{i + 1}Id")!;
+                var hp = (ComboBox)FindName($"Monster{i + 1}Hp")!;
+                var atk = (ComboBox)FindName($"Monster{i + 1}Attack")!;
+                var part = (ComboBox)FindName($"Monster{i + 1}PartHp")!;
+                var other = (ComboBox)FindName($"Monster{i + 1}Other")!;
+                var multi = (ComboBox)FindName($"Monster{i + 1}Multi")!;
+                var dif = (ComboBox)FindName($"Monster{i + 1}Difficulty")!;
+                var cond = (ComboBox)FindName($"Monster{i + 1}SpawnCondition")!;
+                var type = (ComboBox)FindName($"Monster{i + 1}IndividualType")!;
 
                 id.ItemsSource = EnumHelper.Monster;
                 hp.ItemsSource = EnumHelper.HealthRate;
@@ -405,21 +404,21 @@ namespace RiseQuestEditor
 
                     for (int i = 0; i < 7; i++)
                     {
-                        ((ComboBox)FindName($"Monster{i + 1}Id")).SelectedValue = data.Monsters[i].Id;
-                        ((ComboBox)FindName($"Monster{i + 1}Hp")).SelectedValue = enemy.Monsters[i].HealthTable;
-                        ((ComboBox)FindName($"Monster{i + 1}Attack")).SelectedValue = enemy.Monsters[i].AttackTable;
-                        ((ComboBox)FindName($"Monster{i + 1}PartHp")).SelectedValue = enemy.Monsters[i].PartTable;
-                        ((ComboBox)FindName($"Monster{i + 1}Other")).SelectedValue = (int)enemy.Monsters[i].OtherTable;
-                        ((ComboBox)FindName($"Monster{i + 1}Multi")).SelectedValue = (int)enemy.Monsters[i].MultiTable;
-                        ((ComboBox)FindName($"Monster{i + 1}Difficulty")).SelectedValue = (int)enemy.Monsters[i].Difficulty;
-                        ((ComboBox)FindName($"Monster{i + 1}SpawnCondition")).SelectedValue = (int)data.Monsters[i].SpawnCondition;
-                        ((ComboBox)FindName($"Monster{i + 1}IndividualType")).SelectedValue = (int)enemy.Monsters[i].IndividualType;
-                        ((TextBox)FindName($"Monster{i + 1}SubType")).Text = enemy.Monsters[i].SubType.ToString();
-                        ((TextBox)FindName($"Monster{i + 1}SetName")).Text = enemy.Monsters[i].SetName.ToString();
-                        ((TextBox)FindName($"Monster{i + 1}Stamina")).Text = enemy.Monsters[i].StaminaTable.ToString();
-                        ((TextBox)FindName($"Monster{i + 1}SpawnParam")).Text = data.Monsters[i].SpawnParam.ToString();
-                        ((TextBox)FindName($"Monster{i + 1}SizeTable")).Text = enemy.Monsters[i].SizeTable.ToString();
-                        ((TextBox)FindName($"Monster{i + 1}Size")).Text = enemy.Monsters[i].Size.ToString();
+                        ((ComboBox)FindName($"Monster{i + 1}Id")!).SelectedValue = data.Monsters[i].Id;
+                        ((ComboBox)FindName($"Monster{i + 1}Hp")!).SelectedValue = enemy.Monsters[i].HealthTable;
+                        ((ComboBox)FindName($"Monster{i + 1}Attack")!).SelectedValue = enemy.Monsters[i].AttackTable;
+                        ((ComboBox)FindName($"Monster{i + 1}PartHp")!).SelectedValue = enemy.Monsters[i].PartTable;
+                        ((ComboBox)FindName($"Monster{i + 1}Other")!).SelectedValue = (int)enemy.Monsters[i].OtherTable;
+                        ((ComboBox)FindName($"Monster{i + 1}Multi")!).SelectedValue = (int)enemy.Monsters[i].MultiTable;
+                        ((ComboBox)FindName($"Monster{i + 1}Difficulty")!).SelectedValue = (int)enemy.Monsters[i].Difficulty;
+                        ((ComboBox)FindName($"Monster{i + 1}SpawnCondition")!).SelectedValue = (int)data.Monsters[i].SpawnCondition;
+                        ((ComboBox)FindName($"Monster{i + 1}IndividualType")!).SelectedValue = (int)enemy.Monsters[i].IndividualType;
+                        ((TextBox)FindName($"Monster{i + 1}SubType")!).Text = enemy.Monsters[i].SubType.ToString();
+                        ((TextBox)FindName($"Monster{i + 1}SetName")!).Text = enemy.Monsters[i].SetName.ToString();
+                        ((TextBox)FindName($"Monster{i + 1}Stamina")!).Text = enemy.Monsters[i].StaminaTable.ToString();
+                        ((TextBox)FindName($"Monster{i + 1}SpawnParam")!).Text = data.Monsters[i].SpawnParam.ToString();
+                        ((TextBox)FindName($"Monster{i + 1}SizeTable")!).Text = enemy.Monsters[i].SizeTable.ToString();
+                        ((TextBox)FindName($"Monster{i + 1}Size")!).Text = enemy.Monsters[i].Size.ToString();
                     }
 
                     SmallMonSpawnType.SelectedValue = (int)enemy.SmallMonsters.SpawnType;
@@ -483,7 +482,7 @@ namespace RiseQuestEditor
                     }
                 }
 
-                int index = EnumHelper.GetLanguageIndex(text.FallbackLanguage!);
+                var index = EnumHelper.GetLanguageIndex(text.FallbackLanguage!);
                 _selectedLanguage = index;
                 GameLanguage.SelectedIndex = index;
                 FallbackLanguage.SelectedIndex = index;
@@ -524,17 +523,17 @@ namespace RiseQuestEditor
 
                 for (int i = 0; i < 3; i++)
                 {
-                    ((ComboBox)FindName($"Wave{i + 1}BossMonster")).SelectedValue = (int)data.Waves[i].BossMonster;
-                    ((TextBox)FindName($"Wave{i + 1}BossSubType")).Text = data.Waves[i].BossSubType.ToString();
-                    ((TextBox)FindName($"Wave{i + 1}OrderTable")).Text = data.Waves[i].OrderTable.ToString();
-                    ((TextBox)FindName($"Wave{i + 1}BossMonsterDifficulty")).Text = data.Waves[i].BossMonsterNandoTable.ToString();
-                    ((TextBox)FindName($"Wave{i + 1}WaveMonsterDifficulty")).Text = data.Waves[i].WaveMonsterNandoTable.ToString();
+                    ((ComboBox)FindName($"Wave{i + 1}BossMonster")!).SelectedValue = (int)data.Waves[i].BossMonster;
+                    ((TextBox)FindName($"Wave{i + 1}BossSubType")!).Text = data.Waves[i].BossSubType.ToString();
+                    ((TextBox)FindName($"Wave{i + 1}OrderTable")!).Text = data.Waves[i].OrderTable.ToString();
+                    ((TextBox)FindName($"Wave{i + 1}BossMonsterDifficulty")!).Text = data.Waves[i].BossMonsterNandoTable.ToString();
+                    ((TextBox)FindName($"Wave{i + 1}WaveMonsterDifficulty")!).Text = data.Waves[i].WaveMonsterNandoTable.ToString();
 
 
-                    ((ComboBox)FindName($"Wave{i + 1}Monster1")).SelectedValue = data.Waves[i].Monsters[0];
-                    ((ComboBox)FindName($"Wave{i + 1}Monster2")).SelectedValue = data.Waves[i].Monsters[1];
-                    ((ComboBox)FindName($"Wave{i + 1}Monster3")).SelectedValue = data.Waves[i].Monsters[2];
-                    ((ComboBox)FindName($"Wave{i + 1}Monster4")).SelectedValue = data.Waves[i].Monsters[3];
+                    ((ComboBox)FindName($"Wave{i + 1}Monster1")!).SelectedValue = data.Waves[i].Monsters[0];
+                    ((ComboBox)FindName($"Wave{i + 1}Monster2")!).SelectedValue = data.Waves[i].Monsters[1];
+                    ((ComboBox)FindName($"Wave{i + 1}Monster3")!).SelectedValue = data.Waves[i].Monsters[2];
+                    ((ComboBox)FindName($"Wave{i + 1}Monster4")!).SelectedValue = data.Waves[i].Monsters[3];
                 }
 
                 RampageTab.IsEnabled = true;
@@ -617,21 +616,21 @@ namespace RiseQuestEditor
 
                     for (int i = 0; i < 7; i++)
                     {
-                        data.Monsters[i].Id = Convert.ToUInt32(((ComboBox)FindName($"Monster{i + 1}Id")).SelectedValue);
-                        enemy.Monsters[i].HealthTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}Hp")).SelectedValue);
-                        enemy.Monsters[i].AttackTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}Attack")).SelectedValue);
-                        enemy.Monsters[i].PartTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}PartHp")).SelectedValue);
-                        enemy.Monsters[i].OtherTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}Other")).SelectedValue);
-                        enemy.Monsters[i].MultiTable = Convert.ToByte(((ComboBox)FindName($"Monster{i + 1}Multi")).SelectedValue);
-                        enemy.Monsters[i].Difficulty = (NandoYuragi)(int)((ComboBox)FindName($"Monster{i + 1}Difficulty")).SelectedValue;
-                        data.Monsters[i].SpawnCondition = (BossSetCondition)(int)((ComboBox)FindName($"Monster{i + 1}SpawnCondition")).SelectedValue;
-                        enemy.Monsters[i].IndividualType = (EnemyIndividualType)(int)((ComboBox)FindName($"Monster{i + 1}IndividualType")).SelectedValue;
-                        enemy.Monsters[i].SubType = byte.Parse(((TextBox)FindName($"Monster{i + 1}SubType")).Text);
-                        enemy.Monsters[i].SetName = ((TextBox)FindName($"Monster{i + 1}SetName")).Text;
-                        enemy.Monsters[i].StaminaTable = byte.Parse(((TextBox)FindName($"Monster{i + 1}Stamina")).Text);
-                        data.Monsters[i].SpawnParam = uint.Parse(((TextBox)FindName($"Monster{i + 1}SpawnParam")).Text);
-                        enemy.Monsters[i].SizeTable = int.Parse(((TextBox)FindName($"Monster{i + 1}SizeTable")).Text);
-                        enemy.Monsters[i].Size = byte.Parse(((TextBox)FindName($"Monster{i + 1}Size")).Text);
+                        data.Monsters[i].Id = Convert.ToUInt32(((ComboBox)FindName($"Monster{i + 1}Id")!).SelectedValue);
+                        enemy.Monsters[i].HealthTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}Hp")!).SelectedValue);
+                        enemy.Monsters[i].AttackTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}Attack")!).SelectedValue);
+                        enemy.Monsters[i].PartTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}PartHp")!).SelectedValue);
+                        enemy.Monsters[i].OtherTable = Convert.ToUInt16(((ComboBox)FindName($"Monster{i + 1}Other")!).SelectedValue);
+                        enemy.Monsters[i].MultiTable = Convert.ToByte(((ComboBox)FindName($"Monster{i + 1}Multi")!).SelectedValue);
+                        enemy.Monsters[i].Difficulty = (NandoYuragi)(int)((ComboBox)FindName($"Monster{i + 1}Difficulty")!).SelectedValue;
+                        data.Monsters[i].SpawnCondition = (BossSetCondition)(int)((ComboBox)FindName($"Monster{i + 1}SpawnCondition")!).SelectedValue;
+                        enemy.Monsters[i].IndividualType = (EnemyIndividualType)(int)((ComboBox)FindName($"Monster{i + 1}IndividualType")!).SelectedValue;
+                        enemy.Monsters[i].SubType = byte.Parse(((TextBox)FindName($"Monster{i + 1}SubType")!).Text);
+                        enemy.Monsters[i].SetName = ((TextBox)FindName($"Monster{i + 1}SetName")!).Text;
+                        enemy.Monsters[i].StaminaTable = byte.Parse(((TextBox)FindName($"Monster{i + 1}Stamina")!).Text);
+                        data.Monsters[i].SpawnParam = uint.Parse(((TextBox)FindName($"Monster{i + 1}SpawnParam")!).Text);
+                        enemy.Monsters[i].SizeTable = int.Parse(((TextBox)FindName($"Monster{i + 1}SizeTable")!).Text);
+                        enemy.Monsters[i].Size = byte.Parse(((TextBox)FindName($"Monster{i + 1}Size")!).Text);
                     }
 
                     enemy.SmallMonsters = new EnemyData.SmallMonsterData
@@ -752,16 +751,16 @@ namespace RiseQuestEditor
 
                 for (int i = 0; i < 3; i++)
                 {
-                    data.Waves[i].BossMonster = Convert.ToUInt32(((ComboBox)FindName($"Wave{i + 1}BossMonster")).SelectedValue);
-                    data.Waves[i].BossSubType = Convert.ToUInt32(((TextBox)FindName($"Wave{i + 1}BossSubType")).Text);
-                    data.Waves[i].OrderTable = Convert.ToInt32(((TextBox)FindName($"Wave{i + 1}OrderTable")).Text);
-                    data.Waves[i].BossMonsterNandoTable = Convert.ToInt32(((TextBox)FindName($"Wave{i + 1}BossMonsterDifficulty")).Text);
-                    data.Waves[i].WaveMonsterNandoTable = Convert.ToInt32(((TextBox)FindName($"Wave{i + 1}WaveMonsterDifficulty")).Text);
+                    data.Waves[i].BossMonster = Convert.ToUInt32(((ComboBox)FindName($"Wave{i + 1}BossMonster")!).SelectedValue);
+                    data.Waves[i].BossSubType = Convert.ToUInt32(((TextBox)FindName($"Wave{i + 1}BossSubType")!).Text);
+                    data.Waves[i].OrderTable = Convert.ToInt32(((TextBox)FindName($"Wave{i + 1}OrderTable")!).Text);
+                    data.Waves[i].BossMonsterNandoTable = Convert.ToInt32(((TextBox)FindName($"Wave{i + 1}BossMonsterDifficulty")!).Text);
+                    data.Waves[i].WaveMonsterNandoTable = Convert.ToInt32(((TextBox)FindName($"Wave{i + 1}WaveMonsterDifficulty")!).Text);
 
-                    data.Waves[i].Monsters[0] = Convert.ToUInt32(((ComboBox)FindName($"Wave{i + 1}Monster1")).SelectedValue);
-                    data.Waves[i].Monsters[1] = Convert.ToUInt32(((ComboBox)FindName($"Wave{i + 1}Monster2")).SelectedValue);
-                    data.Waves[i].Monsters[2] = Convert.ToUInt32(((ComboBox)FindName($"Wave{i + 1}Monster3")).SelectedValue);
-                    data.Waves[i].Monsters[3] = Convert.ToUInt32(((ComboBox)FindName($"Wave{i + 1}Monster4")).SelectedValue);
+                    data.Waves[i].Monsters[0] = Convert.ToUInt32(((ComboBox)FindName($"Wave{i + 1}Monster1")!).SelectedValue);
+                    data.Waves[i].Monsters[1] = Convert.ToUInt32(((ComboBox)FindName($"Wave{i + 1}Monster2")!).SelectedValue);
+                    data.Waves[i].Monsters[2] = Convert.ToUInt32(((ComboBox)FindName($"Wave{i + 1}Monster3")!).SelectedValue);
+                    data.Waves[i].Monsters[3] = Convert.ToUInt32(((ComboBox)FindName($"Wave{i + 1}Monster4")!).SelectedValue);
                 }
             }
         }
@@ -905,7 +904,7 @@ namespace RiseQuestEditor
                 if (icon.SelectedValue != null && (int)icon.SelectedValue != 999)
                 {
                     var name = (string)icon.GetValue(NameProperty);
-                    Image image = (Image)FindName($"IconImage{name.Last()}");
+                    Image image = (Image)FindName($"IconImage{name.Last()}")!;
 
                     Uri uri = new(EnumHelper.MonsterIconFile[(int)icon.SelectedValue], UriKind.Relative);
                     image.Source = new BitmapImage(uri);
@@ -913,7 +912,7 @@ namespace RiseQuestEditor
                 else
                 {
                     var name = (string)icon.GetValue(NameProperty);
-                    Image image = (Image)FindName($"IconImage{name.Last()}");
+                    Image image = (Image)FindName($"IconImage{name.Last()}")!;
                     image.Source = null;
                 }
             }
@@ -985,7 +984,7 @@ Thanks:
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
                 LoadFile(files[0]);
             }
         }

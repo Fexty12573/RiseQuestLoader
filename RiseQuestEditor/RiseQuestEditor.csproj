@@ -57,6 +57,7 @@
 	<Resource Include="Assets/Icons/em077_00_IAM.png" />
 	<Resource Include="Assets/Icons/em081_00_IAM.png" />
 	<Resource Include="Assets/Icons/em082_00_IAM.png" />
+	<Resource Include="Assets/Icons/em082_02_IAM.png" />
 	<Resource Include="Assets/Icons/em082_07_IAM.png" />
 	<Resource Include="Assets/Icons/em086_00_IAM.png" />
 	<Resource Include="Assets/Icons/em086_05_IAM.png" />
@@ -88,6 +89,7 @@
 	<Resource Include="Assets/Icons/em134_00_IAM.png" />
 	<Resource Include="Assets/Icons/em135_00_IAM.png" />
 	<Resource Include="Assets/Icons/em136_00_IAM.png" />
+	<Resource Include="Assets/Icons/em136_01_IAM.png" />
 	<Resource Include="Assets/Icons/em001_02_IAM.png" />
 	<Resource Include="Assets/Icons/em002_02_IAM.png" />
 	<Resource Include="Assets/Icons/em037_02_IAM.png" />
