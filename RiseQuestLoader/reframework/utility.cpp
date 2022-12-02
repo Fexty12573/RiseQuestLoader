@@ -38,7 +38,7 @@ utility::Pattern utility::make_pattern(std::string_view pattern) {
     auto to_byte = [&](char upper, char lower) { return static_cast<int16_t>(hexchar_to_int(upper) << 4 | hexchar_to_int(lower)); };
 
     std::string str{pattern};
-    str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
+    std::erase_if(str, isspace);
 
     const size_t len = str.size();
     
@@ -77,9 +77,9 @@ std::vector<void*> utility::scanmem(const Pattern& pattern) {
     if (!GetModuleInformation(GetCurrentProcess(), module, &moduleInfo, sizeof(moduleInfo)))
         return results;
 
-    byte* startAddr = reinterpret_cast<byte*>(module);
-    byte* endAddr = startAddr + moduleInfo.SizeOfImage;
-    byte* addr = startAddr;
+    const byte* startAddr = reinterpret_cast<byte*>(module);
+    const byte* endAddr = startAddr + moduleInfo.SizeOfImage;
+    const byte* addr = startAddr;
 
     constexpr auto pred = [](auto a, auto b) {
         return static_cast<int16_t>(b) != -1i16 && static_cast<uint8_t>(a) == static_cast<uint8_t>(b);
@@ -105,11 +105,11 @@ std::vector<void*> utility::scanmem(const Pattern& pattern) {
     return results;
 }
 
-SystemString* utility::create_managed_string(std::string_view string) {
+REString* utility::create_managed_string(std::string_view string) {
     using namespace reframework;
     const auto& api = API::get();
 
-    return reinterpret_cast<SystemString*>(api->sdk()->functions->create_managed_string_normal(string.data()));
+    return reinterpret_cast<REString*>(api->sdk()->functions->create_managed_string_normal(string.data()));
 }
 
 reframework::API::ManagedObject* utility::create_managed_array(reframework::API::ManagedObject* runtime_type, size_t length) {

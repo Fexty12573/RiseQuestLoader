@@ -75,9 +75,9 @@ nlohmann::ordered_json QuestExporter::export_quest(int32_t quest_id) {
 
         // QuestData
         if (qnormal) {
-            q["QuestText"]["DebugName"] = utility::narrow((*qnormal->get_field<SystemString*>("_DbgName"))->data);
-            q["QuestText"]["DebugClient"] = utility::narrow((*qnormal->get_field<SystemString*>("_DbgClient"))->data);
-            q["QuestText"]["DebugDescription"] = utility::narrow((*qnormal->get_field<SystemString*>("_DbgContent"))->data);
+            q["QuestText"]["DebugName"] = utility::narrow((*qnormal->get_field<REString*>("_DbgName"))->data);
+            q["QuestText"]["DebugClient"] = utility::narrow((*qnormal->get_field<REString*>("_DbgClient"))->data);
+            q["QuestText"]["DebugDescription"] = utility::narrow((*qnormal->get_field<REString*>("_DbgContent"))->data);
 
             normal["QuestType"] = *qnormal->get_field<uint32_t>("_QuestType");
             normal["QuestLevel"] = *qnormal->get_field<int32_t>("_QuestLv");

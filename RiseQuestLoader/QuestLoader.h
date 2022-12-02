@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 
 class QuestLoader {
@@ -19,6 +20,12 @@ public:
             std::string m_target;
             std::string m_failure_condition;
         };
+        struct MissingSpawnInfo {
+            int32_t m_monster_index;
+            std::string m_spawn_name;
+        };
+
+        std::vector<MissingSpawnInfo> m_missing_spawns;
 
         std::map<GameLanguage, QuestInfo> m_quest_infos;
         GameLanguage m_fallback_language{GameLanguage::NONE};
@@ -326,7 +333,10 @@ private:
     [[nodiscard]] reframework::API::ManagedObject* create_set_info_object(const CustomSpawn::SpawnSetter& setter) const;
     [[nodiscard]] reframework::API::ManagedObject* create_init_pos_object(const CustomSpawn::SpawnInfo& info) const;
 
-    static SystemString* get_quest_text_hook(void* vmctx, reframework::API::ManagedObject* this_, QuestText type, void* qi);
+    void check_for_missing_spawns(CustomQuest& quest) const;
+
+    static REString* get_quest_text_hook(
+        void* vmctx, reframework::API::ManagedObject* this_, QuestText type, void* qi, void* is_change);
     static reframework::API::ManagedObject* make_questno_list_hook(
         void* vmctx, reframework::API::ManagedObject* this_, reframework::API::ManagedObject* src, bool is_quick_match);
     static reframework::API::ManagedObject* make_quest_list_hyakuryu_hook(
@@ -336,7 +346,7 @@ private:
     static const wchar_t* get_message_hook(void* this_, _GUID* guid, GameLanguage language);
     static bool is_single_quest_hook(void* vmctx, int32_t quest_id);
     static reframework::API::ManagedObject* find_boss_init_set_info_hook(
-        void* vmctx, reframework::API::ManagedObject* this_, int em, MapNoType map, SystemString* set_name);
+        void* vmctx, reframework::API::ManagedObject* this_, int em, MapNoType map, REString* set_name);
     static reframework::API::ManagedObject* find_boss_init_position_hook(
         void* vmctx, reframework::API::ManagedObject* this_, int block, int id, MapNoType map, bool is_safety);
 
@@ -353,7 +363,10 @@ private:
     reframework::API::TypeDefinition* m_lot_info{};
     reframework::API::TypeDefinition* m_init_pos{};
 
+    reframework::API::Method* m_find_boss_init_set_info_first{};
     reframework::API::ManagedObject* m_quest_counter{};
+    reframework::API::ManagedObject* m_enemy_manager{};
+
     CustomSpawn::SpawnSetter* m_last_spawn_setter{};
 
     bool m_skip_hook = false;

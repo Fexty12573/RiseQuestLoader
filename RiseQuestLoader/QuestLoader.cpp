@@ -66,6 +66,11 @@ bool QuestLoader::initialize() {
         return false;
     }
 
+    m_enemy_manager = api->get_managed_singleton("snow.enemy.EnemyManager");
+    if (!m_enemy_manager) {
+        return false;
+    }
+
     if (!m_quest_exporter.initialize()) {
         return false;
     }
@@ -210,6 +215,13 @@ bool QuestLoader::initialize() {
         }
     }
 
+    if (!m_find_boss_init_set_info_first) {
+        m_find_boss_init_set_info_first = api->tdb()->find_method("snow.enemy.EnemyManager", "findBossInitSetInfoFirstData");
+        if (!m_find_boss_init_set_info_first) {
+            return false;
+        }
+    }
+
     // 0f 85 b0 00 00 00 f6 42 13
     auto results = utility::scanmem({0x0f, 0x85, 0xb0, 0x00, 0x00, 0x00, 0xf6, 0x42, 0x13, 0x01});
     if (results.empty()) {
@@ -293,7 +305,9 @@ void QuestLoader::render_ui() {
         }
     }
 
-    if (API::get()->reframework()->is_drawing_ui()) {
+    const auto& api = API::get();
+
+    if (api->reframework()->is_drawing_ui()) {
         ImGui::SetNextWindowPos({1000, 40}, ImGuiCond_FirstUseEver);
         ImGui::Begin("Quest Loader");
 
@@ -338,8 +352,8 @@ void QuestLoader::render_ui() {
                     utility::call(quest_manager, "questCancel");
                 }
 
-                for (auto& quest : m_custom_quests) {
-                    quest.second.cleanup(questdict);
+                for (auto& [_, quest] : m_custom_quests) {
+                    quest.cleanup(questdict);
                 }
 
                 m_custom_quests.clear();
@@ -358,6 +372,8 @@ void QuestLoader::render_ui() {
                                     quest.disable(questdict);
                                 }
                             }
+
+                            //auto spawn = m_find_boss_init_set_info_hook->call_original<ManagedObject*>(api->get_vm_context(), m_enemy_manager, )
                         }
                     }
                 } catch (const std::exception& e) {
@@ -456,9 +472,9 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
     qenemy->add_ref();
     qrampage->add_ref();
 
-    *qnormal->get_field<SystemString*>("_DbgName") = utility::create_managed_string(j["QuestText"]["DebugName"]);
-    *qnormal->get_field<SystemString*>("_DbgClient") = utility::create_managed_string(j["QuestText"]["DebugClient"]);
-    *qnormal->get_field<SystemString*>("_DbgContent") = utility::create_managed_string(j["QuestText"]["DebugDescription"]);
+    *qnormal->get_field<REString*>("_DbgName") = utility::create_managed_string(j["QuestText"]["DebugName"]);
+    *qnormal->get_field<REString*>("_DbgClient") = utility::create_managed_string(j["QuestText"]["DebugClient"]);
+    *qnormal->get_field<REString*>("_DbgContent") = utility::create_managed_string(j["QuestText"]["DebugDescription"]);
 
     if (j.contains("QuestData") && j["QuestData"].type() != nlohmann::detail::value_t::null) {
         const auto& normal = j["QuestData"];
@@ -803,15 +819,15 @@ bool QuestLoader::is_existing_quest(int32_t quest_id) const {
         return true;
     }
 
-    if (std::ranges::any_of(*quest_data_kohaku,
-            [quest_id](const ManagedObject* obj) { return *obj->get_field<int32_t>("_QuestNo") == quest_id; })) {
+    if (std::ranges::any_of(*quest_data_kohaku, [quest_id](const ManagedObject* obj) 
+        { return *obj->get_field<int32_t>("_QuestNo") == quest_id; })) {
         return true;
     }
     
     return false;
 }
 
-SystemString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_, QuestText type, void* qi) {
+REString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_, QuestText type, void* qi, void* is_change) {
     const auto quest_id = utility::call<int32_t>(this_, "getQuestNo");
     const auto loader = get();
 
@@ -835,12 +851,12 @@ SystemString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_
             case QuestText::MISS:
                 return utility::create_managed_string(info.m_failure_condition);
             default:
-                return loader->m_get_quest_text_hook->call_original<SystemString*>(vmctx, this_, type, qi);
+                return loader->m_get_quest_text_hook->call_original<REString*>(vmctx, this_, type, qi, is_change);
             }
         }
     }
 
-    return loader->m_get_quest_text_hook->call_original<SystemString*>(vmctx, this_, type, qi);
+    return loader->m_get_quest_text_hook->call_original<REString*>(vmctx, this_, type, qi, is_change);
 }
 
 ManagedObject* QuestLoader::make_questno_list_hook(void* vmctx, ManagedObject* this_, ManagedObject* src, bool is_quick_match) {
@@ -1004,7 +1020,7 @@ ManagedObject* QuestLoader::create_set_info_object(const CustomSpawn::SpawnSette
         lot_infos->set_item(i, lot_info);
     }
 
-    *info->get_field<SystemString*>("_SetName") = set_name;
+    *info->get_field<REString*>("_SetName") = set_name;
     *info->get_field<REArray<ManagedObject*>*>("Info") = lot_infos;
 
     return info;
@@ -1016,13 +1032,13 @@ ManagedObject* QuestLoader::create_init_pos_object(const CustomSpawn::SpawnInfo&
         return nullptr;
     }
 
-    SystemString* unique_name = utility::create_managed_string("CustomSpawn");
+    REString* unique_name = utility::create_managed_string("CustomSpawn");
     reinterpret_cast<ManagedObject*>(unique_name)->add_ref();
 
     *init_pos->get_field<int>("_BlockNo") = info.m_block;
     *init_pos->get_field<int>("_UniqueID") = info.m_id;
     *init_pos->get_field<CustomSpawn::SpawnInfo::Vec3>("_Pos") = *info.m_coordinates;
-    *init_pos->get_field<SystemString*>("_UniqueName") = unique_name;
+    *init_pos->get_field<REString*>("_UniqueName") = unique_name;
     *init_pos->get_field<float>("_Radius") = 10.0f;
     *init_pos->get_field<int>("_PosType") = 0;
     *init_pos->get_field<float>("_Angle") = 10.0f;
@@ -1030,7 +1046,21 @@ ManagedObject* QuestLoader::create_init_pos_object(const CustomSpawn::SpawnInfo&
     return init_pos;
 }
 
-ManagedObject* QuestLoader::find_boss_init_set_info_hook(void* vmctx, ManagedObject* this_, int em, MapNoType map, SystemString* set_name) {
+void QuestLoader::check_for_missing_spawns(CustomQuest& quest) const {
+    ManagedObject* obj = quest.m_memory_object;
+
+    const auto raw_normal = utility::call<ManagedObject*>(obj, "get_RawNormal");
+    const auto& bosses = **raw_normal->get_field<REArray<uint32_t>*>("_BossEmType");
+
+    const auto map = utility::call<uint32_t>(obj, "getMapNo");
+
+    for (auto i = 0u; i < bosses.size(); ++i) {
+        const auto type_index = utility::call<uint32_t>(m_enemy_manager, "convertEnemyTypeIndex", bosses[i]);
+
+    }
+}
+
+ManagedObject* QuestLoader::find_boss_init_set_info_hook(void* vmctx, ManagedObject* this_, int em, MapNoType map, REString* set_name) {
     const auto loader = get();
     const auto result = loader->m_find_boss_init_set_info_hook->call_original<ManagedObject*>(vmctx, this_, em, map, set_name);
 
