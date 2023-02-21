@@ -842,7 +842,6 @@ REString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_, Qu
         const auto& quest = loader->m_custom_quests[quest_id];
 
         if (!quest.m_is_replacement || !quest.m_use_default) {
-            API::get()->log_error("%i", quest.m_quest_id);
             const auto language = loader->m_resource_manager->get_language();
             const auto& info = quest.get_quest_info(language);
 
