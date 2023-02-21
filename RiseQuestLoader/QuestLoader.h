@@ -90,7 +90,7 @@ public:
             }
 
             m_quest_id = j.value("QuestID", 0);
-            if (j.contains("QuestText")) {
+            if (j.contains("QuestText") && j["QuestText"].type() != nlohmann::detail::value_t::null) {
                 m_fallback_language = language::get_language(j["QuestText"]["FallbackLanguage"]);
 
                 for (const auto& info : j["QuestText"]["QuestInfo"]) {

@@ -277,7 +277,7 @@ void QuestLoader::read_quests() {
             try {
                 parse_quest(entry);
             } catch (const std::exception& e) {
-                api->log_error("C++ Exception Thrown while parsing quest: {}", e.what());
+                api->log_error("C++ Exception Thrown while parsing quest: %s", e.what());
             }
         }
     }
@@ -292,7 +292,7 @@ void QuestLoader::read_quests() {
             try {
                 parse_spawn(entry);
             } catch (const std::exception& e) {
-                api->log_error("C++ Exception Thrown while parsing spawn: {}", e.what());
+                api->log_error("C++ Exception Thrown while parsing spawn: %s", e.what());
             }
         }
     }
@@ -472,10 +472,16 @@ void QuestLoader::parse_quest(const std::filesystem::path& path) {
     qenemy->add_ref();
     qrampage->add_ref();
 
-    *qnormal->get_field<REString*>("_DbgName") = utility::create_managed_string(j["QuestText"]["DebugName"]);
-    *qnormal->get_field<REString*>("_DbgClient") = utility::create_managed_string(j["QuestText"]["DebugClient"]);
-    *qnormal->get_field<REString*>("_DbgContent") = utility::create_managed_string(j["QuestText"]["DebugDescription"]);
-
+    if (j.contains("QuestText") && j["QuestText"].type() != nlohmann::detail::value_t::null) {
+        *qnormal->get_field<REString*>("_DbgName") = utility::create_managed_string(j["QuestText"]["DebugName"]);
+        *qnormal->get_field<REString*>("_DbgClient") = utility::create_managed_string(j["QuestText"]["DebugClient"]);
+        *qnormal->get_field<REString*>("_DbgContent") = utility::create_managed_string(j["QuestText"]["DebugDescription"]);
+    }
+    else {
+        *qnormal->get_field<REString*>("_DbgName") = utility::create_managed_string("DebugName");
+        *qnormal->get_field<REString*>("_DbgClient") = utility::create_managed_string("DebugClient");
+        *qnormal->get_field<REString*>("_DbgContent") = utility::create_managed_string("DebugContent");
+    }
     if (j.contains("QuestData") && j["QuestData"].type() != nlohmann::detail::value_t::null) {
         const auto& normal = j["QuestData"];
 
@@ -836,6 +842,7 @@ REString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_, Qu
         const auto& quest = loader->m_custom_quests[quest_id];
 
         if (!quest.m_is_replacement || !quest.m_use_default) {
+            API::get()->log_error("%i", quest.m_quest_id);
             const auto language = loader->m_resource_manager->get_language();
             const auto& info = quest.get_quest_info(language);
 
