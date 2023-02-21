@@ -36,6 +36,7 @@ public:
         reframework::API::ManagedObject* m_original_object{};
         bool m_is_replacement{false};
         bool m_enabled{true};
+        bool m_use_default{false};
 
         void enable(reframework::API::ManagedObject* questdict) {
             if (m_is_replacement) {
@@ -89,16 +90,17 @@ public:
             }
 
             m_quest_id = j.value("QuestID", 0);
-            m_fallback_language = language::get_language(j["QuestText"]["FallbackLanguage"]);
+            if (j.contains("QuestText") && j["QuestText"].type() != nlohmann::detail::value_t::null) {
+                m_fallback_language = language::get_language(j["QuestText"]["FallbackLanguage"]);
 
-            for (const auto& info : j["QuestText"]["QuestInfo"]) {
-                m_quest_infos[language::get_language(info["Language"])] = {
-                    info["Name"],
-                    info["Client"],
-                    info["Description"],
-                    info["Target"],
-                    info.value("Fail", "")
-                };
+                for (const auto& info : j["QuestText"]["QuestInfo"]) {
+                    m_quest_infos[language::get_language(info["Language"])] = {
+                        info["Name"], info["Client"], info["Description"], info["Target"], info.value("Fail", "")};
+                }
+            } else {
+                if (m_is_replacement)
+                    m_use_default = true;
+                m_quest_infos[m_fallback_language] = {"", "", "", "", ""};
             }
         }
         ~CustomQuest() {

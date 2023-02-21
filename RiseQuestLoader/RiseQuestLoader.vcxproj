@@ -24,6 +24,10 @@
     <ProjectGuid>{7c38e2ca-a0bb-4e31-a73b-ba65808ac609}</ProjectGuid>
     <RootNamespace>RiseQuestLoader</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <GameRegistryPath>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 1446780</GameRegistryPath>
+    <GamePath Condition="'$(GamePath)' == ''">$([MSBuild]::GetRegistryValueFromView('$(GameRegistryPath)', 'InstallLocation', null, RegistryView.Registry32))</GamePath>
+    <GamePath Condition="'$(GamePath)' == ''">$([MSBuild]::GetRegistryValueFromView('$(GameRegistryPath)', 'InstallLocation', null, RegistryView.Registry64))</GamePath>
+    <GamePath Condition="'$(GamePath)' == ''">$(targetdir)</GamePath>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -144,7 +148,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(targetdir)$(targetname).dll "E:\SteamLibrary\steamapps\common\MonsterHunterRise\reframework\plugins\"</Command>
+      <Command>copy $(targetdir)$(targetname).dll "$(GamePath)\reframework\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
