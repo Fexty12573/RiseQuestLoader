@@ -835,7 +835,7 @@ REString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_, Qu
     if (loader->m_custom_quests.contains(quest_id)) {
         const auto& quest = loader->m_custom_quests[quest_id];
 
-        if (!quest.m_is_replacement || quest.m_enabled) {
+        if (!quest.m_is_replacement || !quest.m_use_default) {
             const auto language = loader->m_resource_manager->get_language();
             const auto& info = quest.get_quest_info(language);
 
