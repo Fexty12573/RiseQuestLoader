@@ -338,7 +338,7 @@ private:
     void check_for_missing_spawns(CustomQuest& quest) const;
 
     static REString* get_quest_text_hook(
-        void* vmctx, reframework::API::ManagedObject* this_, QuestText type, void* qi, void* is_change);
+        void* vmctx, reframework::API::ManagedObject* this_, QuestText type, void* qi, void* is_special_random_mystery, void* is_change);
     static reframework::API::ManagedObject* make_questno_list_hook(
         void* vmctx, reframework::API::ManagedObject* this_, reframework::API::ManagedObject* src, bool is_quick_match);
     static reframework::API::ManagedObject* make_quest_list_hyakuryu_hook(

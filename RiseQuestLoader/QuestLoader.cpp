@@ -833,7 +833,7 @@ bool QuestLoader::is_existing_quest(int32_t quest_id) const {
     return false;
 }
 
-REString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_, QuestText type, void* qi, void* is_change) {
+REString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_, QuestText type, void* qi, void* is_special_random_mystery, void* is_change) {
     const auto quest_id = utility::call<int32_t>(this_, "getQuestNo");
     const auto loader = get();
 
@@ -857,12 +857,12 @@ REString* QuestLoader::get_quest_text_hook(void* vmctx, ManagedObject* this_, Qu
             case QuestText::MISS:
                 return utility::create_managed_string(info.m_failure_condition);
             default:
-                return loader->m_get_quest_text_hook->call_original<REString*>(vmctx, this_, type, qi, is_change);
+                return loader->m_get_quest_text_hook->call_original<REString*>(vmctx, this_, type, qi, is_special_random_mystery, is_change);
             }
         }
     }
 
-    return loader->m_get_quest_text_hook->call_original<REString*>(vmctx, this_, type, qi, is_change);
+    return loader->m_get_quest_text_hook->call_original<REString*>(vmctx, this_, type, qi, is_special_random_mystery, is_change);
 }
 
 ManagedObject* QuestLoader::make_questno_list_hook(void* vmctx, ManagedObject* this_, ManagedObject* src, bool is_quick_match) {
